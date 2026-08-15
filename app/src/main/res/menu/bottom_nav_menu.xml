@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+     <item
+         android:id="@+id/libraryFragment"
+         android:title="Könyvtár"
+         android:icon="@drawable/ic_library" />
+     <item
+         android:id="@+id/wishlistFragment"
+         android:title="Kívánságlista"
+         android:icon="@drawable/ic_wishlist" />
+     <item
+         android:id="@+id/searchFragment"
+         android:title="Keresés"
+         android:icon="@drawable/ic_search" />
+     <item
+         android:id="@+id/feedFragment"
+         android:title="Aktivitás"
+         android:icon="@drawable/ic_feed" />
+     <item
+         android:id="@+id/settingsFragment"
+         android:title="Beállítások"
+         android:icon="@drawable/ic_settings" />
+</menu>
