@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">MyGameVault</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="library">Könyvtár</string>
+    <string name="wishlist">Kívánságlista</string>
+    <string name="search">Keresés</string>
+    <string name="feed">Aktivitás</string>
+    <string name="settings">Beállítások</string>
+
+    <string name="title_login">Jelentkezz be a folytatáshoz!</string>
+    <string name="email">E-mail cím</string>
+    <string name="password">Jelszó</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="login_to_register">Nincs még fiókod? Regisztrálj!</string>
+
+    <string name="register">Regisztráció</string>
+    <string name="password_confirm">Jelszó újra</string>
+    <string name="register_button">Fiók létrehozása</string>
+    <string name="register_to_login">Már van fiókod? Lépj be!</string>
+
 </resources>

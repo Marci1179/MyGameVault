@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
      <item
          android:id="@+id/libraryFragment"
-         android:title="Könyvtár"
+         android:title="@string/library"
          android:icon="@drawable/ic_library" />
      <item
          android:id="@+id/wishlistFragment"
-         android:title="Kívánságlista"
+         android:title="@string/wishlist"
          android:icon="@drawable/ic_wishlist" />
      <item
          android:id="@+id/searchFragment"
-         android:title="Keresés"
+         android:title="@string/search"
          android:icon="@drawable/ic_search" />
      <item
          android:id="@+id/feedFragment"
-         android:title="Aktivitás"
+         android:title="@string/feed"
          android:icon="@drawable/ic_feed" />
      <item
          android:id="@+id/settingsFragment"
-         android:title="Beállítások"
+         android:title="@string/settings"
          android:icon="@drawable/ic_settings" />
 </menu>
