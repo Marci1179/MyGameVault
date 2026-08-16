@@ -17,5 +17,15 @@
     <string name="password_confirm">Jelszó újra</string>
     <string name="register_button">Fiók létrehozása</string>
     <string name="register_to_login">Már van fiókod? Lépj be!</string>
+    <string name="error_email_required">E-mail cím megadása kötelező.</string>
+    <string name="error_password_required">Jelszó megadása kötelező.</string>
+    <string name="error_password_confirm_required">Jelszó megerősítése kötelező.</string>
+    <string name="error_passwords_mismatch">A jelszavak nem egyeznek!</string>
+    <string name="error_password_too_short">A jelszónak legalább 6 karakter hosszúnak kell lennie!</string>
+    <string name="error_email_registered">Ez az e-mail cím már regisztrálva van.</string>
+    <string name="error_unknown">Hiba történt: %s</string>
+    <string name="error_network">Hálózati hiba: %s</string>
+    <string name="success_registration">Sikeres regisztráció! Most már bejelentkezhetsz.</string>
+
 
 </resources>

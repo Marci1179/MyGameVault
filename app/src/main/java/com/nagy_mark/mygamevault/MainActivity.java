@@ -1,6 +1,7 @@
 package com.nagy_mark.mygamevault;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,13 +31,18 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fcvContent);
 
+        NavController navController = navHostFragment.getNavController();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bnvMain);
 
-        if (navHostFragment != null) {
-            NavController navController = navHostFragment.getNavController();
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
-            NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        }
-
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.registerFragment) {
+                bottomNavigationView.setVisibility(View.GONE);
+            } else {
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
