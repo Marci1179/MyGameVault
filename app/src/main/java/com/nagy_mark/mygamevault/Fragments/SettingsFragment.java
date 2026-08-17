@@ -74,11 +74,15 @@ public class SettingsFragment extends Fragment {
                     targetLocale = "en";
                 }
 
-                prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
+                String currentSaved = prefs.getString("SELECTED_LANGUAGE", defaultLanguage);
 
-                AppCompatDelegate.setApplicationLocales(
-                        LocaleListCompat.forLanguageTags(targetLocale)
-                );
+                if (!targetLocale.equals(currentSaved)) {
+                    prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
+
+                    AppCompatDelegate.setApplicationLocales(
+                            LocaleListCompat.forLanguageTags(targetLocale)
+                    );
+                }
             }
 
             @Override
