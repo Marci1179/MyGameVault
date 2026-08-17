@@ -121,7 +121,7 @@ public class RegisterFragment extends Fragment {
                     if (responseCode == 200 || responseCode == 201) {
                         getActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), getString(R.string.success_registration), Toast.LENGTH_SHORT).show();
-                            Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
+                            Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment);
                         });
                     } else {
                         InputStream errorStream = conn.getErrorStream();

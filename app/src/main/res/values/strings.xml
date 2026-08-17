@@ -12,6 +12,9 @@
     <string name="password">Jelszó</string>
     <string name="login">Bejelentkezés</string>
     <string name="login_to_register">Nincs még fiókod? Regisztrálj!</string>
+    <string name="success_login">Sikeres bejelentkezés!</string>
+    <string name="error_invalid_credentials">Hibás e-mail cím vagy jelszó.</string>
+    <string name="error_occurred">Hiba történt: %s</string>
 
     <string name="register">Regisztráció</string>
     <string name="password_confirm">Jelszó újra</string>

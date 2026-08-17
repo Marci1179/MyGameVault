@@ -13,6 +13,9 @@
     <string name="password">Password</string>
     <string name="login">Log in</string>
     <string name="login_to_register">Don\'t have an account? Sign up!</string>
+    <string name="success_login">Successful login!</string>
+    <string name="error_invalid_credentials">Wrong email or password.</string>
+    <string name="error_occurred">An error occurred: %s</string>
 
     <string name="register">Sign Up</string>
     <string name="password_confirm">Confirm Password</string>
