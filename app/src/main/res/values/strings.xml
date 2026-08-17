@@ -33,6 +33,7 @@
     <string name="logout">Kijelentkezés</string>
     <string name="logout_message">Biztosan ki szeretnél jelentkezni?</string>
     <string name="success_logout">Sikeres kijelentkezés.</string>
+    <string name="language_select">Nyelv kiválasztása</string>
 
     <string name="yes">Igen</string>
     <string name="cancel">Mégsem</string>

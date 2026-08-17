@@ -20,6 +20,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/llLanguage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeaderSettings">
+
+        <TextView
+            android:id="@+id/tvLanguage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/language_select"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/spLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogout"
         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -30,6 +58,6 @@
         android:textColor="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeaderSettings" />
+        app:layout_constraintTop_toBottomOf="@+id/llLanguage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

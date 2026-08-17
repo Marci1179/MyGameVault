@@ -48,8 +48,8 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SharedPreferences checkPrefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
-        String savedToken = checkPrefs.getString("JWT_TOKEN", null);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        String savedToken = prefs.getString("JWT_TOKEN", null);
 
         if (savedToken != null && !savedToken.isEmpty()) {
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_libraryFragment);
@@ -126,7 +126,6 @@ public class LoginFragment extends Fragment {
                        JSONObject jsonResponse = new JSONObject(result);
                        String accessToken = jsonResponse.getString("access_token");
 
-                       SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
                        prefs.edit().putString("JWT_TOKEN", accessToken).apply();
 
                        getActivity().runOnUiThread(() -> {

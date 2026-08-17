@@ -6,13 +6,18 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -36,6 +41,51 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Button btnLogout = view.findViewById(R.id.btnLogout);
+        Spinner spLanguage = view.findViewById(R.id.spLanguage);
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
+        String[] languages = {"Magyar", "English"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, languages);
+        spLanguage.setAdapter(adapter);
+
+        String defaultLanguage;
+        if (LocaleListCompat.getDefault().get(0).toLanguageTag().startsWith("hu")) {
+            defaultLanguage = "hu";
+        } else {
+            defaultLanguage = "en";
+        }
+
+        String savedLanguage = prefs.getString("SELECTED_LANGUAGE", defaultLanguage);
+
+        if (savedLanguage.equals("hu")) {
+            spLanguage.setSelection(0);
+        } else {
+            spLanguage.setSelection(1);
+        }
+
+        spLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String targetLocale;
+                if (position == 0) {
+                    targetLocale = "hu";
+                } else {
+                    targetLocale = "en";
+                }
+
+                prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
+
+                AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(targetLocale)
+                );
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         btnLogout.setOnClickListener(v -> {
             new MaterialAlertDialogBuilder(requireContext())
@@ -43,7 +93,6 @@ public class SettingsFragment extends Fragment {
                     .setTitle(getString(R.string.logout))
                     .setMessage(getString(R.string.logout_message))
                     .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
                         prefs.edit().remove("JWT_TOKEN").apply();
 
                         Toast.makeText(getContext(), getString(R.string.success_logout), Toast.LENGTH_SHORT).show();

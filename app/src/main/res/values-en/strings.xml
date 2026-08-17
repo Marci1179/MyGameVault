@@ -18,8 +18,8 @@
     <string name="error_occurred">An error occurred: %s</string>
 
     <string name="register">Sign Up</string>
-    <string name="password_confirm">Confirm Password</string>
-    <string name="register_button">Create Account</string>
+    <string name="password_confirm">Confirm password</string>
+    <string name="register_button">Create account</string>
     <string name="register_to_login">Already have an account? Log in!</string>
     <string name="error_email_required">Email address is required.</string>
     <string name="error_password_required">Password is required.</string>
@@ -34,6 +34,7 @@
     <string name="logout">Logout</string>
     <string name="logout_message">Are you sure you want to log out?</string>
     <string name="success_logout">Successful logout!</string>
+    <string name="language_select">Select language</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
