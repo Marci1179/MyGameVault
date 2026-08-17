@@ -30,5 +30,11 @@
     <string name="error_network">Hálózati hiba: %s</string>
     <string name="success_registration">Sikeres regisztráció! Most már bejelentkezhetsz.</string>
 
+    <string name="logout">Kijelentkezés</string>
+    <string name="logout_message">Biztosan ki szeretnél jelentkezni?</string>
+    <string name="success_logout">Sikeres kijelentkezés.</string>
+
+    <string name="yes">Igen</string>
+    <string name="cancel">Mégsem</string>
 
 </resources>

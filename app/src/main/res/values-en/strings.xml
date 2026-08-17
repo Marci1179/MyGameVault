@@ -30,4 +30,11 @@
     <string name="error_unknown">An error occurred: %s</string>
     <string name="error_network">Network error: %s</string>
     <string name="success_registration">Successful registration! You can now log in.</string>
+
+    <string name="logout">Logout</string>
+    <string name="logout_message">Are you sure you want to log out?</string>
+    <string name="success_logout">Successful logout!</string>
+
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 </resources>
