@@ -5,7 +5,7 @@
     android:id="@+id/clLibrary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.LibraryFragment">
+    tools:context=".fragments.LibraryFragment">
 
     <TextView
         android:id="@+id/tvHeaderLibrary"

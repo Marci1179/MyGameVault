@@ -15,6 +15,7 @@
     <string name="success_login">Sikeres bejelentkezés!</string>
     <string name="error_invalid_credentials">Hibás e-mail cím vagy jelszó.</string>
     <string name="error_occurred">Hiba történt: %s</string>
+    <string name="error_unknown">Ismeretlen hiba történt.</string>
 
     <string name="register">Regisztráció</string>
     <string name="password_confirm">Jelszó újra</string>
@@ -26,7 +27,6 @@
     <string name="error_passwords_mismatch">A jelszavak nem egyeznek!</string>
     <string name="error_password_too_short">A jelszónak legalább 6 karakter hosszúnak kell lennie!</string>
     <string name="error_email_registered">Ez az e-mail cím már regisztrálva van.</string>
-    <string name="error_unknown">Hiba történt: %s</string>
     <string name="error_network">Hálózati hiba: %s</string>
     <string name="success_registration">Sikeres regisztráció! Most már bejelentkezhetsz.</string>
 

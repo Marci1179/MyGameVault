@@ -5,7 +5,7 @@
     android:id="@+id/clWishlist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.WishlistFragment">
+    tools:context=".fragments.WishlistFragment">
 
     <TextView
         android:id="@+id/tvHeaderWishlist"

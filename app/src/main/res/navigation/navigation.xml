@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.LibraryFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.LibraryFragment"
         android:label="fragment_library"
         tools:layout="@layout/fragment_library" />
     <fragment
         android:id="@+id/wishlistFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.WishlistFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.WishlistFragment"
         android:label="fragment_wishlist"
         tools:layout="@layout/fragment_wishlist" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.SearchFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/feedFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.FeedFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.SettingsFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings">
 
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.LoginFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
 
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.nagy_mark.mygamevault.Fragments.RegisterFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
 

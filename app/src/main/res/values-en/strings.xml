@@ -16,6 +16,7 @@
     <string name="success_login">Successful login!</string>
     <string name="error_invalid_credentials">Wrong email or password.</string>
     <string name="error_occurred">An error occurred: %s</string>
+    <string name="error_unknown">An unknown error occurred.</string>
 
     <string name="register">Sign Up</string>
     <string name="password_confirm">Confirm password</string>
@@ -27,7 +28,6 @@
     <string name="error_passwords_mismatch">Passwords do not match!</string>
     <string name="error_password_too_short">Password must be at least 6 characters long!</string>
     <string name="error_email_registered">This email address is already registered.</string>
-    <string name="error_unknown">An error occurred: %s</string>
     <string name="error_network">Network error: %s</string>
     <string name="success_registration">Successful registration! You can now log in.</string>
 

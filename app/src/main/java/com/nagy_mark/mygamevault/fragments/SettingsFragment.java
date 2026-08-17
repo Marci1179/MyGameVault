@@ -1,4 +1,4 @@
-package com.nagy_mark.mygamevault.Fragments;
+package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
