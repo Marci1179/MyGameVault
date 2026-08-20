@@ -38,4 +38,9 @@
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+
+    <string name="cover">Cover</string>
+    <string name="add_to_library">Add to library</string>
+    <string name="add_to_wishlist">Add to wishlist</string>
+
 </resources>
