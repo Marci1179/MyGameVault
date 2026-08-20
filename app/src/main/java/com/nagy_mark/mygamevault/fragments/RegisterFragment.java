@@ -19,7 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
-import com.nagy_mark.mygamevault.network.ApiClient;
+import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class RegisterFragment extends Fragment {
@@ -90,7 +90,7 @@ public class RegisterFragment extends Fragment {
 
             AuthRequest request = new AuthRequest(email, password);
 
-            SupabaseApi api = ApiClient.getClient(requireContext()).create(SupabaseApi.class);
+            SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
             api.register(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override

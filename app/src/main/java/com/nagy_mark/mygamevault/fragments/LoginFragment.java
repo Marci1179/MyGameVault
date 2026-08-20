@@ -21,7 +21,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
-import com.nagy_mark.mygamevault.network.ApiClient;
+import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class LoginFragment extends Fragment {
@@ -85,15 +85,21 @@ public class LoginFragment extends Fragment {
 
             AuthRequest request = new AuthRequest(email, password);
 
-            SupabaseApi api = ApiClient.getClient(requireContext()).create(SupabaseApi.class);
+            SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
             api.login(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<AuthResponse> call, @NonNull retrofit2.Response<AuthResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         String accessToken = response.body().getAccessToken();
+                        String refreshToken = response.body().getRefreshToken();
+                        String userId = response.body().getUser().getId();
 
-                        prefs.edit().putString("JWT_TOKEN", accessToken).apply();
+                        prefs.edit()
+                                .putString("JWT_TOKEN", accessToken)
+                                .putString("REFRESH_TOKEN", refreshToken)
+                                .putString("USER_ID", userId)
+                                .apply();
 
                         Toast.makeText(getContext(), getString(R.string.success_login), Toast.LENGTH_SHORT).show();
                         Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_libraryFragment);
