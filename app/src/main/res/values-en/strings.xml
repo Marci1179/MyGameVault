@@ -42,4 +42,14 @@
     <string name="cover">Cover</string>
     <string name="add_to_library">Add to library</string>
     <string name="add_to_wishlist">Add to wishlist</string>
+    <string name="unknown_year">Unknown year</string>
+    <string name="unknown_publisher">Unknown publisher</string>
+    <string name="format_release_year">Release year: %1$s</string>
+    <string name="format_publisher">Publisher: %1$s</string>
+    <string name="error_download">Error downloading</string>
+    <string name="error_search">Search error</string>
+    <string name="no_results">No results found for the searched game.</string>
+    <string name="game_added_library">Game added to library!</string>
+    <string name="game_added_wishlist">Game added to wishlist!</string>
+    <string name="error_save">Error saving game!</string>
 </resources>
