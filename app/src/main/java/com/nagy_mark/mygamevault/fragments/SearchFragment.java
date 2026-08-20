@@ -1,6 +1,7 @@
 package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -206,9 +207,11 @@ public class SearchFragment extends Fragment {
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Ismeretlen hiba";
+                        String unknownError = getString(R.string.error_unknown_supabase);
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : unknownError;
+
                         android.util.Log.e("SUPABASE_ERROR", "Mentési hiba kód: " + response.code() + " | Üzenet: " + errorBody);
-                        Toast.makeText(getContext(), "Supabase Hiba: " + errorBody, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -223,7 +226,7 @@ public class SearchFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 }

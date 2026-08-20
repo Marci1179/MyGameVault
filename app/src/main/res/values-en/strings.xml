@@ -52,4 +52,6 @@
     <string name="game_added_library">Game added to library!</string>
     <string name="game_added_wishlist">Game added to wishlist!</string>
     <string name="error_save">Error saving game!</string>
+    <string name="error_save_failed">An error occurred while saving.</string>
+    <string name="error_unknown_supabase">Unknown error</string>
 </resources>

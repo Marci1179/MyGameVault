@@ -27,9 +27,6 @@ public interface SupabaseApi {
         @POST("rest/v1/My_Games")
         Call<Void> insertGame(@Body MyGame myGame);
 
-        @GET("auth/v1/user")
-        Call<SupabaseUserResponse> getCurrentUser();
-
         @GET("rest/v1/My_Games")
         Call<List<SavedGameModel>> getUserSavedGames(
                 @Query("user_id") String userIdFilter,

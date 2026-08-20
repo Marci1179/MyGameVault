@@ -51,4 +51,6 @@
     <string name="game_added_library">Játék hozzáadva a könyvtárhoz!</string>
     <string name="game_added_wishlist">Játék hozzáadva a kívánságlistához!</string>
     <string name="error_save">Hiba a játék mentésekor!</string>
+    <string name="error_save_failed">Mentési hiba történt.</string>
+    <string name="error_unknown_supabase">Ismeretlen hiba</string>
 </resources>
