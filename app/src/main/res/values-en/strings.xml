@@ -70,6 +70,8 @@
     <string name="delete_error">An error occurred while deleting!</string>
 
     <string name="delete_message_wishlist">Are you sure you want to delete %1$s from your wishlist?</string>
+    <string name="lowest_price_format">Lowest price: %1$s$ (%2$s)</string>
+    <string name="price_not_found">Lowest price: Not found</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>

@@ -23,6 +23,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     private List<SavedGameModel> gameList = new ArrayList<>();
     private final Context context;
     private final OnWishlistItemClickListener listener;
+    private java.util.Map<Integer, String> gamePrices = new java.util.HashMap<>();
 
     public interface OnWishlistItemClickListener {
         void onDeleteClick(SavedGameModel game);
@@ -35,6 +36,11 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
     public void setGames(List<SavedGameModel> games) {
         this.gameList = games;
+        notifyDataSetChanged();
+    }
+
+    public void setGamePrice(int gameId, String priceText) {
+        this.gamePrices.put(gameId, priceText);
         notifyDataSetChanged();
     }
 
@@ -72,6 +78,14 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
             holder.ivGameCoverWishlist.setImageDrawable(null);
         }
 
+        String priceInfo = gamePrices.get(game.getId());
+        if (priceInfo != null) {
+            holder.tvGamePriceWishlist.setVisibility(View.VISIBLE);
+            holder.tvGamePriceWishlist.setText(priceInfo);
+        } else {
+            holder.tvGamePriceWishlist.setVisibility(View.GONE);
+        }
+
         holder.btnDeleteWishlist.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(game);
@@ -86,7 +100,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
     public static class WishlistViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGameCoverWishlist;
-        TextView tvGameTitleWishlist, tvGameYearWishlist, tvGamePublisherWishlist;
+        TextView tvGameTitleWishlist, tvGameYearWishlist, tvGamePublisherWishlist, tvGamePriceWishlist;
         ImageButton btnDeleteWishlist;
 
         public WishlistViewHolder(@NonNull View itemView) {
@@ -95,6 +109,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
             tvGameTitleWishlist = itemView.findViewById(R.id.tvGameTitleWishlist);
             tvGameYearWishlist = itemView.findViewById(R.id.tvGameYearWishlist);
             tvGamePublisherWishlist = itemView.findViewById(R.id.tvGamePublisherWishlist);
+            tvGamePriceWishlist = itemView.findViewById(R.id.tvGamePriceWishlist);
             btnDeleteWishlist = itemView.findViewById(R.id.btnDeleteWishlist);
         }
     }

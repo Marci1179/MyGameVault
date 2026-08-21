@@ -24,8 +24,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.WishlistAdapter;
-import com.nagy_mark.mygamevault.adapters.WishlistAdapter;
+import com.nagy_mark.mygamevault.models.CheapSharkDealInfo;
+import com.nagy_mark.mygamevault.models.CheapSharkGameDetailResponse;
+import com.nagy_mark.mygamevault.models.CheapSharkGameSearchResult;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
+import com.nagy_mark.mygamevault.network.CheapSharkApi;
+import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 
@@ -207,6 +211,7 @@ public class WishlistFragment extends Fragment {
         });
 
         adapter.setGames(displayedGames);
+        fetchPricesForWishlist(displayedGames);
     }
 
     private void deleteGameFromDatabase(SavedGameModel game) {
@@ -232,4 +237,81 @@ public class WishlistFragment extends Fragment {
         });
     }
 
+    private String getStoreName(String storeId) {
+        switch (storeId) {
+            case "1": return "Steam";
+            case "3": return "GreenManGaming";
+            case "7": return "GOG";
+            case "8": return "EA/Origin";
+            case "11": return "Humble Store";
+            case "13": return "Ubisoft";
+            case "15": return "Fanatical";
+            case "25": return "Epic Games";
+            default: return null;
+        }
+    }
+
+    private void fetchPricesForWishlist(List<SavedGameModel> gamesToFetch) {
+        CheapSharkApi cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
+
+        for (SavedGameModel game : gamesToFetch) {
+            if (game.getGameName() == null || game.getGameName().isEmpty()) continue;
+
+            cheapSharkApi.searchGame(game.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
+                @Override
+                public void onResponse(Call<List<CheapSharkGameSearchResult>> call, Response<List<CheapSharkGameSearchResult>> response) {
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                        String gameId = response.body().get(0).getGameId();
+
+                        cheapSharkApi.getGameDetails(gameId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
+                            @Override
+                            public void onResponse(Call<CheapSharkGameDetailResponse> call, Response<CheapSharkGameDetailResponse> response) {
+                                if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
+
+                                    double lowestPrice = Double.MAX_VALUE;
+                                    String bestStoreName = "";
+
+                                    for (CheapSharkDealInfo deal : response.body().getDeals()) {
+                                        String storeName = getStoreName(deal.getStoreId());
+                                        if (storeName != null) {
+                                            try {
+                                                double currentPrice = Double.parseDouble(deal.getPrice());
+                                                if (currentPrice < lowestPrice) {
+                                                    lowestPrice = currentPrice;
+                                                    bestStoreName = storeName;
+                                                }
+                                            } catch (NumberFormatException e) {
+
+                                            }
+                                        }
+                                    }
+
+                                    if (lowestPrice != Double.MAX_VALUE) {
+                                        String priceText = getString(R.string.lowest_price_format, String.valueOf(lowestPrice), bestStoreName);
+                                        adapter.setGamePrice(game.getId(), priceText);
+                                    } else {
+                                        adapter.setGamePrice(game.getId(), getString(R.string.price_not_found));
+                                    }
+                                } else {
+                                    adapter.setGamePrice(game.getId(), getString(R.string.price_not_found));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CheapSharkGameDetailResponse> call, Throwable t) {
+                                adapter.setGamePrice(game.getId(), getString(R.string.price_not_found));
+                            }
+                        });
+                    } else {
+                        adapter.setGamePrice(game.getId(), getString(R.string.price_not_found));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CheapSharkGameSearchResult>> call, Throwable t) {
+                    adapter.setGamePrice(game.getId(), getString(R.string.price_not_found));
+                }
+            });
+        }
+    }
 }
