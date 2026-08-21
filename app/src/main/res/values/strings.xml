@@ -59,10 +59,21 @@
     <string name="status_in_progress">Folyamatban</string>
     <string name="status_finished">Befejezve</string>
     <string name="sort_by">Rendezés</string>
+    <string name="unknown_game">Ismeretlen játék</string>
+    <string name="status_label">Státusz: %1$s</string>
+    <string name="error_data_load">Hiba az adatok betöltésekor!</string>
+    <string name="error_network_base">Hálózati hiba!</string>
+    <string name="delete_title">Törlés</string>
+    <string name="delete_message">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a könyvtáradból?</string>
+    <string name="delete_success">Játék sikeresen törölve!</string>
+    <string name="delete_error">Hiba történt a törlés során!</string>
+
+
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
+        <item>Név (Z-A)</item>
         <item>Megjelenési év (Legújabb)</item>
-        <item>Státusz szerint</item>
+        <item>Megjelenési év (Legrégebbi)</item>
     </string-array>
 </resources>

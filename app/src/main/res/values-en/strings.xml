@@ -60,10 +60,19 @@
     <string name="status_in_progress">In Progress</string>
     <string name="status_finished">Finished</string>
     <string name="sort_by">Sort by</string>
+    <string name="unknown_game">Unknown game</string>
+    <string name="status_label">Status: %1$s</string>
+    <string name="error_data_load">Error loading data!</string>
+    <string name="error_network_base">Network error!</string>
+    <string name="delete_title">Delete</string>
+    <string name="delete_message">Are you sure you want to delete %1$s from your library?</string>
+    <string name="delete_success">Game deleted successfully!</string>
+    <string name="delete_error">An error occurred while deleting!</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
+        <item>Name (Z-A)</item>
         <item>Release Year (Newest)</item>
-        <item>By Status</item>
+        <item>Release Year (Oldest)</item>
     </string-array>
 </resources>
