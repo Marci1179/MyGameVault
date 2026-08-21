@@ -64,11 +64,11 @@
     <string name="error_data_load">Hiba az adatok betöltésekor!</string>
     <string name="error_network_base">Hálózati hiba!</string>
     <string name="delete_title">Törlés</string>
-    <string name="delete_message">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a könyvtáradból?</string>
+    <string name="delete_message_library">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a könyvtáradból?</string>
     <string name="delete_success">Játék sikeresen törölve!</string>
     <string name="delete_error">Hiba történt a törlés során!</string>
 
-
+    <string name="delete_message_wishlist">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a kívánságlistádról?</string>
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>

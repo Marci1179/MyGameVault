@@ -65,9 +65,11 @@
     <string name="error_data_load">Error loading data!</string>
     <string name="error_network_base">Network error!</string>
     <string name="delete_title">Delete</string>
-    <string name="delete_message">Are you sure you want to delete %1$s from your library?</string>
+    <string name="delete_message_library">Are you sure you want to delete %1$s from your library?</string>
     <string name="delete_success">Game deleted successfully!</string>
     <string name="delete_error">An error occurred while deleting!</string>
+
+    <string name="delete_message_wishlist">Are you sure you want to delete %1$s from your wishlist?</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>

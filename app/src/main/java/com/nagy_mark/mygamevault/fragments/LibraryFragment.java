@@ -84,7 +84,7 @@ public class LibraryFragment extends Fragment {
             new MaterialAlertDialogBuilder(requireContext())
                     .setIcon(R.drawable.ic_warning)
                     .setTitle(getString(R.string.delete_title))
-                    .setMessage(getString(R.string.delete_message, game.getGameName()))
+                    .setMessage(getString(R.string.delete_message_library, game.getGameName()))
                     .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
                         deleteGameFromDatabase(game);
                     })
