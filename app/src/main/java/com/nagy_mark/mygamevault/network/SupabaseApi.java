@@ -22,7 +22,7 @@ public interface SupabaseApi {
         Call<AuthResponse> register(@Body AuthRequest request);
 
         @POST("/auth/v1/token?grant_type=refresh_token")
-        Call<AuthResponse> refreshToken(@Query("refresh_token") String refreshToken);
+        Call<AuthResponse> refreshToken(@Body java.util.Map<String, String> body);
 
         @POST("rest/v1/My_Games")
         Call<Void> insertGame(@Body MyGame myGame);

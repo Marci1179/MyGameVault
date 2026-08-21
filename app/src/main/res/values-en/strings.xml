@@ -54,4 +54,6 @@
     <string name="error_save">Error saving game!</string>
     <string name="error_save_failed">An error occurred while saving.</string>
     <string name="error_unknown_supabase">Unknown error</string>
+
+    <string name="delete_game">Delete game</string>
 </resources>

@@ -7,6 +7,8 @@ import com.nagy_mark.mygamevault.BuildConfig;
 import com.nagy_mark.mygamevault.models.AuthResponse;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -21,15 +23,27 @@ public class SupabaseApiClient {
 
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
+            SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
+            OkHttpClient authClient = new OkHttpClient.Builder()
+                    .addInterceptor(chain -> {
+                        Request request = chain.request().newBuilder()
+                                .header("apikey", BuildConfig.SUPABASE_API_KEY)
+                                .header("Content-Type", "application/json")
+                                .build();
+                        return chain.proceed(request);
+                    })
+                    .build();
+
+            Retrofit authRetrofit = new Retrofit.Builder()
                     .baseUrl(BuildConfig.SUPABASE_URL)
+                    .client(authClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            SupabaseApi authApi = retrofit.create(SupabaseApi.class);
+            SupabaseApi authApi = authRetrofit.create(SupabaseApi.class);
 
             Interceptor headerInterceptor = chain -> {
-                SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
                 Request originalRequest = chain.request();
                 String savedToken = prefs.getString("JWT_TOKEN", null);
 
@@ -49,7 +63,6 @@ public class SupabaseApiClient {
                     return null;
                 }
 
-                SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
                 String refreshToken = prefs.getString("REFRESH_TOKEN", null);
 
                 if (refreshToken == null) {
@@ -57,7 +70,10 @@ public class SupabaseApiClient {
                 }
 
                 try {
-                    Call<AuthResponse> call = authApi.refreshToken(refreshToken);
+                    Map<String, String> body = new HashMap<>();
+                    body.put("refresh_token", refreshToken);
+
+                    Call<AuthResponse> call = authApi.refreshToken(body);
                     retrofit2.Response<AuthResponse> res = call.execute();
 
                     if (res.isSuccessful() && res.body() != null) {

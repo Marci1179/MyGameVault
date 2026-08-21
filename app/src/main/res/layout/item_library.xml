@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView 
+    android:id="@+id/mcvItemLibrary"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clItemLibrary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/ivGameCoverLibrary"
+            android:layout_width="72dp"
+            android:layout_height="108dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/cover"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvGameTitleLibrary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/green"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toStartOf="@+id/btnDeleteLibrary"
+            app:layout_constraintStart_toEndOf="@+id/ivGameCoverLibrary"
+            app:layout_constraintTop_toTopOf="@+id/ivGameCoverLibrary"
+            tools:text="Játék neve"/>
+
+        <TextView
+            android:id="@+id/tvGameYearLibrary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintStart_toStartOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintTop_toBottomOf="@+id/tvGameTitleLibrary"
+            tools:text="Kiadási év"/>
+
+        <TextView
+            android:id="@+id/tvGamePublisherLibrary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintStart_toStartOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintTop_toBottomOf="@+id/tvGameYearLibrary"
+            tools:text="Kiadó"/>
+
+        <TextView
+            android:id="@+id/tvGameStatusLibrary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintStart_toStartOf="@+id/tvGameTitleLibrary"
+            app:layout_constraintTop_toBottomOf="@+id/tvGamePublisherLibrary"
+            tools:text="Befejezve"/>
+
+        <ImageButton
+            android:id="@+id/btnDeleteLibrary"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_game"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#D32F2F" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
