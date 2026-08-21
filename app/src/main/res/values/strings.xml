@@ -55,4 +55,14 @@
     <string name="error_unknown_supabase">Ismeretlen hiba</string>
 
     <string name="delete_game">Játék törlése</string>
+    <string name="status_owned">Megvan</string>
+    <string name="status_in_progress">Folyamatban</string>
+    <string name="status_finished">Befejezve</string>
+    <string name="sort_by">Rendezés</string>
+
+    <string-array name="sort_options">
+        <item>Név (A-Z)</item>
+        <item>Megjelenési év (Legújabb)</item>
+        <item>Státusz szerint</item>
+    </string-array>
 </resources>

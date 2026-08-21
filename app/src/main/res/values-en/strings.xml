@@ -56,4 +56,14 @@
     <string name="error_unknown_supabase">Unknown error</string>
 
     <string name="delete_game">Delete game</string>
+    <string name="status_owned">Owned</string>
+    <string name="status_in_progress">In Progress</string>
+    <string name="status_finished">Finished</string>
+    <string name="sort_by">Sort by</string>
+
+    <string-array name="sort_options">
+        <item>Name (A-Z)</item>
+        <item>Release Year (Newest)</item>
+        <item>By Status</item>
+    </string-array>
 </resources>
