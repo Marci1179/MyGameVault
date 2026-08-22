@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.WishlistAdapter;
+import com.nagy_mark.mygamevault.database.AppDatabase;
 import com.nagy_mark.mygamevault.models.CheapSharkDealInfo;
 import com.nagy_mark.mygamevault.models.CheapSharkGameDetailResponse;
 import com.nagy_mark.mygamevault.models.CheapSharkGameSearchResult;
@@ -36,6 +37,7 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -225,6 +227,12 @@ public class WishlistFragment extends Fragment {
                     adapter.notifyDataSetChanged();
 
                     Toast.makeText(getContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
+
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        if (getContext() != null) {
+                            AppDatabase.getDatabase(getContext()).wishlistPriceDao().deletePrice(game.getId());
+                        }
+                    });
                 } else {
                     Toast.makeText(getContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
                 }

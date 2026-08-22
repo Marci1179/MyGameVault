@@ -71,6 +71,11 @@
     <string name="delete_message_wishlist">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a kívánságlistádról?</string>
     <string name="lowest_price_format">Legalacsonyabb ár: %1$s$ (%2$s)</string>
     <string name="price_not_found">Legalacsonyabb ár: Nem található</string>
+    <string name="channel_wishlist_name">Akciók és leárazások</string>
+    <string name="channel_wishlist_desc">Értesítések a kívánságlistán szereplő játékok áreséseiről</string>
+    <string name="notif_price_drop_title">A kívánságlistádon szereplő egyik játék leárazásra került!</string>
+    <string name="notif_price_drop_expanded">%1$s\nÚj ár: %2$s</string>
+    <string name="notif_price_drop_collapsed">%1$s - Új ár: %2$s</string>
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>

@@ -72,6 +72,11 @@
     <string name="delete_message_wishlist">Are you sure you want to delete %1$s from your wishlist?</string>
     <string name="lowest_price_format">Lowest price: %1$s$ (%2$s)</string>
     <string name="price_not_found">Lowest price: Not found</string>
+    <string name="channel_wishlist_name">Deals and Discounts</string>
+    <string name="channel_wishlist_desc">Notifications about price drops for games on your wishlist</string>
+    <string name="notif_price_drop_title">A game on your wishlist is on sale!</string>
+    <string name="notif_price_drop_expanded">%1$s\nNew price: %2$s</string>
+    <string name="notif_price_drop_collapsed">%1$s - New price: %2$s</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>

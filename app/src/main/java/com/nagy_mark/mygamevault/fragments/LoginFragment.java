@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -45,7 +46,11 @@ public class LoginFragment extends Fragment {
         String savedToken = prefs.getString("JWT_TOKEN", null);
 
         if (savedToken != null && !savedToken.isEmpty()) {
-            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_libraryFragment);
+            NavController navController = Navigation.findNavController(view);
+
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() == R.id.loginFragment) {
+                navController.navigate(R.id.action_loginFragment_to_libraryFragment);
+            }
             return;
         }
 

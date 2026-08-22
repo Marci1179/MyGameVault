@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nagy_mark.mygamevault.R;
+import com.nagy_mark.mygamevault.database.AppDatabase;
+
+import java.util.concurrent.Executors;
 
 public class SettingsFragment extends Fragment {
 
@@ -98,6 +101,10 @@ public class SettingsFragment extends Fragment {
                     .setMessage(getString(R.string.logout_message))
                     .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
                         prefs.edit().remove("JWT_TOKEN").apply();
+
+                        Executors.newSingleThreadExecutor().execute(() -> {
+                            AppDatabase.getDatabase(requireContext()).clearAllTables();
+                        });
 
                         Toast.makeText(getContext(), getString(R.string.success_logout), Toast.LENGTH_SHORT).show();
 
