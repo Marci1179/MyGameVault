@@ -140,7 +140,7 @@ public class PriceCheckWorker extends Worker {
         String titleText = context.getString(R.string.notif_price_drop_title);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "wishlist_channel")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(titleText)
                 .setContentText(collapsedText)
                 .setStyle(new NotificationCompat.BigTextStyle()
