@@ -7,11 +7,13 @@ import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.models.SupabaseUserResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -42,4 +44,7 @@ public interface SupabaseApi {
 
         @DELETE("rest/v1/My_Games")
         Call<Void> deleteGame(@Query("id") String idEq);
+
+        @PATCH("rest/v1/My_Games")
+        Call<Void> updateGameDetails(@Query("id") String idQuery, @Body Map<String, Object> updates);
 }

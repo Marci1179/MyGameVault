@@ -1,6 +1,8 @@
 package com.nagy_mark.mygamevault.models;
 
-public class SavedGameModel {
+import java.io.Serializable;
+
+public class SavedGameModel implements Serializable {
     private int id;
     private String game_name;
     private String release_year;

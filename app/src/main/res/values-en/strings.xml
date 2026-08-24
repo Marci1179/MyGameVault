@@ -78,6 +78,18 @@
     <string name="notif_price_drop_expanded">%1$s\nNew price: %2$s</string>
     <string name="notif_price_drop_collapsed">%1$s - New price: %2$s</string>
 
+    <string name="game_details_header">Game details</string>
+    <string name="game_status_hint">Current status</string>
+    <string name="your_rating_label">Your rating:</string>
+    <string name="personal_note_hint">Personal opinion</string>
+    <string name="save_changes_button">Save changes</string>
+    <string name="save_success">Saved successfully!</string>
+    <string name="platforms_label">Platforms:</string>
+    <string name="game_modes_label">Game modes:</string>
+    <string name="summary_label">Summary:</string>
+    <string name="genres_label">Genres:</string>
+    <string name="unknown_developer">Unknown developer</string>
+
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

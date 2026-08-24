@@ -57,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+
+            if (item.getItemId() == R.id.libraryFragment) {
+                navController.popBackStack(R.id.libraryFragment, false);
+            }
+
+            return handled;
+        });
+
         if (getIntent() != null && getIntent().hasExtra("NAVIGATE_TO")) {
             String navigateTarget = getIntent().getStringExtra("NAVIGATE_TO");
 

@@ -9,7 +9,11 @@
         android:id="@+id/libraryFragment"
         android:name="com.nagy_mark.mygamevault.fragments.LibraryFragment"
         android:label="fragment_library"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_libraryFragment_to_libraryDetailView"
+            app:destination="@id/libraryDetailView" />
+    </fragment>
     <fragment
         android:id="@+id/wishlistFragment"
         android:name="com.nagy_mark.mygamevault.fragments.WishlistFragment"
@@ -59,4 +63,8 @@
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"/>
     </fragment>
+    <fragment
+        android:id="@+id/libraryDetailView"
+        android:name="com.nagy_mark.mygamevault.fragments.LibraryDetailViewFragment"
+        android:label="LibraryDetailView" />
 </navigation>

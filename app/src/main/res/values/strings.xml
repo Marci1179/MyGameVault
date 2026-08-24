@@ -77,12 +77,22 @@
     <string name="notif_price_drop_expanded">%1$s\nÚj ár: %2$s</string>
     <string name="notif_price_drop_collapsed">%1$s - Új ár: %2$s</string>
 
+    <string name="game_details_header">Játék részletei</string>
+    <string name="game_status_hint">Jelenlegi állapot</string>
+    <string name="your_rating_label">Értékelésed:</string>
+    <string name="personal_note_hint">Saját vélemény</string>
+    <string name="save_changes_button">Változások mentése</string>
+    <string name="save_success">Sikeres mentés!</string>
+    <string name="platforms_label">Platformok:</string>
+    <string name="game_modes_label">Játékmódok:</string>
+    <string name="summary_label">Rövid leírás:</string>
+    <string name="genres_label">Műfajok:</string>
+    <string name="unknown_developer">Ismeretlen fejlesztő</string>
+
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>
         <item>Megjelenési év (Legújabb)</item>
         <item>Megjelenési év (Legrégebbi)</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

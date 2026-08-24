@@ -27,6 +27,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
 
     public interface OnLibraryItemClickListener {
         void onDeleteClick(SavedGameModel game);
+        void onItemClick(SavedGameModel game);
     }
 
     public LibraryAdapter(Context context, OnLibraryItemClickListener listener) {
@@ -95,6 +96,12 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
         holder.btnDeleteLibrary.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(game);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(game);
             }
         });
     }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,17 +81,32 @@ public class LibraryFragment extends Fragment {
 
     private void setupRecyclerView() {
         rvLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new LibraryAdapter(getContext(), game -> {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.delete_title))
-                    .setMessage(getString(R.string.delete_message_library, game.getGameName()))
-                    .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                        deleteGameFromDatabase(game);
-                    })
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show();
+        adapter = new LibraryAdapter(getContext(), new LibraryAdapter.OnLibraryItemClickListener() {
+            @Override
+            public void onDeleteClick(SavedGameModel game) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setIcon(R.drawable.ic_warning)
+                        .setTitle(getString(R.string.delete_title))
+                        .setMessage(getString(R.string.delete_message_library, game.getGameName()))
+                        .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                            deleteGameFromDatabase(game);
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .show();
+            }
+
+            @Override
+            public void onItemClick(SavedGameModel game) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("gameData", game);
+
+                Navigation.findNavController(requireView()).navigate(
+                        R.id.action_libraryFragment_to_libraryDetailView,
+                        bundle
+                );
+            }
         });
+
         rvLibrary.setAdapter(adapter);
     }
 

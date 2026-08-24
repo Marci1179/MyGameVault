@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -48,6 +49,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView rvSearchResults;
     private GameSearchAdapter adapter;
     private TextInputEditText etSearch;
+    private ProgressBar pbSearch;
 
     private final Map<String, Integer> savedGamesMap = new HashMap<>();
 
@@ -68,6 +70,7 @@ public class SearchFragment extends Fragment {
 
         etSearch = view.findViewById(R.id.etSearch);
         rvSearchResults = view.findViewById(R.id.rvSearch);
+        pbSearch = view.findViewById(R.id.pbSearch);
 
         rvSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -83,6 +86,9 @@ public class SearchFragment extends Fragment {
                 if (!query.isEmpty()) {
                     InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    pbSearch.setVisibility(View.VISIBLE);
+                    rvSearchResults.setVisibility(View.INVISIBLE);
 
                     searchGames(query);
                 }
@@ -125,6 +131,9 @@ public class SearchFragment extends Fragment {
     }
 
     private void loadTopGames() {
+        pbSearch.setVisibility(View.VISIBLE);
+        rvSearchResults.setVisibility(View.INVISIBLE);
+
         String query = "fields name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where rating_count > 500 & parent_game = null; sort rating desc; limit 10;";
         RequestBody body = RequestBody.create(MediaType.parse("text/plain"), query);
 
@@ -133,16 +142,25 @@ public class SearchFragment extends Fragment {
         api.getTopGames(body).enqueue(new Callback<List<Game>>() {
             @Override
             public void onResponse(@NonNull Call<List<Game>> call, @NonNull Response<List<Game>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    adapter.setGames(response.body());
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    pbSearch.setVisibility(View.GONE);
+                    rvSearchResults.setVisibility(View.VISIBLE);
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        adapter.setGames(response.body());
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Game>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    pbSearch.setVisibility(View.GONE);
+                    rvSearchResults.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -156,20 +174,29 @@ public class SearchFragment extends Fragment {
         api.getTopGames(body).enqueue(new Callback<List<Game>>() {
             @Override
             public void onResponse(@NonNull Call<List<Game>> call, @NonNull Response<List<Game>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    adapter.setGames(response.body());
+                if (isAdded()) {
+                    pbSearch.setVisibility(View.GONE);
+                    rvSearchResults.setVisibility(View.VISIBLE);
 
-                    if (response.body().isEmpty()) {
-                        Toast.makeText(getContext(), getString(R.string.no_results), Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful() && response.body() != null) {
+                        adapter.setGames(response.body());
+
+                        if (response.body().isEmpty()) {
+                            Toast.makeText(getContext(), getString(R.string.no_results), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.error_search), Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.error_search), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Game>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    pbSearch.setVisibility(View.GONE);
+                    rvSearchResults.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

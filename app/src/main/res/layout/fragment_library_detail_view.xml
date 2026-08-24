@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/clLibraryDetailMain"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground">
+
+    <TextView
+        android:id="@+id/tvHeaderLibraryDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/game_details_header"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/green"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/pbLibraryDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/green"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeaderLibraryDetail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ScrollView
+        android:id="@+id/svLibraryDetail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="invisible"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeaderLibraryDetail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clLibraryDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/ivGameCoverLibraryDetail"
+                android:layout_width="120dp"
+                android:layout_height="170dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cover"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvGameTitleLibraryDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivGameCoverLibraryDetail"
+                app:layout_constraintTop_toTopOf="@+id/ivGameCoverLibraryDetail"
+                tools:text="Játék neve"/>
+
+            <TextView
+                android:id="@+id/tvGameYearLibraryDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivGameCoverLibraryDetail"
+                app:layout_constraintTop_toBottomOf="@+id/tvGameTitleLibraryDetail"
+                tools:text="Kiadás éve: 2023"/>
+
+            <TextView
+                android:id="@+id/tvGamePublisherLibraryDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivGameCoverLibraryDetail"
+                app:layout_constraintTop_toBottomOf="@+id/tvGameYearLibraryDetail"
+                tools:text="Kiadó: XY Publisher"/>
+
+            <TextView
+                android:id="@+id/tvGameDeveloperLibraryDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivGameCoverLibraryDetail"
+                app:layout_constraintTop_toBottomOf="@+id/tvGamePublisherLibraryDetail"
+                tools:text="Fejlesztő: XY Developer"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierBelowHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="ivGameCoverLibraryDetail,tvGameDeveloperLibraryDetail" />
+
+            <TextView
+                android:id="@+id/tvSummaryLabelLibraryDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:text="@string/summary_label"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/barrierBelowHeader" />
+
+            <TextView
+                android:id="@+id/tvGameSummaryLibraryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"
+                android:justificationMode="inter_word"
+                app:layout_constraintTop_toBottomOf="@+id/tvSummaryLabelLibraryDetail"
+                tools:text="Rövid leírás szövege..." />
+
+            <TextView
+                android:id="@+id/tvGenresLabelLibraryDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:text="@string/genres_label"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvGameSummaryLibraryDetail" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgGenresLibraryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvGenresLabelLibraryDetail" />
+
+            <TextView
+                android:id="@+id/tvPlatformsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:text="@string/platforms_label"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cgGenresLibraryDetail" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgPlatformsLibraryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvPlatformsLabel" />
+
+            <TextView
+                android:id="@+id/tvGameModesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:text="@string/game_modes_label"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cgPlatformsLibraryDetail" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgGameModesLibraryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvGameModesLabel" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilGameStatusLibraryDetail"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="@string/game_status_hint"
+                app:layout_constraintTop_toBottomOf="@+id/cgGameModesLibraryDetail">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvGameStatusLibraryDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvRatingLabelLibraryDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:text="@string/your_rating_label"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilGameStatusLibraryDetail" />
+
+            <RatingBar
+                android:id="@+id/rbGameRatingLibraryDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:stepSize="0.5"
+                android:numStars="5"
+                android:progressTint="@color/yellow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvRatingLabelLibraryDetail" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNoteLibraryDetail"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:hint="@string/personal_note_hint"
+                app:layout_constraintTop_toBottomOf="@+id/rbGameRatingLibraryDetail">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etGameNoteLibraryDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine"
+                    android:justificationMode="inter_word"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveGameLibraryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/save_changes_button"
+                android:textSize="16sp"
+                app:cornerRadius="12dp"
+                app:layout_constraintTop_toBottomOf="@+id/tilNoteLibraryDetail"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
