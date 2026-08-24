@@ -102,7 +102,7 @@ public class PriceCheckWorker extends Worker {
                                 }
                             }
 
-                            priceDao.insertOrUpdatePrice(new WishlistPriceEntity(game.getId(), lowestPrice));
+                            priceDao.insertOrUpdatePrice(new WishlistPriceEntity(game.getId(), lowestPrice, bestStoreName));
                         }
                     }
                 }

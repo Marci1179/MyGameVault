@@ -10,9 +10,12 @@ public class WishlistPriceEntity {
 
     private double lastKnownPrice;
 
-    public WishlistPriceEntity(int gameId, double lastKnownPrice) {
+    private String storeName;
+
+    public WishlistPriceEntity(int gameId, double lastKnownPrice, String storeName) {
         this.gameId = gameId;
         this.lastKnownPrice = lastKnownPrice;
+        this.storeName = storeName;
     }
 
     public int getGameId() {
@@ -29,5 +32,13 @@ public class WishlistPriceEntity {
 
     public void setLastKnownPrice(double lastKnownPrice) {
         this.lastKnownPrice = lastKnownPrice;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 }
