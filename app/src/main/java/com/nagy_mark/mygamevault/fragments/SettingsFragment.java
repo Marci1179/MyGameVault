@@ -2,7 +2,11 @@ package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -14,6 +18,7 @@ import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +76,11 @@ public class SettingsFragment extends Fragment {
             uri -> {
                 if (uri != null) {
                     selectedImageUri = uri;
-                    ivProfilePictureSettings.setImageURI(uri);
+
+                    Glide.with(requireContext())
+                            .load(uri)
+                            .circleCrop() // Legyen egyből kerek a kiválasztás után is!
+                            .into(ivProfilePictureSettings);
                 }
             }
     );
@@ -224,16 +233,38 @@ public class SettingsFragment extends Fragment {
     private void uploadImageAndSaveProfile(String username) {
         if (currentUserId == null) return;
 
-        deleteOldAvatar(currentAvatarUrl);
-
         try {
-            InputStream inputStream = requireContext().getContentResolver().openInputStream(selectedImageUri);
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            int nRead;
-            byte[] data = new byte[16384];
-            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, nRead);
+            Bitmap originalBitmap = null;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), selectedImageUri);
+                originalBitmap = ImageDecoder.decodeBitmap(source);
+            } else {
+                @SuppressWarnings("deprecation")
+                Bitmap fallbackBitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImageUri);
+                originalBitmap = fallbackBitmap;
             }
+
+            if (originalBitmap == null) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), getString(R.string.error_unsupported_image_format), Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            int maxWidth = 800;
+            int width = originalBitmap.getWidth();
+            int height = originalBitmap.getHeight();
+
+            if (width > maxWidth) {
+                float ratio = (float) width / height;
+                width = maxWidth;
+                height = (int) (width / ratio);
+            }
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, true);
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, buffer);
             byte[] imageBytes = buffer.toByteArray();
 
             String fileName = currentUserId + "_" + System.currentTimeMillis() + ".jpg";
@@ -261,10 +292,8 @@ public class SettingsFragment extends Fragment {
                 }
             });
 
-
         } catch (Exception e) {
             e.printStackTrace();
-
             if(isAdded()) {
                 Toast.makeText(getContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
             }
@@ -273,6 +302,8 @@ public class SettingsFragment extends Fragment {
 
     private void saveProfileDataToSupabase(String username, String avatarUrl) {
         if (currentUserId == null) return;
+
+        String oldAvatarUrlToDelete = currentAvatarUrl;
 
         ProfileModel updatedProfile = new ProfileModel(currentUserId, username, avatarUrl);
         SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
@@ -284,7 +315,11 @@ public class SettingsFragment extends Fragment {
                     if (response.isSuccessful()) {
                         currentAvatarUrl = avatarUrl;
                         selectedImageUri = null;
-                        tilUsernameSettings.setError(null);
+                        if (tilUsernameSettings != null) tilUsernameSettings.setError(null);
+
+                        if (oldAvatarUrlToDelete != null && !oldAvatarUrlToDelete.equals(avatarUrl)) {
+                            deleteOldAvatar(oldAvatarUrlToDelete);
+                        }
 
                         Toast.makeText(getContext(), getString(R.string.profile_saved_successfully), Toast.LENGTH_SHORT).show();
                     } else {
@@ -296,7 +331,7 @@ public class SettingsFragment extends Fragment {
 
                                 if (errorJson.contains("profiles_username_key") || errorJson.contains("duplicate key")) {
                                     errorMsg = getString(R.string.error_username_taken);
-                                    tilUsernameSettings.setError(errorMsg);
+                                    if (tilUsernameSettings != null) tilUsernameSettings.setError(errorMsg);
                                 }
                             }
                         } catch (Exception e) {

@@ -45,6 +45,7 @@
     <string name="error_uploading_image">Error uploading image!</string>
     <string name="error_username_taken">This username is already taken!</string>
     <string name="error_username_required">Username field is required.</string>
+    <string name="error_unsupported_image_format">Unsupported image format!</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
