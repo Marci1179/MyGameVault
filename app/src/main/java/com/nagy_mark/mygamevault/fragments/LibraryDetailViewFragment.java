@@ -117,7 +117,7 @@ public class LibraryDetailViewFragment extends Fragment {
         tvGameTitleLibraryDetail.setText(currentGame.getGameName() != null ? currentGame.getGameName() : getString(R.string.unknown_game));
 
         String rawDate = currentGame.getReleaseYear();
-        String yearOnly = "-";
+        String yearOnly = getString(R.string.unknown_year);
         if (rawDate != null && rawDate.length() >= 4) {
             yearOnly = rawDate.substring(0, 4);
         }

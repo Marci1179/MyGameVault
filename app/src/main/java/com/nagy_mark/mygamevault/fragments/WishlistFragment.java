@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,17 +89,33 @@ public class WishlistFragment extends Fragment {
 
     private void setupRecyclerView() {
         rvWishlist.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new WishlistAdapter(getContext(), game -> {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.delete_title))
-                    .setMessage(getString(R.string.delete_message_wishlist, game.getGameName()))
-                    .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                        deleteGameFromDatabase(game);
-                    })
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show();
+
+        adapter = new WishlistAdapter(getContext(), new WishlistAdapter.OnWishlistItemClickListener() {
+            @Override
+            public void onDeleteClick(SavedGameModel game) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setIcon(R.drawable.ic_warning)
+                        .setTitle(getString(R.string.delete_title))
+                        .setMessage(getString(R.string.delete_message_wishlist, game.getGameName()))
+                        .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                            deleteGameFromDatabase(game);
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .show();
+            }
+
+            @Override
+            public void onItemClick(SavedGameModel game) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("gameData", game);
+
+                Navigation.findNavController(requireView()).navigate(
+                        R.id.action_wishlistFragment_to_wishlistDetailView,
+                        bundle
+                );
+            }
         });
+
         rvWishlist.setAdapter(adapter);
     }
 

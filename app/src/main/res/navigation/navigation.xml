@@ -18,7 +18,12 @@
         android:id="@+id/wishlistFragment"
         android:name="com.nagy_mark.mygamevault.fragments.WishlistFragment"
         android:label="fragment_wishlist"
-        tools:layout="@layout/fragment_wishlist" />
+        tools:layout="@layout/fragment_wishlist">
+
+        <action
+            android:id="@+id/action_wishlistFragment_to_wishlistDetailView"
+            app:destination="@id/wishlistDetailViewFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.nagy_mark.mygamevault.fragments.SearchFragment"
@@ -67,4 +72,8 @@
         android:id="@+id/libraryDetailView"
         android:name="com.nagy_mark.mygamevault.fragments.LibraryDetailViewFragment"
         android:label="LibraryDetailView" />
+    <fragment
+        android:id="@+id/wishlistDetailViewFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.WishlistDetailViewFragment"
+        android:label="WishlistDetailViewFragment" />
 </navigation>

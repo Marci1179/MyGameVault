@@ -105,10 +105,16 @@
     <string name="error_igdb_extra_data">Nem sikerült letölteni az extra adatokat.</string>
     <string name="error_no_internet_extra_data">Nincs internetkapcsolat az extra adatok letöltéséhez.</string>
 
+    <string name="game_details_title">Játék részletei</string>
+    <string name="game_prices_title">A játék árai:</string>
+    <string name="error_loading_prices">Hiba az árak betöltésekor!</string>
+
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>
         <item>Megjelenési év (Legújabb)</item>
         <item>Megjelenési év (Legrégebbi)</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

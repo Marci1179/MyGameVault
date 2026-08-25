@@ -60,8 +60,17 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
 
-            if (item.getItemId() == R.id.libraryFragment) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.libraryFragment) {
                 navController.popBackStack(R.id.libraryFragment, false);
+            } else if (itemId == R.id.wishlistFragment) {
+                navController.popBackStack(R.id.wishlistFragment, false);
+            } else if (itemId == R.id.searchFragment) {
+                navController.popBackStack(R.id.searchFragment, false);
+            } else if (itemId == R.id.feedFragment) {
+                navController.popBackStack(R.id.feedFragment, false);
+            } else if (itemId == R.id.settingsFragment) {
+                navController.popBackStack(R.id.settingsFragment, false);
             }
 
             return handled;

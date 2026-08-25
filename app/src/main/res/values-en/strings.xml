@@ -106,6 +106,10 @@
     <string name="error_igdb_extra_data">Failed to download extra data.</string>
     <string name="error_no_internet_extra_data">No internet connection to download extra data.</string>
 
+    <string name="game_details_title">Game details</string>
+    <string name="game_prices_title">Game prices:</string>
+    <string name="error_loading_prices">Error loading prices!</string>
+
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

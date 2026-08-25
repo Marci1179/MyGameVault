@@ -27,6 +27,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
     public interface OnWishlistItemClickListener {
         void onDeleteClick(SavedGameModel game);
+        void onItemClick(SavedGameModel game);
     }
 
     public WishlistAdapter(Context context, OnWishlistItemClickListener listener) {
@@ -89,6 +90,12 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         holder.btnDeleteWishlist.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(game);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(game);
             }
         });
     }
