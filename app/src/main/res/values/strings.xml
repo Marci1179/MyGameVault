@@ -34,6 +34,14 @@
     <string name="logout_message">Biztosan ki szeretnél jelentkezni?</string>
     <string name="success_logout">Sikeres kijelentkezés.</string>
     <string name="language_select">Nyelv kiválasztása</string>
+    <string name="profile_section_label">Profil</string>
+    <string name="change_picture_hint">Koppints a kép módosításához</string>
+    <string name="username_hint">Felhasználónév</string>
+    <string name="save_profile_button">Profil mentése</string>
+    <string name="app_section_label">Alkalmazás</string>
+    <string name="profile_saved_successfully">Profil sikeresen mentve!</string>
+    <string name="error_saving_profile">Hiba a profil mentésekor!</string>
+    <string name="error_uploading_image">Hiba a kép feltöltésekor!</string>
 
     <string name="yes">Igen</string>
     <string name="cancel">Mégsem</string>

@@ -35,6 +35,14 @@
     <string name="logout_message">Are you sure you want to log out?</string>
     <string name="success_logout">Successful logout!</string>
     <string name="language_select">Select language</string>
+    <string name="profile_section_label">Profile</string>
+    <string name="change_picture_hint">Tap to change picture</string>
+    <string name="username_hint">Username</string>
+    <string name="save_profile_button">Save Profile</string>
+    <string name="app_section_label">Application</string>
+    <string name="profile_saved_successfully">Profile saved successfully!</string>
+    <string name="error_saving_profile">Error saving profile!</string>
+    <string name="error_uploading_image">Error uploading image!</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>

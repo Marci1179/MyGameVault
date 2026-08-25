@@ -3,6 +3,7 @@ package com.nagy_mark.mygamevault.network;
 import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.models.MyGame;
+import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.models.SupabaseUserResponse;
 
@@ -13,8 +14,11 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
+import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface SupabaseApi {
@@ -47,4 +51,17 @@ public interface SupabaseApi {
 
         @PATCH("rest/v1/My_Games")
         Call<Void> updateGameDetails(@Query("id") String idQuery, @Body Map<String, Object> updates);
+
+        @GET("rest/v1/profiles")
+        Call<List<ProfileModel>> getProfile(@Query("id") String eqUserId);
+
+        @Headers({"Prefer: resolution=merge-duplicates"})
+        @POST("rest/v1/profiles")
+        Call<Void> upsertProfile(@Body ProfileModel profile);
+
+        @POST("storage/v1/object/avatars/{filePath}")
+        Call<Void> uploadAvatar(@Path("filePath") String filePath, @Body okhttp3.RequestBody imageBytes);
+
+        @HTTP(method = "DELETE", path = "storage/v1/object/avatars", hasBody = true)
+        Call<Void> deleteAvatars(@Body java.util.Map<String, java.util.List<String>> body);
 }
