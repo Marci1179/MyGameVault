@@ -221,12 +221,12 @@ public class LibraryDetailViewFragment extends Fragment {
                     if (igdbData.getDeveloperName() != null) {
                         developerName = igdbData.getDeveloperName();
                     }
-                    tvGameDeveloperLibraryDetail.setText("Fejlesztő: " + developerName);
+                    tvGameDeveloperLibraryDetail.setText(getString(R.string.developer_format, developerName));
 
                     if (igdbData.getSummary() != null && !igdbData.getSummary().isEmpty()) {
                         tvGameSummaryLibraryDetail.setText(igdbData.getSummary());
                     } else {
-                        tvGameSummaryLibraryDetail.setText("Ehhez a játékhoz nem található leírás.");
+                        tvGameSummaryLibraryDetail.setText(getString(R.string.no_summary_found));
                     }
 
                     cgGenresLibraryDetail.removeAllViews();
@@ -251,8 +251,11 @@ public class LibraryDetailViewFragment extends Fragment {
                     }
 
                 } else if (isAdded()) {
-                    tvGameSummaryLibraryDetail.setText("Nem sikerült letölteni az extra adatokat az IGDB-ből.");
-                    tvGameDeveloperLibraryDetail.setText("Fejlesztő: Ismeretlen");
+                    pbLibraryDetail.setVisibility(View.GONE);
+                    svLibraryDetail.setVisibility(View.VISIBLE);
+
+                    tvGameSummaryLibraryDetail.setText(getString(R.string.error_igdb_extra_data));
+                    tvGameDeveloperLibraryDetail.setText(getString(R.string.developer_unknown));
                 }
             }
 
@@ -262,8 +265,8 @@ public class LibraryDetailViewFragment extends Fragment {
                     pbLibraryDetail.setVisibility(View.GONE);
                     svLibraryDetail.setVisibility(View.VISIBLE);
 
-                    tvGameSummaryLibraryDetail.setText("Nincs internetkapcsolat az extra adatok letöltéséhez.");
-                    tvGameDeveloperLibraryDetail.setText("Fejlesztő: Ismeretlen");
+                    tvGameSummaryLibraryDetail.setText(getString(R.string.error_no_internet_extra_data));
+                    tvGameDeveloperLibraryDetail.setText(getString(R.string.developer_unknown));
                 }
             }
         });

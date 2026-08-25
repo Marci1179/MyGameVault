@@ -89,6 +89,11 @@
     <string name="summary_label">Summary:</string>
     <string name="genres_label">Genres:</string>
     <string name="unknown_developer">Unknown developer</string>
+    <string name="developer_format">Developer: %1$s</string>
+    <string name="developer_unknown">Developer: Unknown</string>
+    <string name="no_summary_found">No description found for this game.</string>
+    <string name="error_igdb_extra_data">Failed to download extra data.</string>
+    <string name="error_no_internet_extra_data">No internet connection to download extra data.</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>

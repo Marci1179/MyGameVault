@@ -88,6 +88,11 @@
     <string name="summary_label">Rövid leírás:</string>
     <string name="genres_label">Műfajok:</string>
     <string name="unknown_developer">Ismeretlen fejlesztő</string>
+    <string name="developer_format">Fejlesztő: %1$s</string>
+    <string name="developer_unknown">Fejlesztő: Ismeretlen</string>
+    <string name="no_summary_found">Ehhez a játékhoz nem található leírás.</string>
+    <string name="error_igdb_extra_data">Nem sikerült letölteni az extra adatokat.</string>
+    <string name="error_no_internet_extra_data">Nincs internetkapcsolat az extra adatok letöltéséhez.</string>
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
