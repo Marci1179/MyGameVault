@@ -43,6 +43,8 @@
     <string name="profile_saved_successfully">Profile saved successfully!</string>
     <string name="error_saving_profile">Error saving profile!</string>
     <string name="error_uploading_image">Error uploading image!</string>
+    <string name="error_username_taken">This username is already taken!</string>
+    <string name="error_username_required">Username field is required.</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>

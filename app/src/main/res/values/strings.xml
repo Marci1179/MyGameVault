@@ -42,6 +42,8 @@
     <string name="profile_saved_successfully">Profil sikeresen mentve!</string>
     <string name="error_saving_profile">Hiba a profil mentésekor!</string>
     <string name="error_uploading_image">Hiba a kép feltöltésekor!</string>
+    <string name="error_username_taken">Ez a felhasználónév már foglalt!</string>
+    <string name="error_username_required">A felhasználónév mező kitöltése kötelező.</string>
 
     <string name="yes">Igen</string>
     <string name="cancel">Mégsem</string>

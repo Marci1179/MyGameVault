@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.nagy_mark.mygamevault.BuildConfig;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.database.AppDatabase;
@@ -59,6 +60,7 @@ public class SettingsFragment extends Fragment {
     private Button btnLogoutSettings;
     private Button btnSaveProfileSettings;
     private AutoCompleteTextView actvLanguageSettings;
+    private TextInputLayout tilUsernameSettings;
 
     private Uri selectedImageUri = null;
     private String currentUserId = null;
@@ -94,6 +96,7 @@ public class SettingsFragment extends Fragment {
         actvLanguageSettings = view.findViewById(R.id.actvLanguageSettings);
         ivProfilePictureSettings = view.findViewById(R.id.ivProfilePictureSettings);
         etUsernameSettings = view.findViewById(R.id.etUsernameSettings);
+        tilUsernameSettings = view.findViewById(R.id.tilUsernameSettings);
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         currentUserId = prefs.getString("USER_ID", null);
@@ -204,8 +207,10 @@ public class SettingsFragment extends Fragment {
     private void saveProfile() {
         String username = etUsernameSettings.getText() != null ? etUsernameSettings.getText().toString().trim() : "";
 
+        tilUsernameSettings.setError(null);
+
         if (username.isEmpty()) {
-            etUsernameSettings.setError(getString(R.string.username_hint));
+            tilUsernameSettings.setError(getString(R.string.error_username_required));
             return;
         }
 
@@ -278,12 +283,27 @@ public class SettingsFragment extends Fragment {
                 if (isAdded()) {
                     if (response.isSuccessful()) {
                         currentAvatarUrl = avatarUrl;
-
                         selectedImageUri = null;
+                        tilUsernameSettings.setError(null);
 
                         Toast.makeText(getContext(), getString(R.string.profile_saved_successfully), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.error_saving_profile), Toast.LENGTH_SHORT).show();
+                        String errorMsg = getString(R.string.error_saving_profile);
+
+                        try {
+                            if (response.errorBody() != null) {
+                                String errorJson = response.errorBody().string();
+
+                                if (errorJson.contains("profiles_username_key") || errorJson.contains("duplicate key")) {
+                                    errorMsg = getString(R.string.error_username_taken);
+                                    tilUsernameSettings.setError(errorMsg);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
                     }
                 }
             }
