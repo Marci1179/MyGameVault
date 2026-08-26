@@ -33,7 +33,12 @@
         android:id="@+id/feedFragment"
         android:name="com.nagy_mark.mygamevault.fragments.FeedFragment"
         android:label="fragment_feed"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed">
+
+        <action
+            android:id="@+id/action_feedFragment_to_usersFragment"
+            app:destination="@id/usersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.nagy_mark.mygamevault.fragments.SettingsFragment"
@@ -76,4 +81,9 @@
         android:id="@+id/wishlistDetailViewFragment"
         android:name="com.nagy_mark.mygamevault.fragments.WishlistDetailViewFragment"
         android:label="WishlistDetailViewFragment" />
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.nagy_mark.mygamevault.fragments.UsersFragment"
+        android:label="fragment_users"
+        tools:layout="@layout/fragment_users" />
 </navigation>
