@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.GameSearchAdapter;
+import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.Game;
 import com.nagy_mark.mygamevault.models.MyGame;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
@@ -210,7 +212,6 @@ public class SearchFragment extends Fragment {
         }
 
         String coverId = (game.getCover() != null) ? game.getCover().getImageId() : null;
-
         String currentUserId = getCurrentUserId();
 
         MyGame newGame = new MyGame(
@@ -229,6 +230,11 @@ public class SearchFragment extends Fragment {
                 if (response.isSuccessful()) {
                     savedGamesMap.put(game.getName(), statusId);
                     adapter.notifyDataSetChanged();
+
+                    String actionType = (statusId == 1) ? "ADDED_TO_LIBRARY" : "ADDED_TO_WISHLIST";
+                    if (currentUserId != null) {
+                        logActivityToFeed(currentUserId, actionType, game.getName());
+                    }
 
                     String message = (statusId == 1) ? getString(R.string.game_added_library) : getString(R.string.game_added_wishlist);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -255,5 +261,24 @@ public class SearchFragment extends Fragment {
     private String getCurrentUserId() {
         SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
+    }
+
+    private void logActivityToFeed(String userId, String actionType, String gameName) {
+        FeedActivityRequest request = new FeedActivityRequest(userId, actionType, gameName);
+        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+
+        api.logFeedActivity(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Log.e("FEED_ERROR", "Nem sikerült az eseményt naplózni: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                android.util.Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
+            }
+        });
     }
 }

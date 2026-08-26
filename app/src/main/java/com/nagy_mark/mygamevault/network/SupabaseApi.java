@@ -2,6 +2,7 @@ package com.nagy_mark.mygamevault.network;
 
 import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
+import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.MyGame;
 import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
@@ -64,4 +65,7 @@ public interface SupabaseApi {
 
         @HTTP(method = "DELETE", path = "storage/v1/object/avatars", hasBody = true)
         Call<Void> deleteAvatars(@Body java.util.Map<String, java.util.List<String>> body);
+
+        @POST("rest/v1/feed_activities")
+        Call<Void> logFeedActivity(@Body FeedActivityRequest activityRequest);
 }

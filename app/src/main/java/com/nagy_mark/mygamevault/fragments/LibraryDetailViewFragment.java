@@ -1,5 +1,7 @@
 package com.nagy_mark.mygamevault.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
@@ -8,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
+import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.Game;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.IgdbApi;
@@ -171,6 +175,12 @@ public class LibraryDetailViewFragment extends Fragment {
         float newRating = rbGameRatingLibraryDetail.getRating();
         String newNote = etGameNoteLibraryDetail.getText() != null ? etGameNoteLibraryDetail.getText().toString().trim() : "";
 
+        boolean isJustStarted = (newStatusId == 2 && currentGame.getStatusId() != 2);
+        boolean isJustFinished = (newStatusId == 3 && currentGame.getStatusId() != 3);
+        String oldNote = currentGame.getNote() != null ? currentGame.getNote() : "";
+        boolean isNewReview = (newRating > 0 && (currentGame.getRating() == null || currentGame.getRating() != newRating)) ||
+                (!newNote.equals(oldNote) && !newNote.isEmpty());
+
         Map<String, Object> updates = new HashMap<>();
         updates.put("status_id", newStatusId);
         updates.put("rating", newRating);
@@ -182,6 +192,19 @@ public class LibraryDetailViewFragment extends Fragment {
                 if (isAdded()) {
                     btnSaveGameLibraryDetail.setEnabled(true);
                     if (response.isSuccessful()) {
+                        String currentUserId = getCurrentUserId();
+                        if (currentUserId != null) {
+                            if (isJustStarted) {
+                                logActivityToFeed(currentUserId, "STATUS_IN_PROGRESS", currentGame.getGameName(), null, null);
+                            } else if (isJustFinished) {
+                                logActivityToFeed(currentUserId, "STATUS_COMPLETED", currentGame.getGameName(), null, null);
+                            }
+
+                            if (isNewReview) {
+                                logActivityToFeed(currentUserId, "REVIEWED_GAME", currentGame.getGameName(), newRating, newNote);
+                            }
+                        }
+
                         Toast.makeText(getContext(), getString(R.string.save_success), Toast.LENGTH_SHORT).show();
                         requireActivity().getOnBackPressedDispatcher().onBackPressed();
                     } else {
@@ -287,5 +310,28 @@ public class LibraryDetailViewFragment extends Fragment {
         chip.setChipStrokeColor(ColorStateList.valueOf(GreenColor));
 
         return chip;
+    }
+
+    private void logActivityToFeed(String userId, String actionType, String gameName, Float rating, String reviewText) {
+        FeedActivityRequest request = new FeedActivityRequest(userId, actionType, gameName, rating, reviewText);
+
+        api.logFeedActivity(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Log.e("FEED_ERROR", "Nem sikerült a library eseményt naplózni: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
+            }
+        });
+    }
+
+    private String getCurrentUserId() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("USER_ID", null);
     }
 }
