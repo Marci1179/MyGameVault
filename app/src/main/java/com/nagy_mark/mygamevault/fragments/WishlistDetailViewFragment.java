@@ -122,7 +122,7 @@ public class WishlistDetailViewFragment extends Fragment {
                             if (isAdded() && response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
                                 populatePricesList(response.body().getDeals());
                             } else {
-                                showPriceMessage(getString(R.string.price_not_found));
+                                showPriceMessage(getString(R.string.price_not_found_wdw));
                             }
                         }
 
@@ -135,7 +135,7 @@ public class WishlistDetailViewFragment extends Fragment {
                         }
                     });
                 } else {
-                    showPriceMessage(getString(R.string.price_not_found));
+                    showPriceMessage(getString(R.string.price_not_found_wdw));
                 }
             }
 
@@ -169,7 +169,7 @@ public class WishlistDetailViewFragment extends Fragment {
         }
 
         if (!hasPrices) {
-            showPriceMessage(getString(R.string.price_not_found));
+            showPriceMessage(getString(R.string.price_not_found_wdw));
         } else {
             if (isAdded()) {
                 pbWishlistDetail.setVisibility(View.GONE);

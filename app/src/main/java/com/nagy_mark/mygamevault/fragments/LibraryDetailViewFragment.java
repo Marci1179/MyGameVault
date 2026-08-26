@@ -285,7 +285,6 @@ public class LibraryDetailViewFragment extends Fragment {
         chip.setTextColor(ColorStateList.valueOf(GreenColor));
         chip.setChipStrokeWidth(3f);
         chip.setChipStrokeColor(ColorStateList.valueOf(GreenColor));
-        chip.setTextAppearanceResource(com.google.android.material.R.style.TextAppearance_MaterialComponents_Chip);
 
         return chip;
     }

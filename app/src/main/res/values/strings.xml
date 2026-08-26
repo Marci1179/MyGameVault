@@ -108,6 +108,7 @@
     <string name="game_details_title">Játék részletei</string>
     <string name="game_prices_title">A játék árai:</string>
     <string name="error_loading_prices">Hiba az árak betöltésekor!</string>
+    <string name="price_not_found_wdw">Ár nem található</string>
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>

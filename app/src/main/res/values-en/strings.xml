@@ -109,6 +109,7 @@
     <string name="game_details_title">Game details</string>
     <string name="game_prices_title">Game prices:</string>
     <string name="error_loading_prices">Error loading prices!</string>
+    <string name="price_not_found_wdw">Price not found</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
