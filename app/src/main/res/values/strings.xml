@@ -110,6 +110,9 @@
     <string name="error_loading_prices">Hiba az árak betöltésekor!</string>
     <string name="price_not_found_wdw">Ár nem található</string>
 
+    <string name="find_users">Felhasználók keresése</string>
+    <string name="content_desc_follow">Követés</string>
+
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>

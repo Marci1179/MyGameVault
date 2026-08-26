@@ -111,6 +111,9 @@
     <string name="error_loading_prices">Error loading prices!</string>
     <string name="price_not_found_wdw">Price not found</string>
 
+    <string name="find_users">Find Users</string>
+    <string name="content_desc_follow">Follow</string>
+
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>
