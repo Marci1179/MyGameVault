@@ -17,6 +17,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -84,4 +85,13 @@ public interface SupabaseApi {
                 @Query("follower_id") String followerId,
                 @Query("following_id") String followingId
         );
+
+        @GET("rest/v1/profiles")
+        Call<List<ProfileModel>> getProfilesPaginated(@Header("Range") String range);
+
+        @GET("rest/v1/profiles")
+        Call<List<ProfileModel>> searchProfiles(@Query("username") String usernameQuery);
+
+        @GET("rest/v1/profiles")
+        Call<List<ProfileModel>> getProfilesByIds(@Query("id") String idInQuery);
 }

@@ -112,6 +112,8 @@
 
     <string name="find_users">Felhasználók keresése</string>
     <string name="content_desc_follow">Követés</string>
+    <string name="tab_all_users">Összes</string>
+    <string name="tab_following_users">Követések</string>
 
     <string-array name="sort_options">
         <item>Név (A-Z)</item>

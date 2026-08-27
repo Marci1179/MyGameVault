@@ -113,6 +113,8 @@
 
     <string name="find_users">Find Users</string>
     <string name="content_desc_follow">Follow</string>
+    <string name="tab_all_users">All</string>
+    <string name="tab_following_users">Following</string>
 
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
