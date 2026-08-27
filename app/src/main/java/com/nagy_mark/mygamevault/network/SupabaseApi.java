@@ -3,6 +3,7 @@ package com.nagy_mark.mygamevault.network;
 import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.models.FeedActivityRequest;
+import com.nagy_mark.mygamevault.models.FeedModel;
 import com.nagy_mark.mygamevault.models.FollowRelationship;
 import com.nagy_mark.mygamevault.models.MyGame;
 import com.nagy_mark.mygamevault.models.ProfileModel;
@@ -71,9 +72,6 @@ public interface SupabaseApi {
         @POST("rest/v1/feed_activities")
         Call<Void> logFeedActivity(@Body FeedActivityRequest activityRequest);
 
-        @GET("rest/v1/profiles")
-        Call<List<ProfileModel>> getAllProfiles();
-
         @GET("rest/v1/follows")
         Call<List<FollowRelationship>> getMyFollowing(@Query("follower_id") String followerQuery);
 
@@ -94,4 +92,11 @@ public interface SupabaseApi {
 
         @GET("rest/v1/profiles")
         Call<List<ProfileModel>> getProfilesByIds(@Query("id") String idInQuery);
+
+        @GET("rest/v1/feed_activities")
+        Call<List<FeedModel>> getFeedActivities(
+                @Query("user_id") String userFilter,
+                @Query("select") String selectQuery,
+                @Query("order") String orderBy
+        );
 }

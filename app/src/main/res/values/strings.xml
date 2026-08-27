@@ -115,6 +115,16 @@
     <string name="tab_all_users">Összes</string>
     <string name="tab_following_users">Követések</string>
 
+    <string name="unknown_user">Ismeretlen felhasználó</string>
+    <string name="unknown_game_feed">egy játékot</string>
+    <string name="feed_action_added_library">Hozzáadta a(z) %s játékot a könyvtárához.</string>
+    <string name="feed_action_added_wishlist">Hozzáadta a(z) %s játékot a kívánságlistájához.</string>
+    <string name="feed_action_in_progress">Elkezdte a(z) %s végigjátszását.</string>
+    <string name="feed_action_completed">Végigjátszotta a(z) %s játékot.</string>
+    <string name="feed_action_reviewed">Értékelte ezt a játékot: %s.</string>
+    <string name="feed_action_updated">Frissítette ezt a játékot: %s.</string>
+    <string name="empty_feed_message">Még nem követsz egy felhasználót sem. Kövess be valakit, hogy lásd a tevékenységeit!</string>
+
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>

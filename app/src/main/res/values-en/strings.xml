@@ -116,6 +116,16 @@
     <string name="tab_all_users">All</string>
     <string name="tab_following_users">Following</string>
 
+    <string name="unknown_user">Unknown user</string>
+    <string name="unknown_game_feed">a game</string>
+    <string name="feed_action_added_library">Added %s to their library.</string>
+    <string name="feed_action_added_wishlist">Added %s to their wishlist.</string>
+    <string name="feed_action_in_progress">Started playing %s.</string>
+    <string name="feed_action_completed">Completed %s.</string>
+    <string name="feed_action_reviewed">Reviewed this game: %s.</string>
+    <string name="feed_action_updated">Updated this game: %s.</string>
+    <string name="empty_feed_message">You are not following anyone yet. Follow someone to see their activities!</string>
+
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>
