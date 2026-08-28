@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,6 @@ public class WishlistFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_wishlist, container, false);
     }
 
@@ -93,6 +93,7 @@ public class WishlistFragment extends Fragment {
         adapter = new WishlistAdapter(getContext(), new WishlistAdapter.OnWishlistItemClickListener() {
             @Override
             public void onDeleteClick(SavedGameModel game) {
+                if (!isAdded()) return;
                 new MaterialAlertDialogBuilder(requireContext())
                         .setIcon(R.drawable.ic_warning)
                         .setTitle(getString(R.string.delete_title))
@@ -106,6 +107,7 @@ public class WishlistFragment extends Fragment {
 
             @Override
             public void onItemClick(SavedGameModel game) {
+                if (!isAdded()) return;
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("gameData", game);
 
@@ -155,14 +157,10 @@ public class WishlistFragment extends Fragment {
     private void setupSearch() {
         etSearchWishlist.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -173,25 +171,30 @@ public class WishlistFragment extends Fragment {
     }
 
     private void loadWishlistGames() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         String currentUserId = prefs.getString("USER_ID", null);
 
         if (currentUserId == null) return;
 
         api.getGamesByStatus("eq." + currentUserId, "eq.4").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
-            public void onResponse(Call<List<SavedGameModel>> call, Response<List<SavedGameModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    allGames = response.body();
-                    applyFilterAndSort();
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
+            public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        allGames = response.body();
+                        applyFilterAndSort();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<List<SavedGameModel>> call, Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<List<SavedGameModel>> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                    Log.e("API_HIBA", "Wishlist load failure: " + t.getMessage());
+                }
             }
         });
     }
@@ -217,16 +220,11 @@ public class WishlistFragment extends Fragment {
             String year2 = g2.getReleaseYear() != null ? g2.getReleaseYear() : "";
 
             switch (currentSortPosition) {
-                case 0: // Név (A-Z)
-                    return name1.compareToIgnoreCase(name2);
-                case 1: // Név (Z-A)
-                    return name2.compareToIgnoreCase(name1);
-                case 2: // Megjelenési év (Legújabb) -> Csökkenő sorrend
-                    return year2.compareTo(year1);
-                case 3: // Megjelenési év (Legrégebbi) -> Növekvő sorrend
-                    return year1.compareTo(year2);
-                default:
-                    return 0;
+                case 0: return name1.compareToIgnoreCase(name2);
+                case 1: return name2.compareToIgnoreCase(name1);
+                case 2: return year2.compareTo(year1);
+                case 3: return year1.compareTo(year2);
+                default: return 0;
             }
         });
 
@@ -237,28 +235,33 @@ public class WishlistFragment extends Fragment {
     private void deleteGameFromDatabase(SavedGameModel game) {
         api.deleteGame("eq." + game.getId()).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    allGames.remove(game);
-                    displayedGames.remove(game);
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        allGames.remove(game);
+                        displayedGames.remove(game);
+                        adapter.notifyDataSetChanged();
 
-                    adapter.notifyDataSetChanged();
+                        Toast.makeText(requireContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(getContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
-
-                    Executors.newSingleThreadExecutor().execute(() -> {
-                        if (getContext() != null) {
-                            AppDatabase.getDatabase(getContext()).wishlistPriceDao().deletePrice(game.getId());
+                        Context context = getContext();
+                        if (context != null) {
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                AppDatabase.getDatabase(context).wishlistPriceDao().deletePrice(game.getId());
+                            });
                         }
-                    });
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                    Log.e("API_HIBA", "Wishlist delete failure: " + t.getMessage());
+                }
             }
         });
     }
@@ -278,7 +281,10 @@ public class WishlistFragment extends Fragment {
     }
 
     private void fetchPricesForWishlist(List<SavedGameModel> gamesToFetch) {
-        AppDatabase db = AppDatabase.getDatabase(requireContext());
+        Context context = getContext();
+        if (context == null) return;
+
+        AppDatabase db = AppDatabase.getDatabase(context);
 
         Executors.newSingleThreadExecutor().execute(() -> {
             for (SavedGameModel game : gamesToFetch) {
@@ -287,10 +293,15 @@ public class WishlistFragment extends Fragment {
                 var cachedPrice = db.wishlistPriceDao().getPriceForGame(game.getId());
 
                 if (cachedPrice != null && cachedPrice.getLastKnownPrice() > 0) {
+                    if (!isAdded()) return;
                     String priceText = getString(R.string.lowest_price_format, String.valueOf(cachedPrice.getLastKnownPrice()), cachedPrice.getStoreName());
 
                     if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> adapter.setGamePrice(game.getId(), priceText));
+                        getActivity().runOnUiThread(() -> {
+                            if (isAdded()) {
+                                adapter.setGamePrice(game.getId(), priceText);
+                            }
+                        });
                     }
                 } else {
                     fetchAndSavePriceFromApi(game, db);
@@ -299,20 +310,23 @@ public class WishlistFragment extends Fragment {
         });
     }
 
-    private  void fetchAndSavePriceFromApi(SavedGameModel game, AppDatabase db) {
+    private void fetchAndSavePriceFromApi(SavedGameModel game, AppDatabase db) {
         CheapSharkApi cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
 
         cheapSharkApi.searchGame(game.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override
-            public void onResponse(Call<List<CheapSharkGameSearchResult>> call, Response<List<CheapSharkGameSearchResult>> response) {
+            public void onResponse(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Response<List<CheapSharkGameSearchResult>> response) {
+                if (!isAdded()) return;
+
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     String gameId = response.body().get(0).getGameId();
 
                     cheapSharkApi.getGameDetails(gameId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
                         @Override
-                        public void onResponse(Call<CheapSharkGameDetailResponse> call, Response<CheapSharkGameDetailResponse> response) {
-                            if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
+                        public void onResponse(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Response<CheapSharkGameDetailResponse> response) {
+                            if (!isAdded()) return;
 
+                            if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
                                 double lowestPrice = Double.MAX_VALUE;
                                 String bestStoreName = "";
 
@@ -335,7 +349,11 @@ public class WishlistFragment extends Fragment {
                                     String priceText = getString(R.string.lowest_price_format, String.valueOf(finalPrice), finalStoreName);
 
                                     if (getActivity() != null) {
-                                        getActivity().runOnUiThread(() -> adapter.setGamePrice(game.getId(), priceText));
+                                        getActivity().runOnUiThread(() -> {
+                                            if (isAdded()) {
+                                                adapter.setGamePrice(game.getId(), priceText);
+                                            }
+                                        });
                                     }
 
                                     Executors.newSingleThreadExecutor().execute(() -> {
@@ -352,8 +370,8 @@ public class WishlistFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<CheapSharkGameDetailResponse> call, Throwable t) {
-                            setNotFound(game.getId());
+                        public void onFailure(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Throwable t) {
+                            if (isAdded()) setNotFound(game.getId());
                         }
                     });
                 } else {
@@ -362,15 +380,19 @@ public class WishlistFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<CheapSharkGameSearchResult>> call, Throwable t) {
-                setNotFound(game.getId());
+            public void onFailure(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Throwable t) {
+                if (isAdded()) setNotFound(game.getId());
             }
         });
     }
 
     private void setNotFound(int gameId) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(() -> adapter.setGamePrice(gameId, getString(R.string.price_not_found)));
+            getActivity().runOnUiThread(() -> {
+                if (isAdded()) {
+                    adapter.setGamePrice(gameId, getString(R.string.price_not_found));
+                }
+            });
         }
     }
 }

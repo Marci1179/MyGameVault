@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -36,7 +37,6 @@ import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class LibraryDetailViewFragment extends Fragment {
     private TextInputEditText etGameNoteLibraryDetail;
     private MaterialButton btnSaveGameLibraryDetail;
     private ScrollView svLibraryDetail;
-    private android.widget.ProgressBar pbLibraryDetail;
+    private ProgressBar pbLibraryDetail;
 
     private SavedGameModel currentGame;
     private SupabaseApi api;
@@ -72,7 +72,6 @@ public class LibraryDetailViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_library_detail_view, container, false);
     }
 
@@ -160,6 +159,7 @@ public class LibraryDetailViewFragment extends Fragment {
     }
 
     private void saveChangesToDatabase() {
+        if (!isAdded() || currentGame == null) return;
         btnSaveGameLibraryDetail.setEnabled(false);
 
         String selectedStatusText = actvGameStatusLibraryDetail.getText().toString();
@@ -205,10 +205,12 @@ public class LibraryDetailViewFragment extends Fragment {
                             }
                         }
 
-                        Toast.makeText(getContext(), getString(R.string.save_success), Toast.LENGTH_SHORT).show();
-                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                        Toast.makeText(requireContext(), getString(R.string.save_success), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null) {
+                            getActivity().getOnBackPressedDispatcher().onBackPressed();
+                        }
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -217,7 +219,8 @@ public class LibraryDetailViewFragment extends Fragment {
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     btnSaveGameLibraryDetail.setEnabled(true);
-                    Toast.makeText(getContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                    Log.e("API_HIBA", "Save details failure: " + t.getMessage());
                 }
             }
         });
@@ -290,6 +293,7 @@ public class LibraryDetailViewFragment extends Fragment {
 
                     tvGameSummaryLibraryDetail.setText(getString(R.string.error_no_internet_extra_data));
                     tvGameDeveloperLibraryDetail.setText(getString(R.string.developer_unknown));
+                    Log.e("API_HIBA", "IGDB details failure: " + t.getMessage());
                 }
             }
         });
@@ -331,7 +335,9 @@ public class LibraryDetailViewFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        Context context = getContext();
+        if (context == null) return null;
+        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 }

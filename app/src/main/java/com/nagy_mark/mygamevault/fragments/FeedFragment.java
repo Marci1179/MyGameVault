@@ -126,7 +126,7 @@ public class FeedFragment extends Fragment {
 
                     } else {
                         if (swipeRefreshFeed != null) swipeRefreshFeed.setRefreshing(false);
-                        Toast.makeText(getContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -135,7 +135,7 @@ public class FeedFragment extends Fragment {
             public void onFailure(@NonNull Call<List<FollowRelationship>> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     if (swipeRefreshFeed != null) swipeRefreshFeed.setRefreshing(false);
-                    Toast.makeText(getContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
                 }
             }
         });

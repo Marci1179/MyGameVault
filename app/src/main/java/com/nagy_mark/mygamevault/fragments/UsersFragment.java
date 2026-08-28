@@ -94,7 +94,9 @@ public class UsersFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        Context context = getContext();
+        if (context == null) return null;
+        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 
@@ -107,16 +109,20 @@ public class UsersFragment extends Fragment {
                 api.unfollowUser("eq." + userId, "eq." + user.getId()).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            followingIds.remove(user.getId().toLowerCase());
-                            usersAdapter.notifyItemChanged(position);
-                        } else {
-                            Toast.makeText(getContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            if (response.isSuccessful()) {
+                                followingIds.remove(user.getId().toLowerCase());
+                                usersAdapter.notifyItemChanged(position);
+                            } else {
+                                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             } else {
@@ -124,16 +130,20 @@ public class UsersFragment extends Fragment {
                 api.followUser(follow).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            followingIds.add(user.getId().toLowerCase());
-                            usersAdapter.notifyItemChanged(position);
-                        } else {
-                            Toast.makeText(getContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            if (response.isSuccessful()) {
+                                followingIds.add(user.getId().toLowerCase());
+                                usersAdapter.notifyItemChanged(position);
+                            } else {
+                                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -190,8 +200,12 @@ public class UsersFragment extends Fragment {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 currentSearchText = etSearchUsers.getText().toString().trim();
 
-                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                if (getActivity() != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
 
                 if (!currentSearchText.isEmpty()) {
                     performServerSearch();
@@ -209,20 +223,24 @@ public class UsersFragment extends Fragment {
         api.getMyFollowing("eq." + userId).enqueue(new Callback<List<FollowRelationship>>() {
             @Override
             public void onResponse(@NonNull Call<List<FollowRelationship>> call, @NonNull Response<List<FollowRelationship>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    followingIds.clear();
-                    for (FollowRelationship f : response.body()) {
-                        if (f.getFollowingId() != null) {
-                            followingIds.add(f.getFollowingId().toLowerCase());
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        followingIds.clear();
+                        for (FollowRelationship f : response.body()) {
+                            if (f.getFollowingId() != null) {
+                                followingIds.add(f.getFollowingId().toLowerCase());
+                            }
                         }
                     }
+                    resetAndLoadData();
                 }
-                resetAndLoadData();
             }
 
             @Override
             public void onFailure(@NonNull Call<List<FollowRelationship>> call, @NonNull Throwable t) {
-                resetAndLoadData();
+                if (isAdded()) {
+                    resetAndLoadData();
+                }
             }
         });
     }
@@ -310,7 +328,9 @@ public class UsersFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<List<ProfileModel>> call, @NonNull Throwable t) {
-                if (isAdded()) pbUsers.setVisibility(View.GONE);
+                if (isAdded()) {
+                    pbUsers.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -352,7 +372,9 @@ public class UsersFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<List<ProfileModel>> call, @NonNull Throwable t) {
-                if (isAdded()) pbUsers.setVisibility(View.GONE);
+                if (isAdded()) {
+                    pbUsers.setVisibility(View.GONE);
+                }
             }
         });
     }

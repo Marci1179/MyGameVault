@@ -27,6 +27,11 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class LoginFragment extends Fragment {
 
+    TextView register;
+    TextInputLayout tilLoginEmail, tilLoginPassword;
+    TextInputEditText etLoginEmail, etLoginPassword;
+    Button btnLogin;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -54,12 +59,12 @@ public class LoginFragment extends Fragment {
             return;
         }
 
-        TextView register = view.findViewById(R.id.tvRegister);
-        TextInputLayout tilLoginEmail = view.findViewById(R.id.tilLoginEmail);
-        TextInputLayout tilLoginPassword = view.findViewById(R.id.tilLoginPassword);
-        TextInputEditText etLoginEmail = view.findViewById(R.id.etLoginEmail);
-        TextInputEditText etLoginPassword = view.findViewById(R.id.etLoginPassword);
-        Button btnLogin = view.findViewById(R.id.btnLogin);
+        register = view.findViewById(R.id.tvRegister);
+        tilLoginEmail = view.findViewById(R.id.tilLoginEmail);
+        tilLoginPassword = view.findViewById(R.id.tilLoginPassword);
+        etLoginEmail = view.findViewById(R.id.etLoginEmail);
+        etLoginPassword = view.findViewById(R.id.etLoginPassword);
+        btnLogin = view.findViewById(R.id.btnLogin);
 
         register.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment);
@@ -95,43 +100,51 @@ public class LoginFragment extends Fragment {
             api.login(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<AuthResponse> call, @NonNull retrofit2.Response<AuthResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        String accessToken = response.body().getAccessToken();
-                        String refreshToken = response.body().getRefreshToken();
-                        String userId = response.body().getUser().getId();
+                    if (isAdded()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String accessToken = response.body().getAccessToken();
+                            String refreshToken = response.body().getRefreshToken();
+                            String userId = response.body().getUser().getId();
 
-                        prefs.edit()
-                                .putString("JWT_TOKEN", accessToken)
-                                .putString("REFRESH_TOKEN", refreshToken)
-                                .putString("USER_ID", userId)
-                                .apply();
+                            prefs.edit()
+                                    .putString("JWT_TOKEN", accessToken)
+                                    .putString("REFRESH_TOKEN", refreshToken)
+                                    .putString("USER_ID", userId)
+                                    .apply();
 
-                        Toast.makeText(getContext(), getString(R.string.success_login), Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_libraryFragment);
-                    } else {
-                        String errorMsg = getString(R.string.error_unknown);
-                        try {
-                            if (response.errorBody() != null) {
-                                String errorJson = response.errorBody().string();
-                                if (errorJson.contains("Invalid login credentials")) {
-                                    errorMsg = getString(R.string.error_invalid_credentials);
-                                } else {
-                                    errorMsg = getString(R.string.error_occurred, errorJson);
-                                }
+                            Toast.makeText(requireContext(), getString(R.string.success_login), Toast.LENGTH_SHORT).show();
+
+                            NavController navController = Navigation.findNavController(view);
+                            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() == R.id.loginFragment) {
+                                navController.navigate(R.id.action_loginFragment_to_libraryFragment);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } else {
+                            String errorMsg = getString(R.string.error_unknown);
+                            try {
+                                if (response.errorBody() != null) {
+                                    String errorJson = response.errorBody().string();
+                                    if (errorJson.contains("Invalid login credentials")) {
+                                        errorMsg = getString(R.string.error_invalid_credentials);
+                                    } else {
+                                        errorMsg = getString(R.string.error_occurred, errorJson);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT).show();
-                        if (tilLoginEmail != null) tilLoginEmail.setError(" ");
-                        if (tilLoginPassword != null) tilLoginPassword.setError(" ");
+                            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                            if (tilLoginEmail != null) tilLoginEmail.setError(" ");
+                            if (tilLoginPassword != null) tilLoginPassword.setError(" ");
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull retrofit2.Call<AuthResponse> call, @NonNull Throwable t) {
-                    Toast.makeText(getContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });

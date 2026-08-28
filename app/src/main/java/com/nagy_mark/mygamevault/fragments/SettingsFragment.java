@@ -3,7 +3,6 @@ package com.nagy_mark.mygamevault.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
@@ -23,12 +22,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Filter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -42,10 +39,8 @@ import com.nagy_mark.mygamevault.database.AppDatabase;
 import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
-import com.nagy_mark.mygamevault.workers.PriceCheckWorker;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +57,7 @@ public class SettingsFragment extends Fragment {
 
     private ShapeableImageView ivProfilePictureSettings;
     private TextInputEditText etUsernameSettings;
-    private Button btnLogoutSettings;
-    private Button btnSaveProfileSettings;
+    private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings;
     private AutoCompleteTextView actvLanguageSettings;
     private TextInputLayout tilUsernameSettings;
 
@@ -74,12 +68,12 @@ public class SettingsFragment extends Fragment {
     private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
-                if (uri != null) {
+                if (uri != null && isAdded()) {
                     selectedImageUri = uri;
 
                     Glide.with(requireContext())
                             .load(uri)
-                            .circleCrop() // Legyen egyből kerek a kiválasztás után is!
+                            .circleCrop()
                             .into(ivProfilePictureSettings);
                 }
             }
@@ -92,7 +86,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
@@ -102,6 +95,7 @@ public class SettingsFragment extends Fragment {
 
         btnLogoutSettings = view.findViewById(R.id.btnLogoutSettings);
         btnSaveProfileSettings = view.findViewById(R.id.btnSaveProfileSettings);
+        btnStatisticsSettings = view.findViewById(R.id.btnStatisticsSettings);
         actvLanguageSettings = view.findViewById(R.id.actvLanguageSettings);
         ivProfilePictureSettings = view.findViewById(R.id.ivProfilePictureSettings);
         etUsernameSettings = view.findViewById(R.id.etUsernameSettings);
@@ -115,6 +109,10 @@ public class SettingsFragment extends Fragment {
         ivProfilePictureSettings.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         btnSaveProfileSettings.setOnClickListener(v -> saveProfile());
+
+        btnStatisticsSettings.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_settingsFragment_to_statisticsFragment);
+        });
 
         String[] languages = {"Magyar", "English"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, languages) {
@@ -150,12 +148,12 @@ public class SettingsFragment extends Fragment {
 
         actvLanguageSettings.setOnItemClickListener((parent, view1, position, id) -> {
             String targetLocale = (position == 0) ? "hu" : "en";
-             String currentSaved = prefs.getString("SELECTED_LANGUAGE", defaultLanguage);
+            String currentSaved = prefs.getString("SELECTED_LANGUAGE", defaultLanguage);
 
-             if (!targetLocale.equals(currentSaved)) {
-                 prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
-                 AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetLocale));
-             }
+            if (!targetLocale.equals(currentSaved)) {
+                prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetLocale));
+            }
         });
 
         btnLogoutSettings.setOnClickListener(v -> {
@@ -166,11 +164,12 @@ public class SettingsFragment extends Fragment {
                     .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
                         prefs.edit().remove("JWT_TOKEN").apply();
 
+                        Context appContext = requireContext();
                         Executors.newSingleThreadExecutor().execute(() -> {
-                            AppDatabase.getDatabase(requireContext()).clearAllTables();
+                            AppDatabase.getDatabase(appContext).clearAllTables();
                         });
 
-                        Toast.makeText(getContext(), getString(R.string.success_logout), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.success_logout), Toast.LENGTH_SHORT).show();
 
                         Navigation.findNavController(v).navigate(R.id.action_settingsFragment_to_loginFragment);
                     })
@@ -208,7 +207,9 @@ public class SettingsFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<List<ProfileModel>> call, @NonNull Throwable t) {
-
+                if (isAdded()) {
+                    Log.e("API_HIBA", "Load profile failure: " + t.getMessage());
+                }
             }
         });
     }
@@ -234,7 +235,7 @@ public class SettingsFragment extends Fragment {
         if (currentUserId == null) return;
 
         try {
-            Bitmap originalBitmap = null;
+            Bitmap originalBitmap;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), selectedImageUri);
@@ -247,7 +248,7 @@ public class SettingsFragment extends Fragment {
 
             if (originalBitmap == null) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), getString(R.string.error_unsupported_image_format), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_unsupported_image_format), Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -274,12 +275,12 @@ public class SettingsFragment extends Fragment {
             api.uploadAvatar(fileName, requestBody).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        String fileUrl = BuildConfig.SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
-                        saveProfileDataToSupabase(username, fileUrl);
-                    } else {
-                        if (isAdded()) {
-                            Toast.makeText(getContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
+                    if (isAdded()) {
+                        if (response.isSuccessful()) {
+                            String fileUrl = BuildConfig.SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
+                            saveProfileDataToSupabase(username, fileUrl);
+                        } else {
+                            Toast.makeText(requireContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -287,15 +288,15 @@ public class SettingsFragment extends Fragment {
                 @Override
                 public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                     if (isAdded()) {
-                        Toast.makeText(getContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
 
         } catch (Exception e) {
             e.printStackTrace();
-            if(isAdded()) {
-                Toast.makeText(getContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
+            if (isAdded()) {
+                Toast.makeText(requireContext(), getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -321,7 +322,7 @@ public class SettingsFragment extends Fragment {
                             deleteOldAvatar(oldAvatarUrlToDelete);
                         }
 
-                        Toast.makeText(getContext(), getString(R.string.profile_saved_successfully), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.profile_saved_successfully), Toast.LENGTH_SHORT).show();
                     } else {
                         String errorMsg = getString(R.string.error_saving_profile);
 
@@ -338,7 +339,7 @@ public class SettingsFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -346,7 +347,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), getString(R.string.error_saving_profile), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_saving_profile), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -366,7 +367,7 @@ public class SettingsFragment extends Fragment {
         api.deleteAvatars(payload).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d("SUPABASE_STORAGE", "Régi kép törölve: " + oldFileName);
                 } else {
                     Log.e("SUPABASE_STORAGE", "Nem sikerült törölni a régi képet: " + response.code());

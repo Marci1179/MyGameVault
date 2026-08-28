@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,25 +165,30 @@ public class LibraryFragment extends Fragment {
     }
 
     private void loadLibraryGames() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         String currentUserId = prefs.getString("USER_ID", null);
 
         if (currentUserId == null) return;
 
         api.getGamesByStatus("eq." + currentUserId, "in.(1,2,3)").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
-            public void onResponse(Call<List<SavedGameModel>> call, Response<List<SavedGameModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    allGames = response.body();
-                    applyFilterAndSort();
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
+            public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        allGames = response.body();
+                        applyFilterAndSort();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<List<SavedGameModel>> call, Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<List<SavedGameModel>> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                    Log.e("API_HIBA", "Library load failure: " + t.getMessage());
+                }
             }
         });
     }
@@ -227,22 +233,26 @@ public class LibraryFragment extends Fragment {
     private void deleteGameFromDatabase(SavedGameModel game) {
         api.deleteGame("eq." + game.getId()).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    allGames.remove(game);
-                    displayedGames.remove(game);
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        allGames.remove(game);
+                        displayedGames.remove(game);
+                        adapter.notifyDataSetChanged();
 
-                    adapter.notifyDataSetChanged();
-
-                    Toast.makeText(getContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                    Log.e("API_HIBA", "Library delete failure: " + t.getMessage());
+                }
             }
         });
     }

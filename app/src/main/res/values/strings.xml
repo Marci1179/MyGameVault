@@ -66,9 +66,9 @@
     <string name="error_unknown_supabase">Ismeretlen hiba</string>
 
     <string name="delete_game">Játék törlése</string>
-    <string name="status_owned">Megvan</string>
+    <string name="status_owned">Birtokolt</string>
     <string name="status_in_progress">Folyamatban</string>
-    <string name="status_finished">Befejezve</string>
+    <string name="status_finished">Végigjátszott</string>
     <string name="sort_by">Rendezés</string>
     <string name="unknown_game">Ismeretlen játék</string>
     <string name="status_label">Státusz: %1$s</string>
@@ -125,11 +125,35 @@
     <string name="feed_action_updated">Frissítette ezt a játékot: %s.</string>
     <string name="empty_feed_message">Még nem követsz egy felhasználót sem. Kövess be valakit, hogy lásd a tevékenységeit!</string>
 
+    <string name="statistics">Statisztikák</string>
+    <string name="chart_title_completed_games">Végigjátszott játékok száma hónapokra bontva:</string>
+    <string name="completion_rate">Végigjátszási arány</string>
+    <string name="status_wishlist">Kívánságlista</string>
+    <string name="reviews_count">Értékelések</string>
+    <string name="average_rating">Átlagos értékelés</string>
+    <string name="completed_games_chart_label">Végigjátszott játékok</string>
+    <string name="social_stats_format">%1$d Követő | %2$d Követett</string>
+
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>
         <item>Megjelenési év (Legújabb)</item>
         <item>Megjelenési év (Legrégebbi)</item>
+    </string-array>
+
+    <string-array name="short_months">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Már</item>
+        <item>Ápr</item>
+        <item>Máj</item>
+        <item>Jún</item>
+        <item>Júl</item>
+        <item>Aug</item>
+        <item>Szep</item>
+        <item>Okt</item>
+        <item>Nov</item>
+        <item>Dec</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

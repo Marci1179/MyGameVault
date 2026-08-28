@@ -99,4 +99,7 @@ public interface SupabaseApi {
                 @Query("select") String selectQuery,
                 @Query("order") String orderBy
         );
+
+        @GET("rest/v1/follows")
+        Call<List<FollowRelationship>> getMyFollowers(@Query("following_id") String followingQuery);
 }

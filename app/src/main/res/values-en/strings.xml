@@ -126,10 +126,34 @@
     <string name="feed_action_updated">Updated this game: %s.</string>
     <string name="empty_feed_message">You are not following anyone yet. Follow someone to see their activities!</string>
 
+    <string name="statistics">Statistics</string>
+    <string name="chart_title_completed_games">Completed games by month:</string>
+    <string name="completion_rate">Completion Rate</string>
+    <string name="status_wishlist">Wishlist</string>
+    <string name="reviews_count">Reviews</string>
+    <string name="average_rating">Average Rating</string>
+    <string name="completed_games_chart_label">Completed Games</string>
+    <string name="social_stats_format">%1$d Followers | %2$d Following</string>
+
     <string-array name="sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>
         <item>Release Year (Newest)</item>
         <item>Release Year (Oldest)</item>
+    </string-array>
+
+    <string-array name="short_months">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
     </string-array>
 </resources>

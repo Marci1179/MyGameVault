@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -24,6 +25,12 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class RegisterFragment extends Fragment {
 
+    TextInputEditText etRegisterEmail, etRegisterPassword, etRegisterPasswordConfirm;
+    TextInputLayout tilRegisterEmail, tilRegisterPassword, tilRegisterPasswordConfirm;
+    Button btnRegister;
+    TextView login;
+
+
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -39,14 +46,14 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextInputEditText etRegisterEmail = view.findViewById(R.id.etRegisterEmail);
-        TextInputEditText etRegisterPassword = view.findViewById(R.id.etRegisterPassword);
-        TextInputEditText etRegisterPasswordConfirm = view.findViewById(R.id.etRegisterPasswordConfirm);
-        TextInputLayout tilRegisterEmail = view.findViewById(R.id.tilRegisterEmail);
-        TextInputLayout tilRegisterPassword = view.findViewById(R.id.tilRegisterPassword);
-        TextInputLayout tilRegisterPasswordConfirm = view.findViewById(R.id.tilRegisterPasswordConfirm);
-        Button btnRegister = view.findViewById(R.id.btnRegister);
-        TextView login = view.findViewById(R.id.tvLogin);
+        etRegisterEmail = view.findViewById(R.id.etRegisterEmail);
+        etRegisterPassword = view.findViewById(R.id.etRegisterPassword);
+        etRegisterPasswordConfirm = view.findViewById(R.id.etRegisterPasswordConfirm);
+        tilRegisterEmail = view.findViewById(R.id.tilRegisterEmail);
+        tilRegisterPassword = view.findViewById(R.id.tilRegisterPassword);
+        tilRegisterPasswordConfirm = view.findViewById(R.id.tilRegisterPasswordConfirm);
+        btnRegister = view.findViewById(R.id.btnRegister);
+        login = view.findViewById(R.id.tvLogin);
 
         login.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment);
@@ -95,39 +102,47 @@ public class RegisterFragment extends Fragment {
             api.register(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<AuthResponse> call, @NonNull retrofit2.Response<AuthResponse> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(getContext(), getString(R.string.success_registration), Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment);
-                    } else {
-                        String errorMsg = getString(R.string.error_unknown);
-                        boolean isEmailRegistered = false;
+                    if (isAdded()) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(requireContext(), getString(R.string.success_registration), Toast.LENGTH_SHORT).show();
 
-                        try {
-                            if (response.errorBody() != null) {
-                                String errorJson = response.errorBody().string();
-
-                                if (errorJson.contains("User already registered")) {
-                                    isEmailRegistered = true;
-                                    errorMsg = getString(R.string.error_email_registered);
-                                } else {
-                                    errorMsg = errorMsg + " " + errorJson;
-                                }
+                            NavController navController = Navigation.findNavController(view);
+                            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() == R.id.registerFragment) {
+                                navController.navigate(R.id.action_registerFragment_to_loginFragment);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        if (isEmailRegistered && tilRegisterEmail != null) {
-                            tilRegisterEmail.setError(errorMsg);
                         } else {
-                            Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                            String errorMsg = getString(R.string.error_unknown);
+                            boolean isEmailRegistered = false;
+
+                            try {
+                                if (response.errorBody() != null) {
+                                    String errorJson = response.errorBody().string();
+
+                                    if (errorJson.contains("User already registered")) {
+                                        isEmailRegistered = true;
+                                        errorMsg = getString(R.string.error_email_registered);
+                                    } else {
+                                        errorMsg = errorMsg + " " + errorJson;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if (isEmailRegistered && tilRegisterEmail != null) {
+                                tilRegisterEmail.setError(errorMsg);
+                            } else {
+                                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull retrofit2.Call<AuthResponse> call, @NonNull Throwable t) {
-                    Toast.makeText(getContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });

@@ -34,11 +34,9 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -62,7 +60,6 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
@@ -86,8 +83,12 @@ public class SearchFragment extends Fragment {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String query = etSearch.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    if (getActivity() != null) {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        }
+                    }
 
                     pbSearch.setVisibility(View.VISIBLE);
                     rvSearchResults.setVisibility(View.INVISIBLE);
@@ -116,18 +117,22 @@ public class SearchFragment extends Fragment {
         api.getUserSavedGames("eq." + userId, "game_name,status_id").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    savedGamesMap.clear();
-                    for (SavedGameModel item : response.body()) {
-                        savedGamesMap.put(item.getGameName(), item.getStatusId());
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        savedGamesMap.clear();
+                        for (SavedGameModel item : response.body()) {
+                            savedGamesMap.put(item.getGameName(), item.getStatusId());
+                        }
+                        if (adapter != null) adapter.notifyDataSetChanged();
                     }
-                    if (adapter != null) adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<SavedGameModel>> call, @NonNull Throwable t) {
-
+                if (isAdded()) {
+                    Log.e("API_HIBA", "Search loadUserSavedGames failure: " + t.getMessage());
+                }
             }
         });
     }
@@ -151,7 +156,7 @@ public class SearchFragment extends Fragment {
                     if (response.isSuccessful() && response.body() != null) {
                         adapter.setGames(response.body());
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.error_download), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -161,7 +166,7 @@ public class SearchFragment extends Fragment {
                 if (isAdded()) {
                     pbSearch.setVisibility(View.GONE);
                     rvSearchResults.setVisibility(View.VISIBLE);
-                    Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -184,10 +189,10 @@ public class SearchFragment extends Fragment {
                         adapter.setGames(response.body());
 
                         if (response.body().isEmpty()) {
-                            Toast.makeText(getContext(), getString(R.string.no_results), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), getString(R.string.no_results), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.error_search), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.error_search), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -197,7 +202,7 @@ public class SearchFragment extends Fragment {
                 if (isAdded()) {
                     pbSearch.setVisibility(View.GONE);
                     rvSearchResults.setVisibility(View.VISIBLE);
-                    Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -227,39 +232,45 @@ public class SearchFragment extends Fragment {
         api.insertGame(newGame).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    savedGamesMap.put(game.getName(), statusId);
-                    adapter.notifyDataSetChanged();
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        savedGamesMap.put(game.getName(), statusId);
+                        adapter.notifyDataSetChanged();
 
-                    String actionType = (statusId == 1) ? "ADDED_TO_LIBRARY" : "ADDED_TO_WISHLIST";
-                    if (currentUserId != null) {
-                        logActivityToFeed(currentUserId, actionType, game.getName());
-                    }
+                        String actionType = (statusId == 1) ? "ADDED_TO_LIBRARY" : "ADDED_TO_WISHLIST";
+                        if (currentUserId != null) {
+                            logActivityToFeed(currentUserId, actionType, game.getName());
+                        }
 
-                    String message = (statusId == 1) ? getString(R.string.game_added_library) : getString(R.string.game_added_wishlist);
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                } else {
-                    try {
-                        String unknownError = getString(R.string.error_unknown_supabase);
-                        String errorBody = response.errorBody() != null ? response.errorBody().string() : unknownError;
+                        String message = (statusId == 1) ? getString(R.string.game_added_library) : getString(R.string.game_added_wishlist);
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                    } else {
+                        try {
+                            String unknownError = getString(R.string.error_unknown_supabase);
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : unknownError;
 
-                        android.util.Log.e("SUPABASE_ERROR", "Mentési hiba kód: " + response.code() + " | Üzenet: " + errorBody);
-                        Toast.makeText(getContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                            Log.e("SUPABASE_ERROR", "Mentési hiba kód: " + response.code() + " | Üzenet: " + errorBody);
+                            Toast.makeText(requireContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     private String getCurrentUserId() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        Context context = getContext();
+        if (context == null) return null;
+        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 
@@ -277,7 +288,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                android.util.Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
+                Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
             }
         });
     }

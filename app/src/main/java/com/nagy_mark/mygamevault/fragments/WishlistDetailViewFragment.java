@@ -48,7 +48,6 @@ public class WishlistDetailViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_wishlist_detail_view, container, false);
     }
 
@@ -113,29 +112,33 @@ public class WishlistDetailViewFragment extends Fragment {
         api.searchGame(currentGame.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override
             public void onResponse(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Response<List<CheapSharkGameSearchResult>> response) {
-                if (isAdded() && response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    String cheapSharkId = response.body().get(0).getGameId();
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                        String cheapSharkId = response.body().get(0).getGameId();
 
-                    api.getGameDetails(cheapSharkId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
-                        @Override
-                        public void onResponse(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Response<CheapSharkGameDetailResponse> response) {
-                            if (isAdded() && response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
-                                populatePricesList(response.body().getDeals());
-                            } else {
-                                showPriceMessage(getString(R.string.price_not_found_wdw));
+                        api.getGameDetails(cheapSharkId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
+                            @Override
+                            public void onResponse(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Response<CheapSharkGameDetailResponse> response) {
+                                if (isAdded()) {
+                                    if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
+                                        populatePricesList(response.body().getDeals());
+                                    } else {
+                                        showPriceMessage(getString(R.string.price_not_found_wdw));
+                                    }
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Throwable t) {
-                            if (isAdded()) {
-                                Toast.makeText(requireContext(), getString(R.string.error_loading_prices), Toast.LENGTH_SHORT).show();
-                                showPriceMessage(getString(R.string.error_loading_prices));
+                            @Override
+                            public void onFailure(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Throwable t) {
+                                if (isAdded()) {
+                                    Toast.makeText(requireContext(), getString(R.string.error_loading_prices), Toast.LENGTH_SHORT).show();
+                                    showPriceMessage(getString(R.string.error_loading_prices));
+                                }
                             }
-                        }
-                    });
-                } else {
-                    showPriceMessage(getString(R.string.price_not_found_wdw));
+                        });
+                    } else {
+                        showPriceMessage(getString(R.string.price_not_found_wdw));
+                    }
                 }
             }
 
@@ -168,13 +171,11 @@ public class WishlistDetailViewFragment extends Fragment {
             }
         }
 
+        pbWishlistDetail.setVisibility(View.GONE);
+        svWishlistDetail.setVisibility(View.VISIBLE);
+
         if (!hasPrices) {
             showPriceMessage(getString(R.string.price_not_found_wdw));
-        } else {
-            if (isAdded()) {
-                pbWishlistDetail.setVisibility(View.GONE);
-                svWishlistDetail.setVisibility(View.VISIBLE);
-            }
         }
     }
 
