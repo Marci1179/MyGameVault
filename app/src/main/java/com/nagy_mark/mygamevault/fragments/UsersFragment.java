@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -45,6 +46,7 @@ public class UsersFragment extends Fragment {
     private ProgressBar pbUsers;
     private TextInputEditText etSearchUsers;
     private MaterialButtonToggleGroup btgUsers;
+    private TextView tvEmptyUsers;
 
     private UsersAdapter usersAdapter;
     private SupabaseApi api;
@@ -77,6 +79,7 @@ public class UsersFragment extends Fragment {
         pbUsers = view.findViewById(R.id.pbUsers);
         etSearchUsers = view.findViewById(R.id.etSearchUsers);
         btgUsers = view.findViewById(R.id.btgUsers);
+        tvEmptyUsers = view.findViewById(R.id.tvEmptyUsers);
 
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
@@ -251,6 +254,8 @@ public class UsersFragment extends Fragment {
         displayedUsers.clear();
         usersAdapter.updateData(displayedUsers, followingIds);
 
+        tvEmptyUsers.setVisibility(View.GONE);
+
         if (!currentSearchText.isEmpty()) {
             performServerSearch();
         } else if (isShowingFollowing) {
@@ -263,7 +268,9 @@ public class UsersFragment extends Fragment {
     private void loadMoreUsersPaginated() {
         if (isLoading || isLastPage) return;
         isLoading = true;
+
         pbUsers.setVisibility(View.VISIBLE);
+        tvEmptyUsers.setVisibility(View.GONE);
 
         int rangeEnd = currentOffset + PAGE_SIZE - 1;
         String rangeHeader = currentOffset + "-" + rangeEnd;
@@ -303,11 +310,15 @@ public class UsersFragment extends Fragment {
         if (followingIds.isEmpty()) {
             displayedUsers.clear();
             usersAdapter.updateData(displayedUsers, followingIds);
+            pbUsers.setVisibility(View.GONE);
+            rvUsers.setVisibility(View.INVISIBLE);
+            tvEmptyUsers.setVisibility(View.VISIBLE);
             return;
         }
 
         pbUsers.setVisibility(View.VISIBLE);
         rvUsers.setVisibility(View.INVISIBLE);
+        tvEmptyUsers.setVisibility(View.GONE);
 
         String idInQuery = "in.(" + TextUtils.join(",", followingIds) + ")";
 
@@ -316,12 +327,21 @@ public class UsersFragment extends Fragment {
             public void onResponse(@NonNull Call<List<ProfileModel>> call, @NonNull Response<List<ProfileModel>> response) {
                 if (isAdded()) {
                     pbUsers.setVisibility(View.GONE);
-                    rvUsers.setVisibility(View.VISIBLE);
 
                     if (response.isSuccessful() && response.body() != null) {
                         displayedUsers.clear();
                         displayedUsers.addAll(response.body());
                         usersAdapter.updateData(displayedUsers, followingIds);
+
+                        if (displayedUsers.isEmpty()) {
+                            tvEmptyUsers.setVisibility(View.VISIBLE);
+                            rvUsers.setVisibility(View.INVISIBLE);
+                        } else {
+                            tvEmptyUsers.setVisibility(View.GONE);
+                            rvUsers.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        rvUsers.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -330,6 +350,7 @@ public class UsersFragment extends Fragment {
             public void onFailure(@NonNull Call<List<ProfileModel>> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     pbUsers.setVisibility(View.GONE);
+                    rvUsers.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -338,6 +359,7 @@ public class UsersFragment extends Fragment {
     private void performServerSearch() {
         pbUsers.setVisibility(View.VISIBLE);
         rvUsers.setVisibility(View.INVISIBLE);
+        tvEmptyUsers.setVisibility(View.GONE);
 
         displayedUsers.clear();
         usersAdapter.updateData(displayedUsers, followingIds);
@@ -349,7 +371,6 @@ public class UsersFragment extends Fragment {
             public void onResponse(@NonNull Call<List<ProfileModel>> call, @NonNull Response<List<ProfileModel>> response) {
                 if (isAdded()) {
                     pbUsers.setVisibility(View.GONE);
-                    rvUsers.setVisibility(View.VISIBLE);
 
                     if (response.isSuccessful() && response.body() != null) {
                         List<ProfileModel> results = filterOutCurrentUser(response.body());
@@ -366,6 +387,16 @@ public class UsersFragment extends Fragment {
 
                         displayedUsers.addAll(results);
                         usersAdapter.updateData(displayedUsers, followingIds);
+
+                        if (isShowingFollowing && displayedUsers.isEmpty()) {
+                            tvEmptyUsers.setVisibility(View.VISIBLE);
+                            rvUsers.setVisibility(View.INVISIBLE);
+                        } else {
+                            tvEmptyUsers.setVisibility(View.GONE);
+                            rvUsers.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        rvUsers.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -374,6 +405,7 @@ public class UsersFragment extends Fragment {
             public void onFailure(@NonNull Call<List<ProfileModel>> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     pbUsers.setVisibility(View.GONE);
+                    rvUsers.setVisibility(View.VISIBLE);
                 }
             }
         });

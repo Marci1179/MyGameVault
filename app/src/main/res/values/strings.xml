@@ -114,6 +114,7 @@
     <string name="content_desc_follow">Követés</string>
     <string name="tab_all_users">Összes</string>
     <string name="tab_following_users">Követések</string>
+    <string name="empty_following">Nem követsz egy felhasználót sem.</string>
 
     <string name="unknown_user">Ismeretlen felhasználó</string>
     <string name="unknown_game_feed">egy játékot</string>

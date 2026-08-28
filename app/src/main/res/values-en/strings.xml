@@ -115,6 +115,7 @@
     <string name="content_desc_follow">Follow</string>
     <string name="tab_all_users">All</string>
     <string name="tab_following_users">Following</string>
+    <string name="empty_following">You are not following anyone.</string>
 
     <string name="unknown_user">Unknown user</string>
     <string name="unknown_game_feed">a game</string>
