@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +47,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class SearchFragment extends Fragment {
     private RecyclerView rvSearchResults;
     private GameSearchAdapter adapter;
@@ -52,6 +54,8 @@ public class SearchFragment extends Fragment {
     private ProgressBar pbSearch;
 
     private final Map<String, Integer> savedGamesMap = new HashMap<>();
+
+    private List<Game> topGames = new ArrayList<>();
 
     public SearchFragment() {
         // Required empty public constructor
@@ -79,21 +83,46 @@ public class SearchFragment extends Fragment {
 
         rvSearchResults.setAdapter(adapter);
 
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().isEmpty()) {
+                    if (!topGames.isEmpty()) {
+                        adapter.setGames(topGames);
+                    } else {
+                        loadTopGames();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String query = etSearch.getText().toString().trim();
-                if (!query.isEmpty()) {
-                    if (getActivity() != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
 
+                if (getActivity() != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+
+                if (!query.isEmpty()) {
                     pbSearch.setVisibility(View.VISIBLE);
                     rvSearchResults.setVisibility(View.INVISIBLE);
-
                     searchGames(query);
+                } else {
+                    if (!topGames.isEmpty()) {
+                        adapter.setGames(topGames);
+                    } else {
+                        loadTopGames();
+                    }
                 }
                 return true;
             }
@@ -154,7 +183,8 @@ public class SearchFragment extends Fragment {
                     rvSearchResults.setVisibility(View.VISIBLE);
 
                     if (response.isSuccessful() && response.body() != null) {
-                        adapter.setGames(response.body());
+                        topGames = response.body();
+                        adapter.setGames(topGames);
                     } else {
                         Toast.makeText(requireContext(), getString(R.string.error_download), Toast.LENGTH_SHORT).show();
                     }
