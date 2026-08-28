@@ -308,13 +308,11 @@ public class StatisticsFragment extends Fragment {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setAxisMinimum(-0.5f);
-        xAxis.setAxisMaximum(entries.size() - 0.5f);
-
-        xAxis.setLabelCount(activeMonthLabels.size(), true);
+        xAxis.setLabelCount(activeMonthLabels.size(), false);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(activeMonthLabels.toArray(new String[0])));
 
         barChartStatistics.setData(barData);
+        barChartStatistics.setFitBars(true);
         barChartStatistics.fitScreen();
         barChartStatistics.invalidate();
         barChartStatistics.animateY(1000);
