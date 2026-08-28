@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -43,6 +44,7 @@ public class LibraryFragment extends Fragment {
     private LibraryAdapter adapter;
     private AutoCompleteTextView actvSortLibrary;
     private TextInputEditText etSearchLibrary;
+    private TextView tvEmptyLibrary;
 
     private SupabaseApi api;
 
@@ -59,7 +61,6 @@ public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
@@ -70,6 +71,7 @@ public class LibraryFragment extends Fragment {
         rvLibrary = view.findViewById(R.id.rvLibrary);
         actvSortLibrary = view.findViewById(R.id.actvSortLibrary);
         etSearchLibrary = view.findViewById(R.id.etSearchLibrary);
+        tvEmptyLibrary = view.findViewById(R.id.tvEmptyLibrary);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
@@ -85,6 +87,7 @@ public class LibraryFragment extends Fragment {
         adapter = new LibraryAdapter(getContext(), new LibraryAdapter.OnLibraryItemClickListener() {
             @Override
             public void onDeleteClick(SavedGameModel game) {
+                if (!isAdded()) return;
                 new MaterialAlertDialogBuilder(requireContext())
                         .setIcon(R.drawable.ic_warning)
                         .setTitle(getString(R.string.delete_title))
@@ -98,6 +101,7 @@ public class LibraryFragment extends Fragment {
 
             @Override
             public void onItemClick(SavedGameModel game) {
+                if (!isAdded()) return;
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("gameData", game);
 
@@ -147,14 +151,10 @@ public class LibraryFragment extends Fragment {
     private void setupSearch() {
         etSearchLibrary.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -214,20 +214,23 @@ public class LibraryFragment extends Fragment {
             String year2 = g2.getReleaseYear() != null ? g2.getReleaseYear() : "";
 
             switch (currentSortPosition) {
-                case 0: // Név (A-Z)
-                    return name1.compareToIgnoreCase(name2);
-                case 1: // Név (Z-A)
-                    return name2.compareToIgnoreCase(name1);
-                case 2: // Megjelenési év (Legújabb) -> Csökkenő sorrend
-                    return year2.compareTo(year1);
-                case 3: // Megjelenési év (Legrégebbi) -> Növekvő sorrend
-                    return year1.compareTo(year2);
-                default:
-                    return 0;
+                case 0: return name1.compareToIgnoreCase(name2);
+                case 1: return name2.compareToIgnoreCase(name1);
+                case 2: return year2.compareTo(year1);
+                case 3: return year1.compareTo(year2);
+                default: return 0;
             }
         });
 
         adapter.setGames(displayedGames);
+
+        if (displayedGames.isEmpty()) {
+            tvEmptyLibrary.setVisibility(View.VISIBLE);
+            rvLibrary.setVisibility(View.INVISIBLE);
+        } else {
+            tvEmptyLibrary.setVisibility(View.GONE);
+            rvLibrary.setVisibility(View.VISIBLE);
+        }
     }
 
     private void deleteGameFromDatabase(SavedGameModel game) {
@@ -240,6 +243,11 @@ public class LibraryFragment extends Fragment {
                         displayedGames.remove(game);
                         adapter.notifyDataSetChanged();
 
+                        if (displayedGames.isEmpty()) {
+                            tvEmptyLibrary.setVisibility(View.VISIBLE);
+                            rvLibrary.setVisibility(View.INVISIBLE);
+                        }
+
                         Toast.makeText(requireContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(requireContext(), getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
@@ -248,7 +256,7 @@ public class LibraryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<Void> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
                     Log.e("API_HIBA", "Library delete failure: " + t.getMessage());

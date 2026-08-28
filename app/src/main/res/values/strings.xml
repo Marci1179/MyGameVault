@@ -64,6 +64,7 @@
     <string name="error_save">Hiba a játék mentésekor!</string>
     <string name="error_save_failed">Mentési hiba történt.</string>
     <string name="error_unknown_supabase">Ismeretlen hiba</string>
+    <string name="empty_library">Nincsenek játékok a könyvtáradban.</string>
 
     <string name="delete_game">Játék törlése</string>
     <string name="status_owned">Birtokolt</string>
