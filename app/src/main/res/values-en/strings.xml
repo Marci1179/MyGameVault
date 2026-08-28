@@ -65,7 +65,6 @@
     <string name="error_save">Error saving game!</string>
     <string name="error_save_failed">An error occurred while saving.</string>
     <string name="error_unknown_supabase">Unknown error</string>
-    <string name="empty_library">You have no games in your library.</string>
 
     <string name="delete_game">Delete game</string>
     <string name="status_owned">Owned</string>
@@ -80,6 +79,7 @@
     <string name="delete_message_library">Are you sure you want to delete %1$s from your library?</string>
     <string name="delete_success">Game deleted successfully!</string>
     <string name="delete_error">An error occurred while deleting!</string>
+    <string name="empty_library">You have no games in your library.</string>
 
     <string name="delete_message_wishlist">Are you sure you want to delete %1$s from your wishlist?</string>
     <string name="lowest_price_format">Lowest price: %1$s$ (%2$s)</string>
@@ -89,6 +89,7 @@
     <string name="notif_price_drop_title">A game on your wishlist is on sale!</string>
     <string name="notif_price_drop_expanded">%1$s\nNew price: %2$s</string>
     <string name="notif_price_drop_collapsed">%1$s - New price: %2$s</string>
+    <string name="empty_wishlist">You have no games in your wishlist.</string>
 
     <string name="game_details_header">Game details</string>
     <string name="game_status_hint">Current status</string>

@@ -64,7 +64,6 @@
     <string name="error_save">Hiba a játék mentésekor!</string>
     <string name="error_save_failed">Mentési hiba történt.</string>
     <string name="error_unknown_supabase">Ismeretlen hiba</string>
-    <string name="empty_library">Nincsenek játékok a könyvtáradban.</string>
 
     <string name="delete_game">Játék törlése</string>
     <string name="status_owned">Birtokolt</string>
@@ -79,6 +78,7 @@
     <string name="delete_message_library">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a könyvtáradból?</string>
     <string name="delete_success">Játék sikeresen törölve!</string>
     <string name="delete_error">Hiba történt a törlés során!</string>
+    <string name="empty_library">Nincsenek játékok a könyvtáradban.</string>
 
     <string name="delete_message_wishlist">Biztosan törölni szeretnéd a(z) %1$s nevű játékot a kívánságlistádról?</string>
     <string name="lowest_price_format">Legalacsonyabb ár: %1$s$ (%2$s)</string>
@@ -88,6 +88,7 @@
     <string name="notif_price_drop_title">A kívánságlistádon szereplő egyik játék leárazásra került!</string>
     <string name="notif_price_drop_expanded">%1$s\nÚj ár: %2$s</string>
     <string name="notif_price_drop_collapsed">%1$s - Új ár: %2$s</string>
+    <string name="empty_wishlist">Nincsenek játékok a kívánságlistádon.</string>
 
     <string name="game_details_header">Játék részletei</string>
     <string name="game_status_hint">Jelenlegi állapot</string>

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -51,6 +52,7 @@ public class WishlistFragment extends Fragment {
     private WishlistAdapter adapter;
     private AutoCompleteTextView actvSortWishlist;
     private TextInputEditText etSearchWishlist;
+    private TextView tvEmptyWishlist;
 
     private SupabaseApi api;
 
@@ -77,6 +79,7 @@ public class WishlistFragment extends Fragment {
         rvWishlist = view.findViewById(R.id.rvWishlist);
         actvSortWishlist = view.findViewById(R.id.actvSortWishlist);
         etSearchWishlist = view.findViewById(R.id.etSearchWishlist);
+        tvEmptyWishlist = view.findViewById(R.id.tvEmptyWishlist);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
@@ -230,6 +233,14 @@ public class WishlistFragment extends Fragment {
 
         adapter.setGames(displayedGames);
         fetchPricesForWishlist(displayedGames);
+
+        if (displayedGames.isEmpty()) {
+            tvEmptyWishlist.setVisibility(View.VISIBLE);
+            rvWishlist.setVisibility(View.INVISIBLE);
+        } else {
+            tvEmptyWishlist.setVisibility(View.GONE);
+            rvWishlist.setVisibility(View.VISIBLE);
+        }
     }
 
     private void deleteGameFromDatabase(SavedGameModel game) {
@@ -241,6 +252,11 @@ public class WishlistFragment extends Fragment {
                         allGames.remove(game);
                         displayedGames.remove(game);
                         adapter.notifyDataSetChanged();
+
+                        if (displayedGames.isEmpty()) {
+                            tvEmptyWishlist.setVisibility(View.VISIBLE);
+                            rvWishlist.setVisibility(View.INVISIBLE);
+                        }
 
                         Toast.makeText(requireContext(), getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
 
