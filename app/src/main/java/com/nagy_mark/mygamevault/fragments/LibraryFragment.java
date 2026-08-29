@@ -28,6 +28,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.LibraryAdapter;
+import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
@@ -226,6 +227,13 @@ public class LibraryFragment extends Fragment {
                     if (response.isSuccessful()) {
                         game.setFavorite(newFavoriteStatus);
 
+                        if (newFavoriteStatus) {
+                            String currentUserId = getCurrentUserId();
+                            if (currentUserId != null) {
+                                logActivityToFeed(currentUserId, "ADDED_TO_FAVORITES", game.getGameName());
+                            }
+                        }
+
                         if (swFavoritesFilterLibrary.isChecked() && !newFavoriteStatus) {
                             applyFilterAndSort();
                         } else {
@@ -325,5 +333,30 @@ public class LibraryFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void logActivityToFeed(String userId, String actionType, String gameName) {
+        FeedActivityRequest request = new FeedActivityRequest(userId, actionType, gameName, null, null);
+
+        api.logFeedActivity(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Log.e("FEED_ERROR", "Nem sikerült a kedvenc eseményt naplózni: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
+            }
+        });
+    }
+
+    private String getCurrentUserId() {
+        Context context = getContext();
+        if (context == null) return null;
+        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("USER_ID", null);
     }
 }
