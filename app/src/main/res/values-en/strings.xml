@@ -129,6 +129,7 @@
     <string name="feed_action_reviewed">Reviewed this game: %s.</string>
     <string name="feed_action_updated">Updated this game: %s.</string>
     <string name="empty_feed_message">You are not following anyone yet. Follow someone to see their activities!</string>
+    <string name="feed_action_added_favorites">Added %1$s to their favorites.</string>
 
     <string name="statistics">Statistics</string>
     <string name="chart_title_completed_games">Completed games by month:</string>

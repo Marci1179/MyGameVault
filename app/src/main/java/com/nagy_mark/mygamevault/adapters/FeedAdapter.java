@@ -88,6 +88,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             case "REVIEWED_GAME":
                 actionText = context.getString(R.string.feed_action_reviewed, game);
                 break;
+            case "ADDED_TO_FAVORITES":
+                actionText = context.getString(R.string.feed_action_added_favorites, game);
+                break;
             default:
                 actionText = context.getString(R.string.feed_action_updated, game);
                 break;

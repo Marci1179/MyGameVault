@@ -128,6 +128,7 @@
     <string name="feed_action_reviewed">Értékelte ezt a játékot: %s.</string>
     <string name="feed_action_updated">Frissítette ezt a játékot: %s.</string>
     <string name="empty_feed_message">Még nem követsz egy felhasználót sem. Kövess be valakit, hogy lásd a tevékenységeit!</string>
+    <string name="feed_action_added_favorites">Hozzáadta a(z) %1$s játékot a kedvenceihez.</string>
 
     <string name="statistics">Statisztikák</string>
     <string name="chart_title_completed_games">Végigjátszott játékok száma hónapokra bontva:</string>
