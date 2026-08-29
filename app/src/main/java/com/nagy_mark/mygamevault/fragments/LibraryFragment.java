@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.LibraryAdapter;
@@ -33,7 +34,9 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +48,7 @@ public class LibraryFragment extends Fragment {
     private AutoCompleteTextView actvSortLibrary;
     private TextInputEditText etSearchLibrary;
     private TextView tvEmptyLibrary;
+    private SwitchMaterial swFavoritesFilterLibrary;
 
     private SupabaseApi api;
 
@@ -72,14 +76,22 @@ public class LibraryFragment extends Fragment {
         actvSortLibrary = view.findViewById(R.id.actvSortLibrary);
         etSearchLibrary = view.findViewById(R.id.etSearchLibrary);
         tvEmptyLibrary = view.findViewById(R.id.tvEmptyLibrary);
+        swFavoritesFilterLibrary = view.findViewById(R.id.swFavoritesFilterLibrary);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         setupRecyclerView();
         setupSorting();
         setupSearch();
+        setupFavoriteFilter();
 
         loadLibraryGames();
+    }
+
+    private void setupFavoriteFilter() {
+        swFavoritesFilterLibrary.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            applyFilterAndSort();
+        });
     }
 
     private void setupRecyclerView() {
@@ -109,6 +121,14 @@ public class LibraryFragment extends Fragment {
                         R.id.action_libraryFragment_to_libraryDetailView,
                         bundle
                 );
+            }
+
+            @Override
+            public void onFavoriteClick(SavedGameModel game, int position) {
+                if (!isAdded()) {
+                    return;
+                }
+                toggleFavoriteStatus(game, position);
             }
         });
 
@@ -193,16 +213,58 @@ public class LibraryFragment extends Fragment {
         });
     }
 
+    private void toggleFavoriteStatus(SavedGameModel game, int position) {
+        boolean newFavoriteStatus = !game.isFavorite();
+
+        Map<String, Boolean> updateBody = new HashMap<>();
+        updateBody.put("is_favorite", newFavoriteStatus);
+
+        api.updateFavoriteStatus("eq." + game.getId(), updateBody).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        game.setFavorite(newFavoriteStatus);
+
+                        if (swFavoritesFilterLibrary.isChecked() && !newFavoriteStatus) {
+                            applyFilterAndSort();
+                        } else {
+                            adapter.notifyItemChanged(position);
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void applyFilterAndSort() {
         displayedGames.clear();
+        boolean showOnlyFavorites = swFavoritesFilterLibrary.isChecked();
 
-        if (currentSearchText.isEmpty()) {
-            displayedGames.addAll(allGames);
-        } else {
-            for (SavedGameModel game : allGames) {
-                if (game.getGameName() != null && game.getGameName().toLowerCase().contains(currentSearchText)) {
-                    displayedGames.add(game);
+        for (SavedGameModel game : allGames) {
+            boolean matchesSearch = true;
+            if (!currentSearchText.isEmpty()) {
+                if (game.getGameName() == null || !game.getGameName().toLowerCase().contains(currentSearchText)) {
+                    matchesSearch = false;
                 }
+            }
+
+            boolean matchesFavorite = true;
+            if (showOnlyFavorites) {
+                matchesFavorite = game.isFavorite();
+            }
+
+            if (matchesSearch && matchesFavorite) {
+                displayedGames.add(game);
             }
         }
 

@@ -28,6 +28,8 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
     public interface OnLibraryItemClickListener {
         void onDeleteClick(SavedGameModel game);
         void onItemClick(SavedGameModel game);
+
+        void onFavoriteClick(SavedGameModel game, int position);
     }
 
     public LibraryAdapter(Context context, OnLibraryItemClickListener listener) {
@@ -93,6 +95,21 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
             holder.ivGameCoverLibrary.setImageDrawable(null);
         }
 
+        if (game.isFavorite()) {
+            holder.btnFavoriteLibrary.setImageResource(R.drawable.ic_heart_filled);
+        } else {
+            holder.btnFavoriteLibrary.setImageResource(R.drawable.ic_heart_outline);
+        }
+
+        holder.btnFavoriteLibrary.setOnClickListener(v -> {
+            if (listener != null) {
+                int currentPosition = holder.getBindingAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onFavoriteClick(game, currentPosition);
+                }
+            }
+        });
+
         holder.btnDeleteLibrary.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(game);
@@ -114,7 +131,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
     public static class LibraryViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGameCoverLibrary;
         TextView tvGameTitleLibrary, tvGameYearLibrary, tvGamePublisherLibrary, tvGameStatusLibrary;
-        ImageButton btnDeleteLibrary;
+        ImageButton btnDeleteLibrary, btnFavoriteLibrary;
 
         public LibraryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -124,6 +141,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
             tvGamePublisherLibrary = itemView.findViewById(R.id.tvGamePublisherLibrary);
             tvGameStatusLibrary = itemView.findViewById(R.id.tvGameStatusLibrary);
             btnDeleteLibrary = itemView.findViewById(R.id.btnDeleteLibrary);
+            btnFavoriteLibrary = itemView.findViewById(R.id.btnFavoriteLibrary);
         }
     }
 }

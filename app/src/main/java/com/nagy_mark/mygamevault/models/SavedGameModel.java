@@ -13,6 +13,7 @@ public class SavedGameModel implements Serializable {
     private String note;
     private String user_id;
     private String created_at;
+    private boolean is_favorite;
 
     public int getId() {
         return id;
@@ -52,5 +53,12 @@ public class SavedGameModel implements Serializable {
 
     public String getCreatedAt() {
         return created_at;
+    }
+
+    public boolean isFavorite() {
+        return is_favorite;
+    }
+    public void setFavorite(boolean favorite) {
+        is_favorite = favorite;
     }
 }

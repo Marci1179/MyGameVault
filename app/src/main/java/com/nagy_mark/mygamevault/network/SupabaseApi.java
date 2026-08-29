@@ -102,4 +102,7 @@ public interface SupabaseApi {
 
         @GET("rest/v1/follows")
         Call<List<FollowRelationship>> getMyFollowers(@Query("following_id") String followingQuery);
+
+        @PATCH("rest/v1/My_Games")
+        Call<Void> updateFavoriteStatus(@Query("id") String idQuery, @Body java.util.Map<String, Boolean> body);
 }

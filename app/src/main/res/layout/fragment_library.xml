@@ -68,6 +68,17 @@
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swFavoritesFilterLibrary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/favorites"
+        android:textColor="@color/green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilSortLibrary" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLibrary"
         android:layout_width="0dp"
@@ -78,7 +89,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilSortLibrary"
+        app:layout_constraintTop_toBottomOf="@id/swFavoritesFilterLibrary"
         tools:listitem="@layout/item_library" />
 
     <TextView
@@ -89,7 +100,7 @@
         android:textSize="16sp"
         android:textColor="@color/green"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/tilSortLibrary"
+        app:layout_constraintTop_toBottomOf="@+id/swFavoritesFilterLibrary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
