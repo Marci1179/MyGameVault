@@ -2,6 +2,7 @@ package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
@@ -22,6 +23,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -31,6 +34,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nagy_mark.mygamevault.BuildConfig;
@@ -60,6 +64,7 @@ public class SettingsFragment extends Fragment {
     private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings;
     private AutoCompleteTextView actvLanguageSettings;
     private TextInputLayout tilUsernameSettings;
+    private SwitchMaterial swDarkModeSettings;
 
     private Uri selectedImageUri = null;
     private String currentUserId = null;
@@ -100,6 +105,7 @@ public class SettingsFragment extends Fragment {
         ivProfilePictureSettings = view.findViewById(R.id.ivProfilePictureSettings);
         etUsernameSettings = view.findViewById(R.id.etUsernameSettings);
         tilUsernameSettings = view.findViewById(R.id.tilUsernameSettings);
+        swDarkModeSettings = view.findViewById(R.id.swDarkModeSettings);
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         currentUserId = prefs.getString("USER_ID", null);
@@ -109,6 +115,16 @@ public class SettingsFragment extends Fragment {
         ivProfilePictureSettings.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         btnSaveProfileSettings.setOnClickListener(v -> saveProfile());
+
+        etUsernameSettings.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                v.clearFocus();
+                return true;
+            }
+            return false;
+        });
 
         btnStatisticsSettings.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_settingsFragment_to_statisticsFragment);
@@ -147,12 +163,30 @@ public class SettingsFragment extends Fragment {
         }
 
         actvLanguageSettings.setOnItemClickListener((parent, view1, position, id) -> {
+            actvLanguageSettings.dismissDropDown();
+            actvLanguageSettings.clearFocus();
+
             String targetLocale = (position == 0) ? "hu" : "en";
             String currentSaved = prefs.getString("SELECTED_LANGUAGE", defaultLanguage);
 
             if (!targetLocale.equals(currentSaved)) {
                 prefs.edit().putString("SELECTED_LANGUAGE", targetLocale).apply();
                 AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetLocale));
+            }
+        });
+
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_YES;
+        boolean isSystemDark = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+        boolean isDarkSaved = prefs.getBoolean("DARK_MODE", isSystemDark);
+
+        swDarkModeSettings.setChecked(isDarkSaved);
+
+        swDarkModeSettings.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("DARK_MODE", isChecked).apply();
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });
 

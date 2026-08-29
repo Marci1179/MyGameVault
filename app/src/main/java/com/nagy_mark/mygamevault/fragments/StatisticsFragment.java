@@ -2,11 +2,13 @@ package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -97,9 +100,21 @@ public class StatisticsFragment extends Fragment {
         barChartStatistics.setDrawBorders(false);
         barChartStatistics.setTouchEnabled(false);
 
-        barChartStatistics.getAxisLeft().setDrawGridLines(false);
-        barChartStatistics.getAxisLeft().setAxisMinimum(0f);
-        barChartStatistics.getAxisLeft().setGranularity(1f);
+        int textColor = isDarkMode() ? Color.WHITE : Color.DKGRAY;
+
+        XAxis xAxis = barChartStatistics.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setTextColor(textColor);
+
+        YAxis leftAxis = barChartStatistics.getAxisLeft();
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setGranularity(1f);
+        leftAxis.setTextColor(textColor);
+
         barChartStatistics.getAxisRight().setEnabled(false);
     }
 
@@ -290,8 +305,11 @@ public class StatisticsFragment extends Fragment {
         }
 
         BarDataSet dataSet = new BarDataSet(entries, getString(R.string.completed_games_chart_label));
-        dataSet.setColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.green));
+        dataSet.setColor(ContextCompat.getColor(requireContext(), R.color.green));
         dataSet.setValueTextSize(12f);
+
+        int textColor = isDarkMode() ? Color.WHITE : Color.DKGRAY;
+        dataSet.setValueTextColor(textColor);
 
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
@@ -304,10 +322,6 @@ public class StatisticsFragment extends Fragment {
         barData.setBarWidth(0.4f);
 
         XAxis xAxis = barChartStatistics.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f);
-        xAxis.setGranularityEnabled(true);
         xAxis.setLabelCount(activeMonthLabels.size(), false);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(activeMonthLabels.toArray(new String[0])));
 
@@ -316,5 +330,10 @@ public class StatisticsFragment extends Fragment {
         barChartStatistics.fitScreen();
         barChartStatistics.invalidate();
         barChartStatistics.animateY(1000);
+    }
+
+    private boolean isDarkMode() {
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 }

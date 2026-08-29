@@ -22,15 +22,16 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearch"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/search"
         app:startIconDrawable="@drawable/ic_search"
         app:startIconTint="@color/green"
-        app:boxStrokeColor="@color/green"
+        app:boxStrokeColor="@color/til_stroke"
         app:hintTextColor="@color/green"
+        app:boxStrokeWidth="2dp"
         app:endIconMode="clear_text"
         app:endIconTint="@color/green"
         app:layout_constraintEnd_toEndOf="parent"

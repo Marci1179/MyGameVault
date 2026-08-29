@@ -86,7 +86,8 @@
                 android:hint="@string/username_hint"
                 app:startIconDrawable="@drawable/ic_person"
                 app:startIconTint="@color/green"
-                app:boxStrokeColor="@color/green"
+                app:boxStrokeColor="@color/til_stroke"
+                app:boxStrokeWidth="2dp"
                 app:hintTextColor="@color/green"
                 app:layout_constraintTop_toBottomOf="@+id/tvChangePictureHintSettings">
 
@@ -95,7 +96,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -150,7 +152,8 @@
                 android:layout_marginTop="16dp"
                 android:hint="@string/language_select"
                 app:startIconTint="@color/green"
-                app:boxStrokeColor="@color/green"
+                app:boxStrokeColor="@color/til_stroke"
+                app:boxStrokeWidth="2dp"
                 app:hintTextColor="@color/green"
                 app:layout_constraintTop_toBottomOf="@+id/tvAppSectionLabelSettings">
 
@@ -160,6 +163,16 @@
                     android:layout_height="wrap_content"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swDarkModeSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/dark_mode"
+                android:textColor="@color/green"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilLanguageSettings" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogoutSettings"
@@ -172,7 +185,7 @@
                 android:textColor="@color/red"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilLanguageSettings"
+                app:layout_constraintTop_toBottomOf="@+id/swDarkModeSettings"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

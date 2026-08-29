@@ -46,6 +46,7 @@
     <string name="error_username_taken">This username is already taken!</string>
     <string name="error_username_required">Username field is required.</string>
     <string name="error_unsupported_image_format">Unsupported image format!</string>
+    <string name="dark_mode">Dark mode</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
