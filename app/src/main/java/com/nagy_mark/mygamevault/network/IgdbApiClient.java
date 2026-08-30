@@ -26,33 +26,59 @@ public class IgdbApiClient {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     String token = prefs.getString("TWITCH_TOKEN", null);
-
+                    
                     if (token == null) {
-                        Retrofit twitchRetrofit = new Retrofit.Builder()
-                                .baseUrl("https://id.twitch.tv/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-
-                        TwitchApi twitchApi = twitchRetrofit.create(TwitchApi.class);
-
-                        retrofit2.Response<TwitchTokenResponse> tokenResponse = twitchApi.getAppAccessToken(
-                                BuildConfig.IGDB_CLIENT_ID,
-                                BuildConfig.IGDB_CLIENT_SECRET
-                        ).execute();
-
-                        if (tokenResponse.isSuccessful() && tokenResponse.body() != null) {
-                            token = tokenResponse.body().getAccessToken();
+                        token = fetchNewToken();
+                        if (token != null) {
                             prefs.edit().putString("TWITCH_TOKEN", token).apply();
                         }
                     }
 
                     Request originalRequest = chain.request();
-                    Request.Builder builder = originalRequest.newBuilder()
+                    Request requestWithAuth = buildRequest(originalRequest, token);
+
+                    Response response = chain.proceed(requestWithAuth);
+
+                    if (response.code() == 401) {
+                        response.close();
+
+                        token = fetchNewToken();
+                        if (token != null) {
+                            prefs.edit().putString("TWITCH_TOKEN", token).apply();
+
+                            Request newRequest = buildRequest(originalRequest, token);
+                            return chain.proceed(newRequest);
+                        }
+                    }
+
+                    return response;
+                }
+
+                private String fetchNewToken() throws IOException {
+                    Retrofit twitchRetrofit = new Retrofit.Builder()
+                            .baseUrl("https://id.twitch.tv/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    TwitchApi twitchApi = twitchRetrofit.create(TwitchApi.class);
+
+                    retrofit2.Response<TwitchTokenResponse> tokenResponse = twitchApi.getAppAccessToken(
+                            BuildConfig.IGDB_CLIENT_ID,
+                            BuildConfig.IGDB_CLIENT_SECRET
+                    ).execute();
+
+                    if (tokenResponse.isSuccessful() && tokenResponse.body() != null) {
+                        return tokenResponse.body().getAccessToken();
+                    }
+                    return null;
+                }
+
+                private Request buildRequest(Request originalRequest, String token) {
+                    return originalRequest.newBuilder()
                             .header("Client-ID", BuildConfig.IGDB_CLIENT_ID)
                             .header("Authorization", "Bearer " + token)
-                            .header("Accept", "application/json");
-
-                    return chain.proceed(builder.build());
+                            .header("Accept", "application/json")
+                            .build();
                 }
             };
 
