@@ -134,6 +134,7 @@
     <string name="feed_action_updated">Frissítette ezt a játékot: %s.</string>
     <string name="empty_feed_message">Még nem követsz egy felhasználót sem. Kövess be valakit, hogy lásd a tevékenységeit!</string>
     <string name="feed_action_added_favorites">Hozzáadta a(z) %1$s játékot a kedvenceihez.</string>
+    <string name="profile_picture">Profilkép</string>
 
     <string name="statistics">Statisztikák</string>
     <string name="chart_title_completed_games">Végigjátszott játékok száma hónapokra bontva:</string>
@@ -165,6 +166,4 @@
         <item>Nov.</item>
         <item>Dec.</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

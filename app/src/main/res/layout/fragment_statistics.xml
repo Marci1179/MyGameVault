@@ -43,6 +43,7 @@
         android:weightSum="3"
         android:layout_marginTop="24dp"
         android:layout_marginHorizontal="16dp"
+        android:baselineAligned="false"
         app:layout_constraintTop_toBottomOf="@id/tvSocialStats">
 
         <LinearLayout
@@ -171,6 +172,7 @@
         android:weightSum="3"
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
+        android:baselineAligned="false"
         app:layout_constraintTop_toBottomOf="@id/llBubblesLibraryStatistics">
 
         <LinearLayout
@@ -304,6 +306,7 @@
             android:id="@+id/rlStatistics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/tvLabelCompletionRateStatistics"
                 android:layout_width="wrap_content"
@@ -311,7 +314,10 @@
                 android:text="@string/completion_rate"
                 android:textColor="@color/green"
                 android:textStyle="bold"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/tvCompletionRateValueStatistics"
+                android:layout_marginEnd="8dp" />
+
             <TextView
                 android:id="@+id/tvCompletionRateValueStatistics"
                 android:layout_width="wrap_content"

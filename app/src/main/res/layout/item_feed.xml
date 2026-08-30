@@ -22,6 +22,7 @@
             android:id="@+id/ivAvatarItemFeed"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:contentDescription="@string/profile_picture"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/ic_person" />
