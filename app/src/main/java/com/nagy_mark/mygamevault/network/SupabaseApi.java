@@ -105,4 +105,7 @@ public interface SupabaseApi {
 
         @PATCH("rest/v1/My_Games")
         Call<Void> updateFavoriteStatus(@Query("id") String idQuery, @Body java.util.Map<String, Boolean> body);
+
+        @POST("rest/v1/rpc/delete_user")
+        Call<Void> deleteUser();
 }

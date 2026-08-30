@@ -61,7 +61,7 @@ public class SettingsFragment extends Fragment {
 
     private ShapeableImageView ivProfilePictureSettings;
     private TextInputEditText etUsernameSettings;
-    private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings;
+    private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings, btnDeleteAccountSettings;
     private AutoCompleteTextView actvLanguageSettings;
     private TextInputLayout tilUsernameSettings;
     private SwitchMaterial swDarkModeSettings;
@@ -106,6 +106,7 @@ public class SettingsFragment extends Fragment {
         etUsernameSettings = view.findViewById(R.id.etUsernameSettings);
         tilUsernameSettings = view.findViewById(R.id.tilUsernameSettings);
         swDarkModeSettings = view.findViewById(R.id.swDarkModeSettings);
+        btnDeleteAccountSettings = view.findViewById(R.id.btnDeleteAccountSettings);
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         currentUserId = prefs.getString("USER_ID", null);
@@ -212,6 +213,73 @@ public class SettingsFragment extends Fragment {
                     })
                     .show();
         });
+
+        btnDeleteAccountSettings.setOnClickListener(v -> {
+            showDeleteAccountDialog();
+        });
+    }
+
+    private void showDeleteAccountDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setIcon(R.drawable.ic_warning)
+                .setTitle(getString(R.string.delete_account))
+                .setMessage(getString(R.string.delete_account_confirmation))
+                .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                    performAccountDeletion();
+                })
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void performAccountDeletion() {
+        if (currentUserId == null) {
+            return;
+        }
+
+        if (currentAvatarUrl != null && !currentAvatarUrl.isEmpty()) {
+            deleteOldAvatar(currentAvatarUrl);
+        }
+
+        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+
+        api.deleteUser().enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    completeLogoutAndDelete();
+                } else {
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), getString(R.string.error_deleting_account), Toast.LENGTH_SHORT).show();
+                        Log.e("DELETE_USER", "Hiba a törlésnél: " + response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_deleting_account), Toast.LENGTH_SHORT).show();
+                    Log.e("DELETE_USER", "Hálózati hiba: " + t.getMessage());
+                }
+            }
+        });
+    }
+
+    private void completeLogoutAndDelete() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        prefs.edit().remove("JWT_TOKEN").remove("USER_ID").apply();
+
+        Context appContext = requireContext();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            AppDatabase.getDatabase(appContext).clearAllTables();
+        });
+
+        if (isAdded()) {
+            Toast.makeText(requireContext(), getString(R.string.account_deleted_successfully), Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(requireView()).navigate(R.id.action_settingsFragment_to_loginFragment);
+        }
     }
 
     private void loadProfile() {

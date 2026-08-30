@@ -47,6 +47,10 @@
     <string name="error_username_required">Username field is required.</string>
     <string name="error_unsupported_image_format">Unsupported image format!</string>
     <string name="dark_mode">Dark mode</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.</string>
+    <string name="error_deleting_account">An error occurred while deleting the account.</string>
+    <string name="account_deleted_successfully">Account successfully deleted.</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
