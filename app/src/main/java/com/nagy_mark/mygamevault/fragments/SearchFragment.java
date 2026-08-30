@@ -54,8 +54,11 @@ public class SearchFragment extends Fragment {
     private ProgressBar pbSearch;
 
     private final Map<String, Integer> savedGamesMap = new HashMap<>();
-
     private List<Game> topGames = new ArrayList<>();
+
+    private SupabaseApi supabaseApi;
+    private IgdbApi igdbApi;
+    private SharedPreferences prefs;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -70,6 +73,10 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        supabaseApi = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        igdbApi = IgdbApiClient.getClient(requireContext()).create(IgdbApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
 
         etSearch = view.findViewById(R.id.etSearch);
         rvSearchResults = view.findViewById(R.id.rvSearch);
@@ -142,8 +149,7 @@ public class SearchFragment extends Fragment {
         String userId = getCurrentUserId();
         if (userId == null) return;
 
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        api.getUserSavedGames("eq." + userId, "game_name,status_id").enqueue(new Callback<List<SavedGameModel>>() {
+        supabaseApi.getUserSavedGames("eq." + userId, "game_name,status_id").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
                 if (isAdded()) {
@@ -173,9 +179,7 @@ public class SearchFragment extends Fragment {
         String query = "fields name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where rating_count > 500 & parent_game = null; sort rating desc; limit 10;";
         RequestBody body = RequestBody.create(MediaType.parse("text/plain"), query);
 
-        IgdbApi api = IgdbApiClient.getClient(requireContext()).create(IgdbApi.class);
-
-        api.getTopGames(body).enqueue(new Callback<List<Game>>() {
+        igdbApi.getTopGames(body).enqueue(new Callback<List<Game>>() {
             @Override
             public void onResponse(@NonNull Call<List<Game>> call, @NonNull Response<List<Game>> response) {
                 if (isAdded()) {
@@ -206,9 +210,7 @@ public class SearchFragment extends Fragment {
         String query = "search \"" + searchQuery + "\"; fields name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where parent_game = null; limit 20;";
         RequestBody body = RequestBody.create(MediaType.parse("text/plain"), query);
 
-        IgdbApi api = IgdbApiClient.getClient(requireContext()).create(IgdbApi.class);
-
-        api.getTopGames(body).enqueue(new Callback<List<Game>>() {
+        igdbApi.getTopGames(body).enqueue(new Callback<List<Game>>() {
             @Override
             public void onResponse(@NonNull Call<List<Game>> call, @NonNull Response<List<Game>> response) {
                 if (isAdded()) {
@@ -258,8 +260,7 @@ public class SearchFragment extends Fragment {
                 currentUserId
         );
 
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        api.insertGame(newGame).enqueue(new Callback<Void>() {
+        supabaseApi.insertGame(newGame).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (isAdded()) {
@@ -298,17 +299,13 @@ public class SearchFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        Context context = getContext();
-        if (context == null) return null;
-        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 
     private void logActivityToFeed(String userId, String actionType, String gameName) {
         FeedActivityRequest request = new FeedActivityRequest(userId, actionType, gameName);
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
-        api.logFeedActivity(request).enqueue(new Callback<Void>() {
+        supabaseApi.logFeedActivity(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {

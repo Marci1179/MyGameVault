@@ -39,6 +39,8 @@ public class WishlistDetailViewFragment extends Fragment {
     private TextView tvGameTitleWishlistDetail, tvGameYearWishlistDetail, tvGamePublisherWishlistDetail;
     private LinearLayout llPricesContainerWishlistDetail;
 
+    private CheapSharkApi api;
+
     private SavedGameModel currentGame;
 
     public WishlistDetailViewFragment() {
@@ -54,6 +56,8 @@ public class WishlistDetailViewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        api = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
 
         pbWishlistDetail = view.findViewById(R.id.pbWishlistDetail);
         svWishlistDetail = view.findViewById(R.id.svWishlistDetail);
@@ -106,8 +110,6 @@ public class WishlistDetailViewFragment extends Fragment {
 
         pbWishlistDetail.setVisibility(View.VISIBLE);
         svWishlistDetail.setVisibility(View.INVISIBLE);
-
-        CheapSharkApi api = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
 
         api.searchGame(currentGame.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override

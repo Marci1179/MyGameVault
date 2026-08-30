@@ -61,6 +61,7 @@ public class LibraryDetailViewFragment extends Fragment {
 
     private SavedGameModel currentGame;
     private SupabaseApi api;
+    private SharedPreferences prefs;
 
     private final int[] statusIds = {1, 2, 3};
     private String[] statusOptions;
@@ -79,6 +80,9 @@ public class LibraryDetailViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         ivGameCoverLibraryDetail = view.findViewById(R.id.ivGameCoverLibraryDetail);
         tvGameTitleLibraryDetail = view.findViewById(R.id.tvGameTitleLibraryDetail);
         tvGameYearLibraryDetail = view.findViewById(R.id.tvGameYearLibraryDetail);
@@ -94,8 +98,6 @@ public class LibraryDetailViewFragment extends Fragment {
         cgGameModesLibraryDetail = view.findViewById(R.id.cgGameModesLibraryDetail);
         svLibraryDetail = view.findViewById(R.id.svLibraryDetail);
         pbLibraryDetail = view.findViewById(R.id.pbLibraryDetail);
-
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         statusOptions = new String[] {
                 getString(R.string.status_owned),
@@ -335,9 +337,6 @@ public class LibraryDetailViewFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        Context context = getContext();
-        if (context == null) return null;
-        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 }

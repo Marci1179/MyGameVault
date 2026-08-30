@@ -52,6 +52,7 @@ public class LibraryFragment extends Fragment {
     private SwitchMaterial swFavoritesFilterLibrary;
 
     private SupabaseApi api;
+    private SharedPreferences prefs;
 
     private List<SavedGameModel> allGames = new ArrayList<>();
     private List<SavedGameModel> displayedGames = new ArrayList<>();
@@ -73,13 +74,14 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         rvLibrary = view.findViewById(R.id.rvLibrary);
         actvSortLibrary = view.findViewById(R.id.actvSortLibrary);
         etSearchLibrary = view.findViewById(R.id.etSearchLibrary);
         tvEmptyLibrary = view.findViewById(R.id.tvEmptyLibrary);
         swFavoritesFilterLibrary = view.findViewById(R.id.swFavoritesFilterLibrary);
-
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         setupRecyclerView();
         setupSorting();
@@ -186,8 +188,7 @@ public class LibraryFragment extends Fragment {
     }
 
     private void loadLibraryGames() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
-        String currentUserId = prefs.getString("USER_ID", null);
+        String currentUserId = getCurrentUserId();
 
         if (currentUserId == null) return;
 
@@ -354,9 +355,6 @@ public class LibraryFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        Context context = getContext();
-        if (context == null) return null;
-        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 }

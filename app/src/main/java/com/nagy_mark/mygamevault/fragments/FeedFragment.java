@@ -42,6 +42,7 @@ public class FeedFragment extends Fragment {
 
     private FeedAdapter feedAdapter;
     private SupabaseApi api;
+    private SharedPreferences prefs;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -58,6 +59,9 @@ public class FeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         rvFeed = view.findViewById(R.id.rvFeed);
         tvEmptyFeed = view.findViewById(R.id.tvEmptyFeed);
         swipeRefreshFeed = view.findViewById(R.id.swipeRefreshFeed);
@@ -72,8 +76,6 @@ public class FeedFragment extends Fragment {
         rvFeed.setLayoutManager(new LinearLayoutManager(getContext()));
         feedAdapter = new FeedAdapter();
         rvFeed.setAdapter(feedAdapter);
-
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         if (swipeRefreshFeed != null) {
             swipeRefreshFeed.setOnRefreshListener(this::loadFeedData);
@@ -93,7 +95,6 @@ public class FeedFragment extends Fragment {
             swipeRefreshFeed.setRefreshing(true);
         }
 
-        SharedPreferences prefs = requireContext().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         String currentUserId = prefs.getString("USER_ID", null);
 
         if (currentUserId == null) {

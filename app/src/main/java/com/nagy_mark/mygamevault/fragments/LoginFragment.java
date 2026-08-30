@@ -27,10 +27,13 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class LoginFragment extends Fragment {
 
-    TextView register;
-    TextInputLayout tilLoginEmail, tilLoginPassword;
-    TextInputEditText etLoginEmail, etLoginPassword;
-    Button btnLogin;
+    private TextView register;
+    private TextInputLayout tilLoginEmail, tilLoginPassword;
+    private TextInputEditText etLoginEmail, etLoginPassword;
+    private Button btnLogin;
+
+    private SupabaseApi api;
+    private SharedPreferences prefs;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -47,7 +50,9 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         String savedToken = prefs.getString("JWT_TOKEN", null);
 
         if (savedToken != null && !savedToken.isEmpty()) {
@@ -94,8 +99,6 @@ public class LoginFragment extends Fragment {
             }
 
             AuthRequest request = new AuthRequest(email, password);
-
-            SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
             api.login(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override

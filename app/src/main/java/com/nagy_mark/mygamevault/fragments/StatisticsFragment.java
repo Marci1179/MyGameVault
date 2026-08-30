@@ -49,6 +49,7 @@ public class StatisticsFragment extends Fragment {
     private BarChart barChartStatistics;
 
     private SupabaseApi api;
+    private SharedPreferences prefs;
     private String currentUserId;
 
     private int followersCount = 0;
@@ -68,6 +69,9 @@ public class StatisticsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         tvOwnedStatistics = view.findViewById(R.id.tvOwnedStatistics);
         tvInProgressStatistics = view.findViewById(R.id.tvInProgressStatistics);
         tvFinishedStatistics = view.findViewById(R.id.tvFinishedStatistics);
@@ -79,10 +83,7 @@ public class StatisticsFragment extends Fragment {
         pbCompletionRateStatistics = view.findViewById(R.id.pbCompletionRateStatistics);
         barChartStatistics = view.findViewById(R.id.barChartStatistics);
 
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         currentUserId = prefs.getString("USER_ID", null);
-
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         setupChart();
 

@@ -54,7 +54,9 @@ public class WishlistFragment extends Fragment {
     private TextInputEditText etSearchWishlist;
     private TextView tvEmptyWishlist;
 
-    private SupabaseApi api;
+    private SupabaseApi supabaseApi;
+    private CheapSharkApi cheapSharkApi;
+    private SharedPreferences prefs;
 
     private List<SavedGameModel> allGames = new ArrayList<>();
     private List<SavedGameModel> displayedGames = new ArrayList<>();
@@ -76,12 +78,14 @@ public class WishlistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        supabaseApi = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         rvWishlist = view.findViewById(R.id.rvWishlist);
         actvSortWishlist = view.findViewById(R.id.actvSortWishlist);
         etSearchWishlist = view.findViewById(R.id.etSearchWishlist);
         tvEmptyWishlist = view.findViewById(R.id.tvEmptyWishlist);
-
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         setupRecyclerView();
         setupSorting();
@@ -174,12 +178,11 @@ public class WishlistFragment extends Fragment {
     }
 
     private void loadWishlistGames() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         String currentUserId = prefs.getString("USER_ID", null);
 
         if (currentUserId == null) return;
 
-        api.getGamesByStatus("eq." + currentUserId, "eq.4").enqueue(new Callback<List<SavedGameModel>>() {
+        supabaseApi.getGamesByStatus("eq." + currentUserId, "eq.4").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
                 if (isAdded()) {
@@ -244,7 +247,7 @@ public class WishlistFragment extends Fragment {
     }
 
     private void deleteGameFromDatabase(SavedGameModel game) {
-        api.deleteGame("eq." + game.getId()).enqueue(new Callback<Void>() {
+        supabaseApi.deleteGame("eq." + game.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (isAdded()) {
@@ -282,20 +285,6 @@ public class WishlistFragment extends Fragment {
         });
     }
 
-    private String getStoreName(String storeId) {
-        switch (storeId) {
-            case "1": return "Steam";
-            case "3": return "GreenManGaming";
-            case "7": return "GOG";
-            case "8": return "EA/Origin";
-            case "11": return "Humble Store";
-            case "13": return "Ubisoft";
-            case "15": return "Fanatical";
-            case "25": return "Epic Games";
-            default: return null;
-        }
-    }
-
     private void fetchPricesForWishlist(List<SavedGameModel> gamesToFetch) {
         Context context = getContext();
         if (context == null) return;
@@ -327,8 +316,6 @@ public class WishlistFragment extends Fragment {
     }
 
     private void fetchAndSavePriceFromApi(SavedGameModel game, AppDatabase db) {
-        CheapSharkApi cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
-
         cheapSharkApi.searchGame(game.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override
             public void onResponse(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Response<List<CheapSharkGameSearchResult>> response) {
@@ -409,6 +396,20 @@ public class WishlistFragment extends Fragment {
                     adapter.setGamePrice(gameId, getString(R.string.price_not_found));
                 }
             });
+        }
+    }
+
+    private String getStoreName(String storeId) {
+        switch (storeId) {
+            case "1": return "Steam";
+            case "3": return "GreenManGaming";
+            case "7": return "GOG";
+            case "8": return "EA/Origin";
+            case "11": return "Humble Store";
+            case "13": return "Ubisoft";
+            case "15": return "Fanatical";
+            case "25": return "Epic Games";
+            default: return null;
         }
     }
 }

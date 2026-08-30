@@ -49,7 +49,9 @@ public class UsersFragment extends Fragment {
     private TextView tvEmptyUsers;
 
     private UsersAdapter usersAdapter;
+
     private SupabaseApi api;
+    private SharedPreferences prefs;
 
     private final List<ProfileModel> displayedUsers = new ArrayList<>();
     private final Set<String> followingIds = new HashSet<>();
@@ -75,6 +77,9 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         rvUsers = view.findViewById(R.id.rvUsers);
         pbUsers = view.findViewById(R.id.pbUsers);
         etSearchUsers = view.findViewById(R.id.etSearchUsers);
@@ -82,7 +87,6 @@ public class UsersFragment extends Fragment {
         tvEmptyUsers = view.findViewById(R.id.tvEmptyUsers);
 
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
-        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         setupRecyclerView();
         setupSearchAndToggle();
@@ -97,9 +101,6 @@ public class UsersFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        Context context = getContext();
-        if (context == null) return null;
-        SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         return prefs.getString("USER_ID", null);
     }
 

@@ -25,11 +25,12 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 
 public class RegisterFragment extends Fragment {
 
-    TextInputEditText etRegisterEmail, etRegisterPassword, etRegisterPasswordConfirm;
-    TextInputLayout tilRegisterEmail, tilRegisterPassword, tilRegisterPasswordConfirm;
-    Button btnRegister;
-    TextView login;
+    private TextInputEditText etRegisterEmail, etRegisterPassword, etRegisterPasswordConfirm;
+    private TextInputLayout tilRegisterEmail, tilRegisterPassword, tilRegisterPasswordConfirm;
+    private Button btnRegister;
+    private TextView login;
 
+    private SupabaseApi api;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -54,6 +55,8 @@ public class RegisterFragment extends Fragment {
         tilRegisterPasswordConfirm = view.findViewById(R.id.tilRegisterPasswordConfirm);
         btnRegister = view.findViewById(R.id.btnRegister);
         login = view.findViewById(R.id.tvLogin);
+
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         login.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment);
@@ -96,8 +99,6 @@ public class RegisterFragment extends Fragment {
             }
 
             AuthRequest request = new AuthRequest(email, password);
-
-            SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
             api.register(request).enqueue(new retrofit2.Callback<AuthResponse>() {
                 @Override

@@ -70,6 +70,9 @@ public class SettingsFragment extends Fragment {
     private String currentUserId = null;
     private String currentAvatarUrl = null;
 
+    private SupabaseApi api;
+    private SharedPreferences prefs;
+
     private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
@@ -98,6 +101,9 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
+        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+
         btnLogoutSettings = view.findViewById(R.id.btnLogoutSettings);
         btnSaveProfileSettings = view.findViewById(R.id.btnSaveProfileSettings);
         btnStatisticsSettings = view.findViewById(R.id.btnStatisticsSettings);
@@ -108,7 +114,6 @@ public class SettingsFragment extends Fragment {
         swDarkModeSettings = view.findViewById(R.id.swDarkModeSettings);
         btnDeleteAccountSettings = view.findViewById(R.id.btnDeleteAccountSettings);
 
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         currentUserId = prefs.getString("USER_ID", null);
 
         loadProfile();
@@ -242,8 +247,6 @@ public class SettingsFragment extends Fragment {
             deleteOldAvatar(currentAvatarUrl);
         }
 
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-
         api.deleteUser().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -268,7 +271,6 @@ public class SettingsFragment extends Fragment {
     }
 
     private void completeLogoutAndDelete() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
         prefs.edit().remove("JWT_TOKEN").remove("USER_ID").apply();
 
         Context appContext = requireContext();
@@ -285,7 +287,6 @@ public class SettingsFragment extends Fragment {
     private void loadProfile() {
         if (currentUserId == null) return;
 
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         api.getProfile("eq." + currentUserId).enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<ProfileModel>> call, @NonNull Response<List<ProfileModel>> response) {
@@ -373,7 +374,6 @@ public class SettingsFragment extends Fragment {
             String fileName = currentUserId + "_" + System.currentTimeMillis() + ".jpg";
             RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageBytes);
 
-            SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
             api.uploadAvatar(fileName, requestBody).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -409,7 +409,6 @@ public class SettingsFragment extends Fragment {
         String oldAvatarUrlToDelete = currentAvatarUrl;
 
         ProfileModel updatedProfile = new ProfileModel(currentUserId, username, avatarUrl);
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
 
         api.upsertProfile(updatedProfile).enqueue(new Callback<Void>() {
             @Override
@@ -465,7 +464,6 @@ public class SettingsFragment extends Fragment {
         Map<String, List<String>> payload = new HashMap<>();
         payload.put("prefixes", Arrays.asList(oldFileName));
 
-        SupabaseApi api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         api.deleteAvatars(payload).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
