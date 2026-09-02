@@ -163,12 +163,15 @@ public class WishlistDetailViewFragment extends Fragment {
         for (CheapSharkDealInfo deal : deals) {
             String storeName = getStoreName(deal.getStoreId());
             if (storeName != null) {
-                TextView tvStore = new TextView(requireContext());
-                tvStore.setText(storeName + ": $" + deal.getPrice());
-                tvStore.setTextSize(16f);
-                tvStore.setPadding(0, 4, 0, 4);
+                View rowView = getLayoutInflater().inflate(R.layout.item_price_row, llPricesContainerWishlistDetail, false);
 
-                llPricesContainerWishlistDetail.addView(tvStore);
+                TextView tvStoreName = rowView.findViewById(R.id.tvStoreNameRow);
+                TextView tvPrice = rowView.findViewById(R.id.tvPriceRow);
+
+                tvStoreName.setText(storeName);
+                tvPrice.setText("$" + deal.getPrice());
+
+                llPricesContainerWishlistDetail.addView(rowView);
                 hasPrices = true;
             }
         }

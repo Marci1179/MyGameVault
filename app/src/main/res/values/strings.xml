@@ -114,7 +114,7 @@
     <string name="error_no_internet_extra_data">Nincs internetkapcsolat az extra adatok letöltéséhez.</string>
 
     <string name="game_details_title">Játék részletei</string>
-    <string name="game_prices_title">A játék árai:</string>
+    <string name="game_prices_title">A játék ára(i):</string>
     <string name="error_loading_prices">Hiba az árak betöltésekor!</string>
     <string name="price_not_found_wdw">Ár nem található</string>
 

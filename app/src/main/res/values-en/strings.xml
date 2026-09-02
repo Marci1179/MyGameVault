@@ -115,7 +115,7 @@
     <string name="error_no_internet_extra_data">No internet connection to download extra data.</string>
 
     <string name="game_details_title">Game details</string>
-    <string name="game_prices_title">Game prices:</string>
+    <string name="game_prices_title">Game price(s):</string>
     <string name="error_loading_prices">Error loading prices!</string>
     <string name="price_not_found_wdw">Price not found</string>
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rlItemPriceRow"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="4dp"
+    android:paddingVertical="8dp">
+
+    <TextView
+        android:id="@+id/tvStoreNameRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/tvPriceRow"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:text="Steam" />
+
+    <TextView
+        android:id="@+id/tvPriceRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/green"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="$18.74" />
+
+    <View
+        android:id="@+id/dividerPriceRow"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tvStoreNameRow"
+        android:layout_marginTop="8dp"
+        android:background="@color/black" />
+
+</RelativeLayout>
