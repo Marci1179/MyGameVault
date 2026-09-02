@@ -78,6 +78,10 @@ public class WishlistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            currentSortPosition = savedInstanceState.getInt("SORT_POSITION", 0);
+        }
+
         supabaseApi = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
         prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
@@ -92,6 +96,21 @@ public class WishlistFragment extends Fragment {
         setupSearch();
 
         loadWishlistGames();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("SORT_POSITION", currentSortPosition);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (actvSortWishlist != null) {
+            String[] sortOptions = getResources().getStringArray(R.array.sort_options);
+            actvSortWishlist.setText(sortOptions[currentSortPosition], false);
+        }
     }
 
     private void setupRecyclerView() {
@@ -153,7 +172,7 @@ public class WishlistFragment extends Fragment {
         };
 
         actvSortWishlist.setAdapter(sortAdapter);
-        actvSortWishlist.setText(sortOptions[0], false);
+        actvSortWishlist.setText(sortOptions[currentSortPosition], false);
 
         actvSortWishlist.setOnItemClickListener((parent, view, position, id) -> {
             currentSortPosition = position;

@@ -74,6 +74,10 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            currentSortPosition = savedInstanceState.getInt("SORT_POSITION", 0);
+        }
+
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
 
@@ -89,6 +93,21 @@ public class LibraryFragment extends Fragment {
         setupFavoriteFilter();
 
         loadLibraryGames();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("SORT_POSITION", currentSortPosition);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (actvSortLibrary != null) {
+            String[] sortOptions = getResources().getStringArray(R.array.sort_options);
+            actvSortLibrary.setText(sortOptions[currentSortPosition], false);
+        }
     }
 
     private void setupFavoriteFilter() {
@@ -163,7 +182,7 @@ public class LibraryFragment extends Fragment {
         };
 
         actvSortLibrary.setAdapter(sortAdapter);
-        actvSortLibrary.setText(sortOptions[0], false);
+        actvSortLibrary.setText(sortOptions[currentSortPosition], false);
 
         actvSortLibrary.setOnItemClickListener((parent, view, position, id) -> {
             currentSortPosition = position;
