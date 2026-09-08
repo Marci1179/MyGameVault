@@ -58,7 +58,48 @@ public class SavedGameModel implements Serializable {
     public boolean isFavorite() {
         return is_favorite;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setGameName(String gameName) {
+        this.game_name = gameName;
+    }
+
+    public void setReleaseYear(String releaseYear) {
+        this.release_year = releaseYear;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public void setStatusId(int statusId) {
+        this.status_id = statusId;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public void setUserId(String userId) {
+        this.user_id = userId;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.created_at = createdAt;
+    }
+
     public void setFavorite(boolean favorite) {
-        is_favorite = favorite;
+        this.is_favorite = favorite;
     }
 }
