@@ -34,12 +34,12 @@ public class GameListUtils {
     }
 
     public static void sortGames(List<SavedGameModel> games, int sortPosition) {
-        Collections.sort(games, (g1, g2) -> {
-            String name1 = g1.getGameName() != null ? g1.getGameName() : "";
-            String name2 = g2.getGameName() != null ? g2.getGameName() : "";
+        Collections.sort(games, (game1, game2) -> {
+            String name1 = game1.getGameName() != null ? game1.getGameName() : "";
+            String name2 = game2.getGameName() != null ? game2.getGameName() : "";
 
-            String year1 = g1.getReleaseYear() != null ? g1.getReleaseYear() : "";
-            String year2 = g2.getReleaseYear() != null ? g2.getReleaseYear() : "";
+            String year1 = game1.getReleaseYear() != null ? game1.getReleaseYear() : "";
+            String year2 = game2.getReleaseYear() != null ? game2.getReleaseYear() : "";
 
             switch (sortPosition) {
                 case 0: return name1.compareToIgnoreCase(name2); // Név A-Z
