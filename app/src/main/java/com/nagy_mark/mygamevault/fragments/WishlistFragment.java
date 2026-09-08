@@ -37,6 +37,7 @@ import com.nagy_mark.mygamevault.network.CheapSharkApi;
 import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.CheapSharkUtils;
 import com.nagy_mark.mygamevault.utils.GameListUtils;
 
 import java.util.ArrayList;
@@ -334,7 +335,7 @@ public class WishlistFragment extends Fragment {
                                 String bestStoreName = "";
 
                                 for (CheapSharkDealInfo deal : response.body().getDeals()) {
-                                    String storeName = getStoreName(deal.getStoreId());
+                                    String storeName = CheapSharkUtils.getStoreName(deal.getStoreId());
                                     if (storeName != null) {
                                         try {
                                             double currentPrice = Double.parseDouble(deal.getPrice());
@@ -396,20 +397,6 @@ public class WishlistFragment extends Fragment {
                     adapter.setGamePrice(gameId, getString(R.string.price_not_found));
                 }
             });
-        }
-    }
-
-    private String getStoreName(String storeId) {
-        switch (storeId) {
-            case "1": return "Steam";
-            case "3": return "GreenManGaming";
-            case "7": return "GOG";
-            case "8": return "EA/Origin";
-            case "11": return "Humble Store";
-            case "13": return "Ubisoft";
-            case "15": return "Fanatical";
-            case "25": return "Epic Games";
-            default: return null;
         }
     }
 }
