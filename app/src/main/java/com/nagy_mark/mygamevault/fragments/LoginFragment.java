@@ -24,6 +24,7 @@ import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
+import com.nagy_mark.mygamevault.utils.ValidationUtils;
 
 public class LoginFragment extends Fragment {
 
@@ -87,8 +88,11 @@ public class LoginFragment extends Fragment {
             if (email.isEmpty()) {
                 tilLoginEmail.setError(getString(R.string.error_email_required));
                 hasError = true;
+            } else if (!ValidationUtils.isValidEmail(email)) {
+                tilLoginEmail.setError(getString(R.string.error_invalid_email));
+                hasError = true;
             }
-
+            
             if (password.isEmpty()) {
                 tilLoginPassword.setError(getString(R.string.error_password_required));
                 hasError = true;
