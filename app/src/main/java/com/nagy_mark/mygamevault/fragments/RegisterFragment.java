@@ -22,6 +22,7 @@ import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
+import com.nagy_mark.mygamevault.utils.ValidationUtils;
 
 public class RegisterFragment extends Fragment {
 
@@ -76,20 +77,23 @@ public class RegisterFragment extends Fragment {
             if (email.isEmpty()) {
                 tilRegisterEmail.setError(getString(R.string.error_email_required));
                 hasError = true;
+            } else if (!ValidationUtils.isValidEmail(email)) {
+                tilRegisterEmail.setError(getString(R.string.error_invalid_email));
+                hasError = true;
             }
 
             if (password.isEmpty()) {
                 tilRegisterPassword.setError(getString(R.string.error_password_required));
                 hasError = true;
-            } else if (password.length() < 6) {
-                tilRegisterPassword.setError(getString(R.string.error_password_too_short));
+            } else if (!ValidationUtils.isPasswordStrong(password)) {
+                tilRegisterPassword.setError(getString(R.string.error_weak_password));
                 hasError = true;
             }
 
             if (passwordConfirm.isEmpty()) {
                 tilRegisterPasswordConfirm.setError(getString(R.string.error_password_confirm_required));
                 hasError = true;
-            } else if (!password.equals(passwordConfirm)) {
+            } else if (!ValidationUtils.isPasswordMatch(password, passwordConfirm)) {
                 tilRegisterPasswordConfirm.setError(getString(R.string.error_passwords_mismatch));
                 hasError = true;
             }

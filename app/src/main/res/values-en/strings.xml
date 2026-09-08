@@ -30,6 +30,8 @@
     <string name="error_email_registered">This email address is already registered.</string>
     <string name="error_network">Network error: %s</string>
     <string name="success_registration">Successful registration! You can now log in.</string>
+    <string name="error_invalid_email">Enter a valid email address.</string>
+    <string name="error_weak_password">Password must be at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</string>
 
     <string name="logout">Logout</string>
     <string name="logout_message">Are you sure you want to log out?</string>

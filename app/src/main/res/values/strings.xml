@@ -29,6 +29,8 @@
     <string name="error_email_registered">Ez az e-mail cím már regisztrálva van.</string>
     <string name="error_network">Hálózati hiba: %s</string>
     <string name="success_registration">Sikeres regisztráció! Most már bejelentkezhetsz.</string>
+    <string name="error_invalid_email">Adjon meg egy érvényes e-mail címet!</string>
+    <string name="error_weak_password">A jelszónak min. 8 karakterből kell állnia, tartalmaznia kell kis/nagybetűt, számot és speciális karaktert.</string>
 
     <string name="logout">Kijelentkezés</string>
     <string name="logout_message">Biztosan ki szeretnél jelentkezni?</string>
