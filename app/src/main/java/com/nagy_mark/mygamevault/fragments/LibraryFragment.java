@@ -32,6 +32,7 @@ import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.GameListUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -275,42 +276,13 @@ public class LibraryFragment extends Fragment {
     }
 
     private void applyFilterAndSort() {
-        displayedGames.clear();
-        boolean showOnlyFavorites = swFavoritesFilterLibrary.isChecked();
+        displayedGames = GameListUtils.filterGames(
+                allGames,
+                currentSearchText,
+                swFavoritesFilterLibrary.isChecked()
+        );
 
-        for (SavedGameModel game : allGames) {
-            boolean matchesSearch = true;
-            if (!currentSearchText.isEmpty()) {
-                if (game.getGameName() == null || !game.getGameName().toLowerCase().contains(currentSearchText)) {
-                    matchesSearch = false;
-                }
-            }
-
-            boolean matchesFavorite = true;
-            if (showOnlyFavorites) {
-                matchesFavorite = game.isFavorite();
-            }
-
-            if (matchesSearch && matchesFavorite) {
-                displayedGames.add(game);
-            }
-        }
-
-        Collections.sort(displayedGames, (g1, g2) -> {
-            String name1 = g1.getGameName() != null ? g1.getGameName() : "";
-            String name2 = g2.getGameName() != null ? g2.getGameName() : "";
-
-            String year1 = g1.getReleaseYear() != null ? g1.getReleaseYear() : "";
-            String year2 = g2.getReleaseYear() != null ? g2.getReleaseYear() : "";
-
-            switch (currentSortPosition) {
-                case 0: return name1.compareToIgnoreCase(name2);
-                case 1: return name2.compareToIgnoreCase(name1);
-                case 2: return year2.compareTo(year1);
-                case 3: return year1.compareTo(year2);
-                default: return 0;
-            }
-        });
+        GameListUtils.sortGames(displayedGames, currentSortPosition);
 
         adapter.setGames(displayedGames);
 

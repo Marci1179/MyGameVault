@@ -37,6 +37,7 @@ import com.nagy_mark.mygamevault.network.CheapSharkApi;
 import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.GameListUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -225,33 +226,13 @@ public class WishlistFragment extends Fragment {
     }
 
     private void applyFilterAndSort() {
-        displayedGames.clear();
+        displayedGames = com.nagy_mark.mygamevault.utils.GameListUtils.filterGames(
+                allGames,
+                currentSearchText,
+                false
+        );
 
-        if (currentSearchText.isEmpty()) {
-            displayedGames.addAll(allGames);
-        } else {
-            for (SavedGameModel game : allGames) {
-                if (game.getGameName() != null && game.getGameName().toLowerCase().contains(currentSearchText)) {
-                    displayedGames.add(game);
-                }
-            }
-        }
-
-        Collections.sort(displayedGames, (g1, g2) -> {
-            String name1 = g1.getGameName() != null ? g1.getGameName() : "";
-            String name2 = g2.getGameName() != null ? g2.getGameName() : "";
-
-            String year1 = g1.getReleaseYear() != null ? g1.getReleaseYear() : "";
-            String year2 = g2.getReleaseYear() != null ? g2.getReleaseYear() : "";
-
-            switch (currentSortPosition) {
-                case 0: return name1.compareToIgnoreCase(name2);
-                case 1: return name2.compareToIgnoreCase(name1);
-                case 2: return year2.compareTo(year1);
-                case 3: return year1.compareTo(year2);
-                default: return 0;
-            }
-        });
+        GameListUtils.sortGames(displayedGames, currentSortPosition);
 
         adapter.setGames(displayedGames);
         fetchPricesForWishlist(displayedGames);
