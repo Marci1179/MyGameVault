@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment {
                 tilLoginEmail.setError(getString(R.string.error_invalid_email));
                 hasError = true;
             }
-            
+
             if (password.isEmpty()) {
                 tilLoginPassword.setError(getString(R.string.error_password_required));
                 hasError = true;
