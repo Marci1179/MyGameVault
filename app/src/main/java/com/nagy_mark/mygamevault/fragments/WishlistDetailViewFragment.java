@@ -25,6 +25,7 @@ import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.CheapSharkApi;
 import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.utils.CheapSharkUtils;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.List;
 
@@ -82,11 +83,10 @@ public class WishlistDetailViewFragment extends Fragment {
         String gameName = currentGame.getGameName() != null ? currentGame.getGameName() : getString(R.string.unknown_game);
         tvGameTitleWishlistDetail.setText(gameName);
 
-        String rawDate = currentGame.getReleaseYear();
-        String yearOnly = getString(R.string.unknown_year);
-        if (rawDate != null && rawDate.length() >= 4) {
-            yearOnly = rawDate.substring(0, 4);
-        }
+        String yearOnly = FormatUtils.extractYear(
+                currentGame.getReleaseYear(),
+                getString(R.string.unknown_year)
+        );
         tvGameYearWishlistDetail.setText(getString(R.string.format_release_year, yearOnly));
 
         String publisher = (currentGame.getPublisher() != null && !currentGame.getPublisher().isEmpty())

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,17 +55,14 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
         SavedGameModel game = gameList.get(position);
 
         holder.tvGameTitleLibrary.setText(game.getGameName() != null ? game.getGameName() : context.getString(R.string.unknown_game));
-        holder.tvGameYearLibrary.setText(game.getReleaseYear() != null ? game.getReleaseYear() : context.getString(R.string.unknown_year));
 
-        String rawDate = game.getReleaseYear();
-        String yearOnly = "-";
-        if (rawDate != null && rawDate.length() >= 4) {
-            yearOnly = rawDate.substring(0, 4);
-        }
+        String yearOnly = FormatUtils.extractYear(
+                game.getReleaseYear(),
+                context.getString(R.string.unknown_year)
+        );
+        holder.tvGameYearLibrary.setText(context.getString(R.string.format_release_year, yearOnly));
 
         String publisher = game.getPublisher() != null ? game.getPublisher() : context.getString(R.string.unknown_publisher);
-
-        holder.tvGameYearLibrary.setText(context.getString(R.string.format_release_year, yearOnly));
         holder.tvGamePublisherLibrary.setText(context.getString(R.string.format_publisher, publisher));
 
         String statusText;

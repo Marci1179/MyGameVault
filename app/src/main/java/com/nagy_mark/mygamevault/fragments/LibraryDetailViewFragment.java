@@ -36,6 +36,7 @@ import com.nagy_mark.mygamevault.network.IgdbApi;
 import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -121,11 +122,10 @@ public class LibraryDetailViewFragment extends Fragment {
     private void populateUI() {
         tvGameTitleLibraryDetail.setText(currentGame.getGameName() != null ? currentGame.getGameName() : getString(R.string.unknown_game));
 
-        String rawDate = currentGame.getReleaseYear();
-        String yearOnly = getString(R.string.unknown_year);
-        if (rawDate != null && rawDate.length() >= 4) {
-            yearOnly = rawDate.substring(0, 4);
-        }
+        String yearOnly = FormatUtils.extractYear(
+                currentGame.getReleaseYear(),
+                getString(R.string.unknown_year)
+        );
         tvGameYearLibraryDetail.setText(getString(R.string.format_release_year, yearOnly));
 
         String publisher = currentGame.getPublisher() != null ? currentGame.getPublisher() : getString(R.string.unknown_publisher);

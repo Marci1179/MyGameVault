@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,15 +60,13 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         String unknownGame = context.getString(R.string.unknown_game);
         holder.tvGameTitleWishlist.setText(game.getGameName() != null ? game.getGameName() : unknownGame);
 
-        String rawDate = game.getReleaseYear();
-        String yearOnly = "-";
-        if (rawDate != null && rawDate.length() >= 4) {
-            yearOnly = rawDate.substring(0, 4);
-        }
+        String yearOnly = FormatUtils.extractYear(
+                game.getReleaseYear(),
+                context.getString(R.string.unknown_year)
+        );
+        holder.tvGameYearWishlist.setText(context.getString(R.string.format_release_year, yearOnly));
 
         String publisher = game.getPublisher() != null ? game.getPublisher() : "-";
-
-        holder.tvGameYearWishlist.setText(context.getString(R.string.format_release_year, yearOnly));
         holder.tvGamePublisherWishlist.setText(context.getString(R.string.format_publisher, publisher));
 
         if (game.getCover() != null && !game.getCover().isEmpty()) {

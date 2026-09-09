@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.models.Game;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -54,15 +54,8 @@ public class GameSearchAdapter extends RecyclerView.Adapter<GameSearchAdapter.Ga
 
         holder.tvGameTitleSearch.setText(game.getName());
 
-        if (game.getFirstReleaseDate() != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(game.getFirstReleaseDate() * 1000);
-            String yearString = String.valueOf(calendar.get(Calendar.YEAR));
-
-            holder.tvGameYearSearch.setText(context.getString(R.string.format_release_year, yearString));
-        } else {
-            holder.tvGameYearSearch.setText(context.getString(R.string.unknown_year));
-        }
+        String yearString = FormatUtils.extractYear(game.getFirstReleaseDate(), context.getString(R.string.unknown_year));
+        holder.tvGameYearSearch.setText(context.getString(R.string.format_release_year, yearString));
 
         String publisherName = game.getPublisherName();
         if (publisherName != null) {
