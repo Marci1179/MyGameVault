@@ -43,6 +43,7 @@ import com.nagy_mark.mygamevault.database.AppDatabase;
 import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.DialogUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -197,11 +198,13 @@ public class SettingsFragment extends Fragment {
         });
 
         btnLogoutSettings.setOnClickListener(v -> {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.logout))
-                    .setMessage(getString(R.string.logout_message))
-                    .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            DialogUtils.showWarningDialog(
+                    requireContext(),
+                    getString(R.string.logout),
+                    getString(R.string.logout_message),
+                    getString(R.string.yes),
+                    getString(R.string.cancel),
+                    () -> {
                         prefs.edit().remove("JWT_TOKEN").apply();
 
                         Context appContext = requireContext();
@@ -210,32 +213,22 @@ public class SettingsFragment extends Fragment {
                         });
 
                         Toast.makeText(requireContext(), getString(R.string.success_logout), Toast.LENGTH_SHORT).show();
-
                         Navigation.findNavController(v).navigate(R.id.action_settingsFragment_to_loginFragment);
-                    })
-                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .show();
+                    }
+            );
         });
 
         btnDeleteAccountSettings.setOnClickListener(v -> {
-            showDeleteAccountDialog();
+            DialogUtils.showDelayedConfirmDialog(
+                    requireContext(),
+                    getString(R.string.delete_account),
+                    getString(R.string.delete_account_confirmation),
+                    getString(R.string.yes),
+                    getString(R.string.cancel),
+                    5,
+                    () -> performAccountDeletion()
+            );
         });
-    }
-
-    private void showDeleteAccountDialog() {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setIcon(R.drawable.ic_warning)
-                .setTitle(getString(R.string.delete_account))
-                .setMessage(getString(R.string.delete_account_confirmation))
-                .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                    performAccountDeletion();
-                })
-                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .show();
     }
 
     private void performAccountDeletion() {

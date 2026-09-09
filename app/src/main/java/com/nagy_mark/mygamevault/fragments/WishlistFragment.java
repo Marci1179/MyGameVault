@@ -38,6 +38,7 @@ import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.CheapSharkUtils;
+import com.nagy_mark.mygamevault.utils.DialogUtils;
 import com.nagy_mark.mygamevault.utils.GameListUtils;
 
 import java.util.ArrayList;
@@ -122,15 +123,14 @@ public class WishlistFragment extends Fragment {
             @Override
             public void onDeleteClick(SavedGameModel game) {
                 if (!isAdded()) return;
-                new MaterialAlertDialogBuilder(requireContext())
-                        .setIcon(R.drawable.ic_warning)
-                        .setTitle(getString(R.string.delete_title))
-                        .setMessage(getString(R.string.delete_message_wishlist, game.getGameName()))
-                        .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                            deleteGameFromDatabase(game);
-                        })
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .show();
+                DialogUtils.showWarningDialog(
+                        requireContext(),
+                        getString(R.string.delete_title),
+                        getString(R.string.delete_message_wishlist, game.getGameName()),
+                        getString(R.string.yes),
+                        getString(R.string.cancel),
+                        () -> deleteGameFromDatabase(game)
+                );
             }
 
             @Override
