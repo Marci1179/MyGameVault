@@ -42,4 +42,20 @@ public class ValidationUtilsTest {
         assertFalse(ValidationUtils.isPasswordMatch("StrongP@ss2026", "Strongp@ss2026"));
         assertFalse(ValidationUtils.isPasswordMatch(null, "Strong@123"));
     }
+
+    @Test
+    public void testIsValidOtp() {
+        assertTrue(ValidationUtils.isValidOtp("12345678"));
+        assertTrue(ValidationUtils.isValidOtp("15467428"));
+
+        assertFalse(ValidationUtils.isValidOtp("1234567"));
+        assertFalse(ValidationUtils.isValidOtp("123456789"));
+        assertFalse(ValidationUtils.isValidOtp("123a5678"));
+        assertFalse(ValidationUtils.isValidOtp("asdfghjk"));
+        assertFalse(ValidationUtils.isValidOtp("123-4567"));
+        assertFalse(ValidationUtils.isValidOtp("1234567 "));
+        assertFalse(ValidationUtils.isValidOtp(" 1234567"));
+        assertFalse(ValidationUtils.isValidOtp(""));
+        assertFalse(ValidationUtils.isValidOtp(null));
+    }
 }
