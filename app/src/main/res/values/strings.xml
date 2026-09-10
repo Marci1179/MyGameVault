@@ -52,6 +52,12 @@
     <string name="delete_account_confirmation">Biztosan törölni szeretnéd a fiókodat? Ez a művelet nem vonható vissza, és minden adatod véglegesen törlődik.</string>
     <string name="error_deleting_account">Hiba történt a fiók törlése során.</string>
     <string name="account_deleted_successfully">Fiók sikeresen törölve.</string>
+    <string name="new_password">Új jelszó</string>
+    <string name="confirm_new_password">Új jelszó megerősítése</string>
+    <string name="change_password">Jelszó megváltoztatása</string>
+    <string name="save">Mentés</string>
+    <string name="password_changed_successfully">Jelszó sikeresen megváltoztatva!</string>
+    <string name="error_changing_password">Hiba történt a jelszó módosítása során!</string>
 
     <string name="yes">Igen</string>
     <string name="cancel">Mégsem</string>

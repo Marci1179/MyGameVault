@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
@@ -32,7 +33,6 @@ import android.widget.Filter;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
@@ -62,7 +62,7 @@ public class SettingsFragment extends Fragment {
 
     private ShapeableImageView ivProfilePictureSettings;
     private TextInputEditText etUsernameSettings;
-    private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings, btnDeleteAccountSettings;
+    private Button btnLogoutSettings, btnSaveProfileSettings, btnStatisticsSettings, btnDeleteAccountSettings, btnChangePasswordSettings;
     private AutoCompleteTextView actvLanguageSettings;
     private TextInputLayout tilUsernameSettings;
     private SwitchMaterial swDarkModeSettings;
@@ -114,6 +114,7 @@ public class SettingsFragment extends Fragment {
         tilUsernameSettings = view.findViewById(R.id.tilUsernameSettings);
         swDarkModeSettings = view.findViewById(R.id.swDarkModeSettings);
         btnDeleteAccountSettings = view.findViewById(R.id.btnDeleteAccountSettings);
+        btnChangePasswordSettings = view.findViewById(R.id.btnChangePasswordSettings);
 
         currentUserId = prefs.getString("USER_ID", null);
 
@@ -229,6 +230,8 @@ public class SettingsFragment extends Fragment {
                     () -> performAccountDeletion()
             );
         });
+
+        btnChangePasswordSettings.setOnClickListener(v -> showChangePasswordDialog());
     }
 
     private void performAccountDeletion() {
@@ -470,6 +473,42 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 Log.e("SUPABASE_STORAGE", "Hálózati hiba törléskor: " + t.getMessage());
+            }
+        });
+    }
+
+    private void showChangePasswordDialog() {
+        DialogUtils.showChangePasswordDialog(requireContext(), getLayoutInflater(), (newPassword, dialog) -> {
+            updatePasswordInSupabase(newPassword, dialog);
+        });
+    }
+
+    private void updatePasswordInSupabase(String newPassword, AlertDialog dialog) {
+        String token = prefs.getString("JWT_TOKEN", null);
+        if (token == null) return;
+
+        Map<String, String> body = new HashMap<>();
+        body.put("password", newPassword);
+
+        api.updatePassword("Bearer " + token, body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(requireContext(), getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_changing_password), Toast.LENGTH_SHORT).show();
+                        Log.e("AUTH", "Hiba a jelszó módosításakor: " + response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

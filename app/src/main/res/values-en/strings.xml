@@ -53,6 +53,12 @@
     <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.</string>
     <string name="error_deleting_account">An error occurred while deleting the account.</string>
     <string name="account_deleted_successfully">Account successfully deleted.</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="change_password">Change password</string>
+    <string name="save">Save</string>
+    <string name="password_changed_successfully">Password changed successfully!</string>
+    <string name="error_changing_password">Failed to change the password!</string>
 
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>

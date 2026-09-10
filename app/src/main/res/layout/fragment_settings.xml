@@ -176,6 +176,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/tilLanguageSettings" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChangePasswordSettings"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_password"
+                android:textColor="@color/red"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/swDarkModeSettings" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteAccountSettings"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
@@ -185,7 +197,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/swDarkModeSettings" />
+                app:layout_constraintTop_toBottomOf="@+id/btnChangePasswordSettings" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogoutSettings"

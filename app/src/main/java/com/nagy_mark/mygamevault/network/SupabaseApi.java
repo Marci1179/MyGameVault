@@ -22,6 +22,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -34,6 +35,9 @@ public interface SupabaseApi {
 
         @POST("/auth/v1/token?grant_type=refresh_token")
         Call<AuthResponse> refreshToken(@Body java.util.Map<String, String> body);
+
+        @PUT("auth/v1/user")
+        Call<Void> updatePassword(@Header("Authorization") String token, @Body Map<String, String> passwordData);
 
         @POST("rest/v1/My_Games")
         Call<Void> insertGame(@Body MyGame myGame);
