@@ -24,6 +24,10 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.utils.ValidationUtils;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RegisterFragment extends Fragment {
 
     private TextInputEditText etRegisterEmail, etRegisterPassword, etRegisterPasswordConfirm;
@@ -104,9 +108,9 @@ public class RegisterFragment extends Fragment {
 
             AuthRequest request = new AuthRequest(email, password);
 
-            api.register(request).enqueue(new retrofit2.Callback<AuthResponse>() {
+            api.register(request).enqueue(new Callback<AuthResponse>() {
                 @Override
-                public void onResponse(@NonNull retrofit2.Call<AuthResponse> call, @NonNull retrofit2.Response<AuthResponse> response) {
+                public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                     if (isAdded()) {
                         if (response.isSuccessful()) {
                             Toast.makeText(requireContext(), getString(R.string.success_registration), Toast.LENGTH_SHORT).show();
@@ -144,7 +148,7 @@ public class RegisterFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(@NonNull retrofit2.Call<AuthResponse> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
                     if (isAdded()) {
                         Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
                     }
