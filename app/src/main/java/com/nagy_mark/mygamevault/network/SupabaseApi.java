@@ -39,6 +39,12 @@ public interface SupabaseApi {
         @PUT("auth/v1/user")
         Call<Void> updatePassword(@Header("Authorization") String token, @Body Map<String, String> passwordData);
 
+        @POST("auth/v1/recover")
+        Call<Void> recoverPassword(@Body Map<String, String> body);
+
+        @POST("auth/v1/verify")
+        Call<AuthResponse> verifyOtp(@Body Map<String, String> body);
+
         @POST("rest/v1/My_Games")
         Call<Void> insertGame(@Body MyGame myGame);
 

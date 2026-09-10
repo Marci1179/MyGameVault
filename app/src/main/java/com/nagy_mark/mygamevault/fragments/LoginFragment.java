@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -24,11 +25,19 @@ import com.nagy_mark.mygamevault.models.AuthResponse;
 import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
+import com.nagy_mark.mygamevault.utils.DialogUtils;
 import com.nagy_mark.mygamevault.utils.ValidationUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
 
-    private TextView register;
+    private TextView register, tvForgotPassword;
     private TextInputLayout tilLoginEmail, tilLoginPassword;
     private TextInputEditText etLoginEmail, etLoginPassword;
     private Button btnLogin;
@@ -66,6 +75,7 @@ public class LoginFragment extends Fragment {
         }
 
         register = view.findViewById(R.id.tvRegister);
+        tvForgotPassword = view.findViewById(R.id.tvForgotPassword);
         tilLoginEmail = view.findViewById(R.id.tilLoginEmail);
         tilLoginPassword = view.findViewById(R.id.tilLoginPassword);
         etLoginEmail = view.findViewById(R.id.etLoginEmail);
@@ -74,6 +84,12 @@ public class LoginFragment extends Fragment {
 
         register.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment);
+        });
+
+        tvForgotPassword.setOnClickListener(v -> {
+            DialogUtils.showForgotPasswordDialog(requireContext(), getLayoutInflater(), (email, emailDialog) -> {
+                sendPasswordResetEmail(email, emailDialog);
+            });
         });
 
         btnLogin.setOnClickListener(v -> {
@@ -104,9 +120,9 @@ public class LoginFragment extends Fragment {
 
             AuthRequest request = new AuthRequest(email, password);
 
-            api.login(request).enqueue(new retrofit2.Callback<AuthResponse>() {
+            api.login(request).enqueue(new Callback<AuthResponse>() {
                 @Override
-                public void onResponse(@NonNull retrofit2.Call<AuthResponse> call, @NonNull retrofit2.Response<AuthResponse> response) {
+                public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                     if (isAdded()) {
                         if (response.isSuccessful() && response.body() != null) {
                             String accessToken = response.body().getAccessToken();
@@ -148,12 +164,107 @@ public class LoginFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(@NonNull retrofit2.Call<AuthResponse> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
                     if (isAdded()) {
                         Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+        });
+    }
+
+    private void sendPasswordResetEmail(String email, AlertDialog emailDialog) {
+        Map<String, String> body = new HashMap<>();
+        body.put("email", email);
+
+        api.recoverPassword(body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        emailDialog.dismiss();
+                        Toast.makeText(requireContext(), getString(R.string.success_password_reset_email), Toast.LENGTH_LONG).show();
+
+                        DialogUtils.showResetPasswordOtpDialog(requireContext(), getLayoutInflater(), (otpCode, newPassword, otpDialog) -> {
+                            verifyOtpAndChangePassword(email, otpCode, newPassword, otpDialog);
+                        });
+
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_password_reset), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void verifyOtpAndChangePassword(String email, String otpCode, String newPassword, AlertDialog otpDialog) {
+        Map<String, String> verifyBody = new HashMap<>();
+        verifyBody.put("type", "recovery");
+        verifyBody.put("email", email);
+        verifyBody.put("token", otpCode);
+
+        api.verifyOtp(verifyBody).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String tempAccessToken = response.body().getAccessToken();
+                        String refreshToken = response.body().getRefreshToken();
+                        String userId = response.body().getUser().getId();
+
+                        Map<String, String> updateBody = new HashMap<>();
+                        updateBody.put("password", newPassword);
+
+                        api.updatePassword("Bearer " + tempAccessToken, updateBody).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> updateResponse) {
+                                if (isAdded()) {
+                                    if (updateResponse.isSuccessful()) {
+                                        prefs.edit()
+                                                .putString("JWT_TOKEN", tempAccessToken)
+                                                .putString("REFRESH_TOKEN", refreshToken)
+                                                .putString("USER_ID", userId)
+                                                .apply();
+
+                                        otpDialog.dismiss();
+                                        Toast.makeText(requireContext(), getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show();
+
+                                        NavController navController = Navigation.findNavController(requireView());
+                                        if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() == R.id.loginFragment) {
+                                            navController.navigate(R.id.action_loginFragment_to_libraryFragment);
+                                        }
+                                    } else {
+                                        Toast.makeText(requireContext(), getString(R.string.error_changing_password), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                                if (isAdded()) {
+                                    Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.error_invalid_otp), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_network, t.getMessage()), Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 }

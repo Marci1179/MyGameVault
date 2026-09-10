@@ -38,4 +38,12 @@ public class ValidationUtils {
 
         return password.equals(confirmPassword);
     }
+
+    public static boolean isValidOtp(String otp) {
+        if (otp == null) {
+            return false;
+        }
+
+        return otp.matches("^[0-9]{8}$");
+    }
 }

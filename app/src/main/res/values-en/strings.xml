@@ -17,6 +17,16 @@
     <string name="error_invalid_credentials">Wrong email or password.</string>
     <string name="error_occurred">An error occurred: %s</string>
     <string name="error_unknown">An unknown error occurred.</string>
+    <string name="reset_password_instruction">Please enter the 8-digit code received in your email and your new password!</string>
+    <string name="otp_code_hint">8-digit code (OTP)</string>
+    <string name="error_otp_length">The code must be exactly 8 digits long!</string>
+    <string name="reset_password_title">Enter new password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password_instruction">Enter the email address associated with your account. We will send you a verification code to reset your password.</string>
+    <string name="send">Send</string>
+    <string name="success_password_reset_email">The 8-digit code has been sent to your email!</string>
+    <string name="error_password_reset">An error occurred while sending the email.</string>
+    <string name="error_invalid_otp">Invalid or expired verification code!</string>
 
     <string name="register">Sign Up</string>
     <string name="password_confirm">Confirm password</string>

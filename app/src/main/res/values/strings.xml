@@ -16,6 +16,16 @@
     <string name="error_invalid_credentials">Hibás e-mail cím vagy jelszó.</string>
     <string name="error_occurred">Hiba történt: %s</string>
     <string name="error_unknown">Ismeretlen hiba történt.</string>
+    <string name="reset_password_instruction">Add meg az emailben kapott 8 jegyű kódot, valamint az új jelszavadat!</string>
+    <string name="otp_code_hint">8 jegyű kód (OTP)</string>
+    <string name="error_otp_length">A kódnak 8 számjegyből kell állnia!</string>
+    <string name="reset_password_title">Új jelszó megadása</string>
+    <string name="forgot_password">Elfelejtetted a jelszavad?</string>
+    <string name="forgot_password_instruction">Add meg a fiókodhoz tartozó email címet. Küldeni fogunk egy ellenőrző kódot a jelszavad visszaállításához.</string>
+    <string name="send">Küldés</string>
+    <string name="success_password_reset_email">A 8 jegyű kódot elküldtük az email címedre!</string>
+    <string name="error_password_reset">Hiba történt az email küldése közben.</string>
+    <string name="error_invalid_otp">Hibás vagy lejárt ellenőrző kód!</string>
 
     <string name="register">Regisztráció</string>
     <string name="password_confirm">Jelszó újra</string>

@@ -23,7 +23,6 @@ import android.widget.Filter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
@@ -36,7 +35,6 @@ import com.nagy_mark.mygamevault.utils.DialogUtils;
 import com.nagy_mark.mygamevault.utils.GameListUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
