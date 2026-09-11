@@ -1,7 +1,5 @@
 package com.nagy_mark.mygamevault.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +24,7 @@ import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.utils.DialogUtils;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 import com.nagy_mark.mygamevault.utils.ValidationUtils;
 
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class LoginFragment extends Fragment {
     private Button btnLogin;
 
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -61,11 +60,9 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
-        String savedToken = prefs.getString("JWT_TOKEN", null);
-
-        if (savedToken != null && !savedToken.isEmpty()) {
+        if (sessionManager.isLoggedIn()) {
             NavController navController = Navigation.findNavController(view);
 
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() == R.id.loginFragment) {
@@ -129,11 +126,7 @@ public class LoginFragment extends Fragment {
                             String refreshToken = response.body().getRefreshToken();
                             String userId = response.body().getUser().getId();
 
-                            prefs.edit()
-                                    .putString("JWT_TOKEN", accessToken)
-                                    .putString("REFRESH_TOKEN", refreshToken)
-                                    .putString("USER_ID", userId)
-                                    .apply();
+                            sessionManager.saveSession(accessToken, refreshToken, userId);
 
                             Toast.makeText(requireContext(), getString(R.string.success_login), Toast.LENGTH_SHORT).show();
 
@@ -188,7 +181,6 @@ public class LoginFragment extends Fragment {
                         DialogUtils.showResetPasswordOtpDialog(requireContext(), getLayoutInflater(), (otpCode, newPassword, otpDialog) -> {
                             verifyOtpAndChangePassword(email, otpCode, newPassword, otpDialog);
                         });
-
                     } else {
                         Toast.makeText(requireContext(), getString(R.string.error_password_reset), Toast.LENGTH_SHORT).show();
                     }
@@ -227,11 +219,7 @@ public class LoginFragment extends Fragment {
                             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> updateResponse) {
                                 if (isAdded()) {
                                     if (updateResponse.isSuccessful()) {
-                                        prefs.edit()
-                                                .putString("JWT_TOKEN", tempAccessToken)
-                                                .putString("REFRESH_TOKEN", refreshToken)
-                                                .putString("USER_ID", userId)
-                                                .apply();
+                                        sessionManager.saveSession(tempAccessToken, refreshToken, userId);
 
                                         otpDialog.dismiss();
                                         Toast.makeText(requireContext(), getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show();

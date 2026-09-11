@@ -1,7 +1,5 @@
 package com.nagy_mark.mygamevault.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
@@ -37,6 +35,7 @@ import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.FormatUtils;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +61,7 @@ public class LibraryDetailViewFragment extends Fragment {
 
     private SavedGameModel currentGame;
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     private final int[] statusIds = {1, 2, 3};
     private String[] statusOptions;
@@ -82,7 +81,7 @@ public class LibraryDetailViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         ivGameCoverLibraryDetail = view.findViewById(R.id.ivGameCoverLibraryDetail);
         tvGameTitleLibraryDetail = view.findViewById(R.id.tvGameTitleLibraryDetail);
@@ -337,6 +336,6 @@ public class LibraryDetailViewFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        return prefs.getString("USER_ID", null);
+        return sessionManager.getUserId();
     }
 }

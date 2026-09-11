@@ -1,10 +1,10 @@
 package com.nagy_mark.mygamevault.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.nagy_mark.mygamevault.BuildConfig;
 import com.nagy_mark.mygamevault.models.TwitchTokenResponse;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.io.IOException;
 
@@ -20,17 +20,17 @@ public class IgdbApiClient {
 
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
-            SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+            SessionManager sessionManager = new SessionManager(context);
 
             Interceptor authInterceptor = new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
-                    String token = prefs.getString("TWITCH_TOKEN", null);
+                    String token = sessionManager.getTwitchToken();
                     
                     if (token == null) {
                         token = fetchNewToken();
                         if (token != null) {
-                            prefs.edit().putString("TWITCH_TOKEN", token).apply();
+                            sessionManager.saveTwitchToken(token);
                         }
                     }
 
@@ -44,7 +44,7 @@ public class IgdbApiClient {
 
                         token = fetchNewToken();
                         if (token != null) {
-                            prefs.edit().putString("TWITCH_TOKEN", token).apply();
+                            sessionManager.saveTwitchToken(token);
 
                             Request newRequest = buildRequest(originalRequest, token);
                             return chain.proceed(newRequest);

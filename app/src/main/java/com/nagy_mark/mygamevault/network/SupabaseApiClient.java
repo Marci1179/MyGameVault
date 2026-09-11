@@ -1,10 +1,10 @@
 package com.nagy_mark.mygamevault.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.nagy_mark.mygamevault.BuildConfig;
 import com.nagy_mark.mygamevault.models.AuthResponse;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class SupabaseApiClient {
 
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
-            SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+            SessionManager sessionManager = new SessionManager(context);
 
             OkHttpClient authClient = new OkHttpClient.Builder()
                     .addInterceptor(chain -> {
@@ -45,7 +45,7 @@ public class SupabaseApiClient {
 
             Interceptor headerInterceptor = chain -> {
                 Request originalRequest = chain.request();
-                String savedToken = prefs.getString("JWT_TOKEN", null);
+                String savedToken = sessionManager.getJwtToken();
 
                 Request.Builder builder = originalRequest.newBuilder()
                         .header("apikey", BuildConfig.SUPABASE_API_KEY)
@@ -63,7 +63,7 @@ public class SupabaseApiClient {
                     return null;
                 }
 
-                String refreshToken = prefs.getString("REFRESH_TOKEN", null);
+                String refreshToken = sessionManager.getRefreshToken();
 
                 if (refreshToken == null) {
                     return null;
@@ -81,16 +81,18 @@ public class SupabaseApiClient {
                         String newAccessToken = authResponse.getAccessToken();
                         String newRefreshToken = authResponse.getRefreshToken();
 
-                        prefs.edit()
-                                .putString("JWT_TOKEN", newAccessToken)
-                                .putString("REFRESH_TOKEN", newRefreshToken)
-                                .apply();
+                        String userId = sessionManager.getUserId();
+                        if (authResponse.getUser() != null && authResponse.getUser().getId() != null) {
+                            userId = authResponse.getUser().getId();
+                        }
+
+                        sessionManager.saveSession(newAccessToken, newRefreshToken, userId);
 
                         return response.request().newBuilder()
                                 .header("Authorization", "Bearer " + newAccessToken)
                                 .build();
                     } else {
-                        prefs.edit().clear().apply();
+                        sessionManager.clearSession();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -1,7 +1,6 @@
 package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +22,6 @@ import android.widget.Filter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.WishlistAdapter;
@@ -40,9 +38,9 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.CheapSharkUtils;
 import com.nagy_mark.mygamevault.utils.DialogUtils;
 import com.nagy_mark.mygamevault.utils.GameListUtils;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -59,7 +57,7 @@ public class WishlistFragment extends Fragment {
 
     private SupabaseApi supabaseApi;
     private CheapSharkApi cheapSharkApi;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     private List<SavedGameModel> allGames = new ArrayList<>();
     private List<SavedGameModel> displayedGames = new ArrayList<>();
@@ -87,7 +85,7 @@ public class WishlistFragment extends Fragment {
 
         supabaseApi = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         rvWishlist = view.findViewById(R.id.rvWishlist);
         actvSortWishlist = view.findViewById(R.id.actvSortWishlist);
@@ -199,7 +197,7 @@ public class WishlistFragment extends Fragment {
     }
 
     private void loadWishlistGames() {
-        String currentUserId = prefs.getString("USER_ID", null);
+        String currentUserId = sessionManager.getUserId();
 
         if (currentUserId == null) return;
 

@@ -26,6 +26,7 @@ import com.nagy_mark.mygamevault.models.FeedModel;
 import com.nagy_mark.mygamevault.models.FollowRelationship;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class FeedFragment extends Fragment {
 
     private FeedAdapter feedAdapter;
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -60,7 +61,7 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         rvFeed = view.findViewById(R.id.rvFeed);
         tvEmptyFeed = view.findViewById(R.id.tvEmptyFeed);
@@ -95,7 +96,7 @@ public class FeedFragment extends Fragment {
             swipeRefreshFeed.setRefreshing(true);
         }
 
-        String currentUserId = prefs.getString("USER_ID", null);
+        String currentUserId = sessionManager.getUserId();
 
         if (currentUserId == null) {
             if (swipeRefreshFeed != null) swipeRefreshFeed.setRefreshing(false);

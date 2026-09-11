@@ -44,6 +44,7 @@ import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.DialogUtils;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ public class SettingsFragment extends Fragment {
 
     private SupabaseApi api;
     private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -104,6 +106,7 @@ public class SettingsFragment extends Fragment {
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         btnLogoutSettings = view.findViewById(R.id.btnLogoutSettings);
         btnSaveProfileSettings = view.findViewById(R.id.btnSaveProfileSettings);
@@ -116,7 +119,7 @@ public class SettingsFragment extends Fragment {
         btnDeleteAccountSettings = view.findViewById(R.id.btnDeleteAccountSettings);
         btnChangePasswordSettings = view.findViewById(R.id.btnChangePasswordSettings);
 
-        currentUserId = prefs.getString("USER_ID", null);
+        currentUserId = sessionManager.getUserId();
 
         loadProfile();
 
@@ -206,7 +209,7 @@ public class SettingsFragment extends Fragment {
                     getString(R.string.yes),
                     getString(R.string.cancel),
                     () -> {
-                        prefs.edit().remove("JWT_TOKEN").apply();
+                        sessionManager.clearSession();
 
                         Context appContext = requireContext();
                         Executors.newSingleThreadExecutor().execute(() -> {
@@ -267,7 +270,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void completeLogoutAndDelete() {
-        prefs.edit().remove("JWT_TOKEN").remove("USER_ID").apply();
+        sessionManager.clearSession();
 
         Context appContext = requireContext();
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -484,7 +487,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void updatePasswordInSupabase(String newPassword, AlertDialog dialog) {
-        String token = prefs.getString("JWT_TOKEN", null);
+        String token = sessionManager.getJwtToken();
         if (token == null) return;
 
         Map<String, String> body = new HashMap<>();

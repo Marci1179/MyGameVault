@@ -1,7 +1,5 @@
 package com.nagy_mark.mygamevault.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,6 +31,7 @@ import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.DialogUtils;
 import com.nagy_mark.mygamevault.utils.GameListUtils;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public class LibraryFragment extends Fragment {
     private SwitchMaterial swFavoritesFilterLibrary;
 
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     private List<SavedGameModel> allGames = new ArrayList<>();
     private List<SavedGameModel> displayedGames = new ArrayList<>();
@@ -79,7 +78,7 @@ public class LibraryFragment extends Fragment {
         }
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         rvLibrary = view.findViewById(R.id.rvLibrary);
         actvSortLibrary = view.findViewById(R.id.actvSortLibrary);
@@ -344,6 +343,6 @@ public class LibraryFragment extends Fragment {
     }
 
     private String getCurrentUserId() {
-        return prefs.getString("USER_ID", null);
+        return sessionManager.getUserId();
     }
 }

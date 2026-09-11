@@ -1,7 +1,6 @@
 package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -32,6 +31,7 @@ import com.nagy_mark.mygamevault.network.IgdbApi;
 import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class SearchFragment extends Fragment {
 
     private SupabaseApi supabaseApi;
     private IgdbApi igdbApi;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -76,7 +76,7 @@ public class SearchFragment extends Fragment {
 
         supabaseApi = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
         igdbApi = IgdbApiClient.getClient(requireContext()).create(IgdbApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         etSearch = view.findViewById(R.id.etSearch);
         rvSearchResults = view.findViewById(R.id.rvSearch);
@@ -298,10 +298,6 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    private String getCurrentUserId() {
-        return prefs.getString("USER_ID", null);
-    }
-
     private void logActivityToFeed(String userId, String actionType, String gameName) {
         FeedActivityRequest request = new FeedActivityRequest(userId, actionType, gameName);
 
@@ -318,5 +314,9 @@ public class SearchFragment extends Fragment {
                 Log.e("FEED_ERROR", "Hálózati hiba a feed naplózásakor", t);
             }
         });
+    }
+
+    private String getCurrentUserId() {
+        return sessionManager.getUserId();
     }
 }

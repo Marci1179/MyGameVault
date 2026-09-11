@@ -1,7 +1,6 @@
 package com.nagy_mark.mygamevault.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,6 +29,7 @@ import com.nagy_mark.mygamevault.models.FollowRelationship;
 import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ public class UsersFragment extends Fragment {
     private UsersAdapter usersAdapter;
 
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
 
     private final List<ProfileModel> displayedUsers = new ArrayList<>();
     private final Set<String> followingIds = new HashSet<>();
@@ -78,7 +78,7 @@ public class UsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         rvUsers = view.findViewById(R.id.rvUsers);
         pbUsers = view.findViewById(R.id.pbUsers);
@@ -98,10 +98,6 @@ public class UsersFragment extends Fragment {
     public void onResume() {
         super.onResume();
         fetchFollowingIdsAndLoadUsers();
-    }
-
-    private String getCurrentUserId() {
-        return prefs.getString("USER_ID", null);
     }
 
     private void setupRecyclerView() {
@@ -421,5 +417,9 @@ public class UsersFragment extends Fragment {
             }
         }
         return filtered;
+    }
+
+    private String getCurrentUserId() {
+        return sessionManager.getUserId();
     }
 }

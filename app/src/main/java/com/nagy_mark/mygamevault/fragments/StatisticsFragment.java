@@ -32,6 +32,7 @@ import com.nagy_mark.mygamevault.models.FollowRelationship;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +50,7 @@ public class StatisticsFragment extends Fragment {
     private BarChart barChartStatistics;
 
     private SupabaseApi api;
-    private SharedPreferences prefs;
+    private SessionManager sessionManager;
     private String currentUserId;
 
     private int followersCount = 0;
@@ -70,7 +71,7 @@ public class StatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         api = SupabaseApiClient.getClient(requireContext()).create(SupabaseApi.class);
-        prefs = requireActivity().getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         tvOwnedStatistics = view.findViewById(R.id.tvOwnedStatistics);
         tvInProgressStatistics = view.findViewById(R.id.tvInProgressStatistics);
@@ -83,7 +84,7 @@ public class StatisticsFragment extends Fragment {
         pbCompletionRateStatistics = view.findViewById(R.id.pbCompletionRateStatistics);
         barChartStatistics = view.findViewById(R.id.barChartStatistics);
 
-        currentUserId = prefs.getString("USER_ID", null);
+        currentUserId = sessionManager.getUserId();
 
         setupChart();
 

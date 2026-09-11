@@ -3,7 +3,6 @@ package com.nagy_mark.mygamevault.workers;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -27,6 +26,7 @@ import com.nagy_mark.mygamevault.network.CheapSharkApi;
 import com.nagy_mark.mygamevault.network.CheapSharkApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.util.List;
 
@@ -46,8 +46,8 @@ public class PriceCheckWorker extends Worker {
             WishlistPriceDao priceDao = AppDatabase.getDatabase(context).wishlistPriceDao();
             CheapSharkApi cheapSharkApi = CheapSharkApiClient.getClient().create(CheapSharkApi.class);
 
-            SharedPreferences prefs = context.getSharedPreferences("MyGameVaultPrefs", Context.MODE_PRIVATE);
-            String currentUserId = prefs.getString("USER_ID", null);
+            SessionManager sessionManager = new SessionManager(context);
+            String currentUserId = sessionManager.getUserId();
 
             if (currentUserId == null) {
                 return Result.failure();
