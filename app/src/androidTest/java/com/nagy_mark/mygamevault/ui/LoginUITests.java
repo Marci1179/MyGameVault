@@ -99,4 +99,13 @@ public class LoginUITests {
         Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
+
+    @Test
+    public void testNavigationToRegister() {
+        Espresso.onView(ViewMatchers.withId(R.id.tvRegister))
+                .perform(ViewActions.click());
+
+        Espresso.onView(ViewMatchers.withId(R.id.btnRegister))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
 }
