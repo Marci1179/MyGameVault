@@ -92,13 +92,25 @@ public class DialogUtils {
                 tilNewPasswordChangePassword.setError(null);
                 tilConfirmNewPasswordChangePassword.setError(null);
 
-                if (!ValidationUtils.isPasswordStrong(newPassword)) {
+                boolean hasError = false;
+
+                if (newPassword.isEmpty()) {
+                    tilNewPasswordChangePassword.setError(context.getString(R.string.error_password_required));
+                    hasError = true;
+                } else if (!ValidationUtils.isPasswordStrong(newPassword)) {
                     tilNewPasswordChangePassword.setError(context.getString(R.string.error_weak_password));
-                    return;
+                    hasError = true;
                 }
 
-                if (!ValidationUtils.isPasswordMatch(newPassword, confirmPassword)) {
+                if (confirmPassword.isEmpty()) {
+                    tilConfirmNewPasswordChangePassword.setError(context.getString(R.string.error_password_confirm_required));
+                    hasError = true;
+                } else if (!ValidationUtils.isPasswordMatch(newPassword, confirmPassword)) {
                     tilConfirmNewPasswordChangePassword.setError(context.getString(R.string.error_passwords_mismatch));
+                    hasError = true;
+                }
+
+                if (hasError) {
                     return;
                 }
 
@@ -135,8 +147,17 @@ public class DialogUtils {
 
                 tilForgotEmailDialogForgotPassword.setError(null);
 
-                if (!ValidationUtils.isValidEmail(email)) {
+                boolean hasError = false;
+
+                if (email.isEmpty()) {
+                    tilForgotEmailDialogForgotPassword.setError(context.getString(R.string.error_email_required));
+                    hasError = true;
+                } else if (!ValidationUtils.isValidEmail(email)) {
                     tilForgotEmailDialogForgotPassword.setError(context.getString(R.string.error_invalid_email));
+                    hasError = true;
+                }
+
+                if (hasError) {
                     return;
                 }
 
@@ -186,17 +207,32 @@ public class DialogUtils {
 
                 boolean hasError = false;
 
-                if (!ValidationUtils.isValidOtp(otp)) {
+                if (otp.isEmpty()) {
+                    tilOtpCodeDialogResetPassword.setError(context.getString(R.string.error_otp_required));
+                    hasError = true;
+                } else if (!ValidationUtils.isValidOtp(otp)) {
                     tilOtpCodeDialogResetPassword.setError(context.getString(R.string.error_otp_length));
                     hasError = true;
                 }
 
-                if (!ValidationUtils.isPasswordStrong(newPass)) {
+                if (newPass.isEmpty()) {
+                    tilResetNewPasswordDialogResetPassword.setError(context.getString(R.string.error_password_required));
+                    hasError = true;
+                } else if (!ValidationUtils.isPasswordStrong(newPass)) {
                     tilResetNewPasswordDialogResetPassword.setError(context.getString(R.string.error_weak_password));
+                    hasError = true;
+                }
+
+                if (confirmPass.isEmpty()) {
+                    tilResetConfirmPasswordDialogResetPassword.setError(context.getString(R.string.error_password_confirm_required));
                     hasError = true;
                 } else if (!ValidationUtils.isPasswordMatch(newPass, confirmPass)) {
                     tilResetConfirmPasswordDialogResetPassword.setError(context.getString(R.string.error_passwords_mismatch));
                     hasError = true;
+                }
+
+                if (hasError) {
+                    return;
                 }
 
                 if (!hasError && listener != null) {
