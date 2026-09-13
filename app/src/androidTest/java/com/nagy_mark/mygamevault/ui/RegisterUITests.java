@@ -1,5 +1,6 @@
 package com.nagy_mark.mygamevault.ui;
 
+import android.Manifest;
 import android.content.Context;
 
 import androidx.test.core.app.ActivityScenario;
@@ -19,7 +20,7 @@ import org.junit.Test;
 public class RegisterUITests {
 
     @Rule
-    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS);
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
 
     @Before
     public void setUp() {
@@ -70,13 +71,13 @@ public class RegisterUITests {
     @Test
     public void testEmailAlredyRegistered() throws InterruptedException {
         Espresso.onView(ViewMatchers.withId(R.id.etRegisterEmail))
-                .perform(ViewActions.replaceText("teszt1@teszt.hu"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("teszt2@teszt.hu"), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.etRegisterPassword))
-                .perform(ViewActions.replaceText("Teszt!01"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("Teszt!02"), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.etRegisterPasswordConfirm))
-                .perform(ViewActions.replaceText("Teszt!01"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("Teszt!02"), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.btnRegister))
                 .perform(ViewActions.click());

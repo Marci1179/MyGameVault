@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.view.View;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.UiController;
@@ -19,19 +18,13 @@ import androidx.test.rule.GrantPermissionRule;
 
 import com.nagy_mark.mygamevault.MainActivity;
 import com.nagy_mark.mygamevault.R;
-import com.nagy_mark.mygamevault.adapters.LibraryAdapter;
-import com.nagy_mark.mygamevault.models.SavedGameModel;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class LibraryUITests {
-
+public class WishlistUITests {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
 
@@ -83,76 +76,39 @@ public class LibraryUITests {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {}
+
+        Espresso.onView(ViewMatchers.withId(R.id.wishlistFragment))
+                .perform(ViewActions.click());
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {}
     }
 
     @Test
-    public void testLibraryItemsAreDisplayed() {
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+    public void testWishlistItemsAreDisplayed() {
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.scrollToPosition(0))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("A Way Out"))));
-    }
-
-    @Test
-    public void testFavoriteFilterFunctionality() {
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        0,
-                        clickChildViewWithId(R.id.btnFavoriteLibrary)
-                ));
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {}
-
-        Espresso.onView(ViewMatchers.withId(R.id.swFavoritesFilterLibrary))
-                .perform(ViewActions.click());
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {}
-
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
-                .perform(RecyclerViewActions.scrollToPosition(0))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("A Way Out"))));
-
-        Espresso.onView(ViewMatchers.withText("Far Cry 3"))
-                .check(ViewAssertions.doesNotExist());
-
-        Espresso.onView(ViewMatchers.withId(R.id.swFavoritesFilterLibrary))
-                .perform(ViewActions.click());
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {}
-
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        0,
-                        clickChildViewWithId(R.id.btnFavoriteLibrary)
-                ));
-
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {}
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("Grand Theft Auto VI"))));
     }
 
     @Test
     public void testSearchFunctionality() {
-        Espresso.onView(ViewMatchers.withId(R.id.etSearchLibrary))
-                .perform(ViewActions.typeText("Far Cry 3"), ViewActions.closeSoftKeyboard());
+        Espresso.onView(ViewMatchers.withId(R.id.etSearchWishlist))
+                .perform(ViewActions.typeText("Grand Theft Auto VI"), ViewActions.closeSoftKeyboard());
 
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {}
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.scrollToPosition(0))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("Far Cry 3"))));
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("Grand Theft Auto VI"))));
 
-        Espresso.onView(ViewMatchers.withText("A Way Out"))
+        Espresso.onView(ViewMatchers.withText("PowerWash Simulator 2"))
                 .check(ViewAssertions.doesNotExist());
     }
 
@@ -162,7 +118,7 @@ public class LibraryUITests {
         String[] sortOptions = context.getResources().getStringArray(R.array.sort_options);
         String nameDesc = sortOptions[1];
 
-        Espresso.onView(ViewMatchers.withId(R.id.actvSortLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.actvSortWishlist))
                 .perform(ViewActions.click());
 
         try {
@@ -177,34 +133,34 @@ public class LibraryUITests {
             Thread.sleep(500);
         } catch (InterruptedException e) {}
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.scrollToPosition(0))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("It Takes Two"))));
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("PowerWash Simulator 2"))));
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.scrollToPosition(2))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("A Way Out"))));
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("Grand Theft Auto VI"))));
     }
 
     @Test
     public void testItemClickNavigatesToDetail() {
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
 
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {}
 
-        Espresso.onView(ViewMatchers.withId(R.id.tvGameTitleLibraryDetail))
+        Espresso.onView(ViewMatchers.withId(R.id.tvGameTitleWishlistDetail))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
     @Test
     public void testDeleteDialogAppearsAndCancel() {
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
-                        clickChildViewWithId(R.id.btnDeleteLibrary)
+                        clickChildViewWithId(R.id.btnDeleteWishlist)
                 ));
 
         try {
@@ -221,8 +177,8 @@ public class LibraryUITests {
             Thread.sleep(500);
         } catch (InterruptedException e) {}
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+        Espresso.onView(ViewMatchers.withId(R.id.rvWishlist))
                 .perform(RecyclerViewActions.scrollToPosition(0))
-                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("A Way Out"))));
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("Grand Theft Auto VI"))));
     }
 }

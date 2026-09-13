@@ -1,5 +1,6 @@
 package com.nagy_mark.mygamevault.ui;
 
+import android.Manifest;
 import android.content.Context;
 
 import androidx.test.core.app.ActivityScenario;
@@ -25,7 +26,7 @@ import org.junit.runner.RunWith;
 public class LoginUITests {
 
     @Rule
-    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS);
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
 
     @Before
     public void setUp() {
@@ -86,10 +87,10 @@ public class LoginUITests {
     @Test
     public void testSuccessfulLoginFlow() throws InterruptedException {
         Espresso.onView(ViewMatchers.withId(R.id.etLoginEmail))
-                .perform(ViewActions.replaceText("teszt1@teszt.hu"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("teszt2@teszt.hu"), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.etLoginPassword))
-                .perform(ViewActions.replaceText("teszt1"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("teszt2"), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.btnLogin))
                 .perform(ViewActions.click());
