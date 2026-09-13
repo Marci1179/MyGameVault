@@ -63,6 +63,12 @@ public interface SupabaseApi {
         @DELETE("rest/v1/My_Games")
         Call<Void> deleteGame(@Query("id") String idEq);
 
+        @DELETE("rest/v1/My_Games")
+        Call<Void> deleteGameByName(
+                @Query("game_name") String gameName,
+                @Query("user_id") String userId
+        );
+
         @PATCH("rest/v1/My_Games")
         Call<Void> updateGameDetails(@Query("id") String idQuery, @Body Map<String, Object> updates);
 
