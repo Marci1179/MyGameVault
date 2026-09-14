@@ -38,14 +38,14 @@ public class GameListUtils {
             String name1 = game1.getGameName() != null ? game1.getGameName() : "";
             String name2 = game2.getGameName() != null ? game2.getGameName() : "";
 
-            String year1 = game1.getReleaseYear() != null ? game1.getReleaseYear() : "";
-            String year2 = game2.getReleaseYear() != null ? game2.getReleaseYear() : "";
+            String date1 = game1.getReleaseDate() != null ? game1.getReleaseDate() : "";
+            String date2 = game2.getReleaseDate() != null ? game2.getReleaseDate() : "";
 
             switch (sortPosition) {
                 case 0: return name1.compareToIgnoreCase(name2); // Név A-Z
                 case 1: return name2.compareToIgnoreCase(name1); // Név Z-A
-                case 2: return year2.compareTo(year1);           // Év csökkenő (Legújabb)
-                case 3: return year1.compareTo(year2);           // Év növekvő (Legrégebbi)
+                case 2: return date2.compareTo(date1);           // Dátum csökkenő (Legújabb)
+                case 3: return date1.compareTo(date2);           // Dátum növekvő (Legrégebbi)
                 default: return 0;
             }
         });

@@ -57,7 +57,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
         holder.tvGameTitleLibrary.setText(game.getGameName() != null ? game.getGameName() : context.getString(R.string.unknown_game));
 
         String yearOnly = FormatUtils.extractYear(
-                game.getReleaseYear(),
+                game.getReleaseDate(),
                 context.getString(R.string.unknown_year)
         );
         holder.tvGameYearLibrary.setText(context.getString(R.string.format_release_year, yearOnly));

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class SavedGameModel implements Serializable {
     private int id;
     private String game_name;
-    private String release_year;
+    private String release_date;
     private String publisher;
     private String cover;
     private int status_id;
@@ -23,8 +23,8 @@ public class SavedGameModel implements Serializable {
         return game_name;
     }
 
-    public String getReleaseYear() {
-        return release_year;
+    public String getReleaseDate() {
+        return release_date;
     }
 
     public String getPublisher() {
@@ -67,8 +67,8 @@ public class SavedGameModel implements Serializable {
         this.game_name = gameName;
     }
 
-    public void setReleaseYear(String releaseYear) {
-        this.release_year = releaseYear;
+    public void setReleaseDate(String release_date) {
+        this.release_date = release_date;
     }
 
     public void setPublisher(String publisher) {

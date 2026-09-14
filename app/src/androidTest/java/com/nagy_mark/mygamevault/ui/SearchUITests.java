@@ -69,8 +69,10 @@ public class SearchUITests {
 
             Espresso.onView(ViewMatchers.withId(R.id.etLoginEmail))
                     .perform(ViewActions.typeText("teszt2@teszt.hu"), ViewActions.closeSoftKeyboard());
+
             Espresso.onView(ViewMatchers.withId(R.id.etLoginPassword))
                     .perform(ViewActions.typeText("teszt2"), ViewActions.closeSoftKeyboard());
+
             Espresso.onView(ViewMatchers.withId(R.id.btnLogin))
                     .perform(ViewActions.click());
 

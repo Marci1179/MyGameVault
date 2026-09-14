@@ -21,17 +21,17 @@ public class GameListUtilsTest {
 
         SavedGameModel game1 = new SavedGameModel();
         game1.setGameName("A Way Out");
-        game1.setReleaseYear("2018");
+        game1.setReleaseDate("2018-03-23");
         game1.setFavorite(true);
 
         SavedGameModel game2 = new SavedGameModel();
         game2.setGameName("Far Cry 3");
-        game2.setReleaseYear("2012");
+        game2.setReleaseDate("2012-11-29");
         game2.setFavorite(false);
 
         SavedGameModel game3 = new SavedGameModel();
         game3.setGameName("It Takes Two");
-        game3.setReleaseYear("2021");
+        game3.setReleaseDate("2021-03-26");
         game3.setFavorite(true);
 
         SavedGameModel game4 = new SavedGameModel();
@@ -90,22 +90,22 @@ public class GameListUtilsTest {
     }
 
     @Test
-    public void testSortGames_YearDescending() {
+    public void testSortGames_DateDescending() {
         GameListUtils.sortGames(testGames, 2);
 
-        assertEquals("2021", testGames.get(0).getReleaseYear());
-        assertEquals("2018", testGames.get(1).getReleaseYear());
-        assertEquals("2012", testGames.get(2).getReleaseYear());
-        assertNull(testGames.get(3).getReleaseYear());
+        assertEquals("2021-03-26", testGames.get(0).getReleaseDate());
+        assertEquals("2018-03-23", testGames.get(1).getReleaseDate());
+        assertEquals("2012-11-29", testGames.get(2).getReleaseDate());
+        assertNull(testGames.get(3).getReleaseDate());
     }
 
     @Test
-    public void testSortGames_YearAscending() {
+    public void testSortGames_DateAscending() {
         GameListUtils.sortGames(testGames, 3);
 
-        assertNull(testGames.get(0).getReleaseYear());
-        assertEquals("2012", testGames.get(1).getReleaseYear());
-        assertEquals("2018", testGames.get(2).getReleaseYear());
-        assertEquals("2021", testGames.get(3).getReleaseYear());
+        assertNull(testGames.get(0).getReleaseDate());
+        assertEquals("2012-11-29", testGames.get(1).getReleaseDate());
+        assertEquals("2018-03-23", testGames.get(2).getReleaseDate());
+        assertEquals("2021-03-26", testGames.get(3).getReleaseDate());
     }
 }

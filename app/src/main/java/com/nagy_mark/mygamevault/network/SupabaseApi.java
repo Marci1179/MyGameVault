@@ -45,34 +45,34 @@ public interface SupabaseApi {
         @POST("auth/v1/verify")
         Call<AuthResponse> verifyOtp(@Body Map<String, String> body);
 
-        @POST("rest/v1/My_Games")
+        @POST("rest/v1/games")
         Call<Void> insertGame(@Body MyGame myGame);
 
-        @GET("rest/v1/My_Games")
+        @GET("rest/v1/games")
         Call<List<SavedGameModel>> getUserSavedGames(
                 @Query("user_id") String userIdFilter,
                 @Query("select") String selectFields
         );
 
-        @GET("rest/v1/My_Games")
+        @GET("rest/v1/games")
         Call<List<SavedGameModel>> getGamesByStatus(
                 @Query("user_id") String userIdFilter,
                 @Query("status_id") String statusFilter
         );
 
-        @DELETE("rest/v1/My_Games")
+        @DELETE("rest/v1/games")
         Call<Void> deleteGame(@Query("id") String idEq);
 
-        @DELETE("rest/v1/My_Games")
+        @DELETE("rest/v1/games")
         Call<Void> deleteGameByName(
                 @Query("game_name") String gameName,
                 @Query("user_id") String userId
         );
 
-        @PATCH("rest/v1/My_Games")
+        @PATCH("rest/v1/games")
         Call<Void> updateGameDetails(@Query("id") String idQuery, @Body Map<String, Object> updates);
 
-        @PATCH("rest/v1/My_Games")
+        @PATCH("rest/v1/games")
         Call<Void> updateFavoriteStatus(@Query("id") String idQuery, @Body java.util.Map<String, Boolean> body);
 
         @GET("rest/v1/profiles")

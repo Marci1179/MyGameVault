@@ -31,6 +31,7 @@ import com.nagy_mark.mygamevault.network.IgdbApi;
 import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
+import com.nagy_mark.mygamevault.utils.FormatUtils;
 import com.nagy_mark.mygamevault.utils.SessionManager;
 
 import java.text.SimpleDateFormat;
@@ -241,13 +242,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void saveGameToSupabase(Game game, int statusId) {
-        String releaseDateFormatted = null;
-        if (game.getFirstReleaseDate() != null) {
-            Date date = new Date(game.getFirstReleaseDate() * 1000);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            releaseDateFormatted = sdf.format(date);
-        }
-
+        String releaseDateFormatted = FormatUtils.formatIgdbDate(game.getFirstReleaseDate());
         String coverId = (game.getCover() != null) ? game.getCover().getImageId() : null;
         String currentUserId = getCurrentUserId();
 

@@ -84,7 +84,7 @@ public class WishlistDetailViewFragment extends Fragment {
         tvGameTitleWishlistDetail.setText(gameName);
 
         String yearOnly = FormatUtils.extractYear(
-                currentGame.getReleaseYear(),
+                currentGame.getReleaseDate(),
                 getString(R.string.unknown_year)
         );
         tvGameYearWishlistDetail.setText(getString(R.string.format_release_year, yearOnly));

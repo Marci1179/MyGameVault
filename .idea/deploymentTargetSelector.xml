@@ -8,9 +8,6 @@
       <SelectionState runConfigName="LibraryUITests">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSortFunctionality()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="testItemClickNavigatesToDetail()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

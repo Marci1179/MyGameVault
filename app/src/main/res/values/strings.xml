@@ -167,8 +167,8 @@
     <string-array name="sort_options">
         <item>Név (A-Z)</item>
         <item>Név (Z-A)</item>
-        <item>Megjelenési év (Legújabb)</item>
-        <item>Megjelenési év (Legrégebbi)</item>
+        <item>Kiadási év (Legújabb)</item>
+        <item>Kiadási év (Legrégebbi)</item>
     </string-array>
 
     <string-array name="short_months">

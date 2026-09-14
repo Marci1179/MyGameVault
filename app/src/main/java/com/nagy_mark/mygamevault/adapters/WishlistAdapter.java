@@ -61,7 +61,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         holder.tvGameTitleWishlist.setText(game.getGameName() != null ? game.getGameName() : unknownGame);
 
         String yearOnly = FormatUtils.extractYear(
-                game.getReleaseYear(),
+                game.getReleaseDate(),
                 context.getString(R.string.unknown_year)
         );
         holder.tvGameYearWishlist.setText(context.getString(R.string.format_release_year, yearOnly));
