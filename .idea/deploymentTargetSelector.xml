@@ -5,16 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LibraryUITests">
+      <SelectionState runConfigName="SettingsUITest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testItemClickNavigatesToDetail()">
+      <SelectionState runConfigName="testDarkModeToggle()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="WishlistUITests">
+      <SelectionState runConfigName="testLanguageSelection()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SearchUITests">
+      <SelectionState runConfigName="testProfilePicturePickerIntent()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testUsernameUpdateAndPersistence()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
