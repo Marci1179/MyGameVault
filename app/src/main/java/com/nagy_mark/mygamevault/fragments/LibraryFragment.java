@@ -46,6 +46,7 @@ public class LibraryFragment extends Fragment {
     private RecyclerView rvLibrary;
     private LibraryAdapter adapter;
     private AutoCompleteTextView actvSortLibrary;
+    private AutoCompleteTextView actvStatusFilterLibrary;
     private TextInputEditText etSearchLibrary;
     private TextView tvEmptyLibrary;
     private SwitchMaterial swFavoritesFilterLibrary;
@@ -57,6 +58,7 @@ public class LibraryFragment extends Fragment {
     private List<SavedGameModel> displayedGames = new ArrayList<>();
 
     private int currentSortPosition = 0;
+    private int currentStatusFilterPosition = 0;
     private String currentSearchText = "";
 
     public LibraryFragment() {
@@ -82,12 +84,14 @@ public class LibraryFragment extends Fragment {
 
         rvLibrary = view.findViewById(R.id.rvLibrary);
         actvSortLibrary = view.findViewById(R.id.actvSortLibrary);
+        actvStatusFilterLibrary = view.findViewById(R.id.actvStatusFilterLibrary);
         etSearchLibrary = view.findViewById(R.id.etSearchLibrary);
         tvEmptyLibrary = view.findViewById(R.id.tvEmptyLibrary);
         swFavoritesFilterLibrary = view.findViewById(R.id.swFavoritesFilterLibrary);
 
         setupRecyclerView();
         setupSorting();
+        setupStatusFilter();
         setupSearch();
         setupFavoriteFilter();
 
@@ -98,6 +102,7 @@ public class LibraryFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("SORT_POSITION", currentSortPosition);
+        outState.putInt("STATUS_POSITION", currentStatusFilterPosition);
     }
 
     @Override
@@ -106,6 +111,11 @@ public class LibraryFragment extends Fragment {
         if (actvSortLibrary != null) {
             String[] sortOptions = getResources().getStringArray(R.array.sort_options);
             actvSortLibrary.setText(sortOptions[currentSortPosition], false);
+        }
+
+        if (actvStatusFilterLibrary != null) {
+            String[] statusOptions = getResources().getStringArray(R.array.status_filter_options);
+            actvStatusFilterLibrary.setText(statusOptions[currentStatusFilterPosition], false);
         }
     }
 
@@ -184,6 +194,39 @@ public class LibraryFragment extends Fragment {
 
         actvSortLibrary.setOnItemClickListener((parent, view, position, id) -> {
             currentSortPosition = position;
+            applyFilterAndSort();
+        });
+    }
+
+    private void setupStatusFilter() {
+        String[] statusOptions = getResources().getStringArray(R.array.status_filter_options);
+
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptions) {
+            @NonNull
+            @Override
+            public Filter getFilter() {
+                return new Filter() {
+                    @Override
+                    protected FilterResults performFiltering(CharSequence constraint) {
+                        FilterResults results = new FilterResults();
+                        results.values = statusOptions;
+                        results.count = statusOptions.length;
+                        return results;
+                    }
+
+                    @Override
+                    protected void publishResults(CharSequence constraint, FilterResults results) {
+                        notifyDataSetChanged();
+                    }
+                };
+            }
+        };
+
+        actvStatusFilterLibrary.setAdapter(statusAdapter);
+        actvStatusFilterLibrary.setText(statusOptions[currentStatusFilterPosition], false);
+
+        actvStatusFilterLibrary.setOnItemClickListener((parent, view, position, id) -> {
+            currentStatusFilterPosition = position;
             applyFilterAndSort();
         });
     }
@@ -276,7 +319,8 @@ public class LibraryFragment extends Fragment {
         displayedGames = GameListUtils.filterGames(
                 allGames,
                 currentSearchText,
-                swFavoritesFilterLibrary.isChecked()
+                swFavoritesFilterLibrary.isChecked(),
+                currentStatusFilterPosition
         );
 
         GameListUtils.sortGames(displayedGames, currentSortPosition);

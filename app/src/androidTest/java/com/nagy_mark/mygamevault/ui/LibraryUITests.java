@@ -190,6 +190,54 @@ public class LibraryUITests {
     }
 
     @Test
+    public void testStatusFilterFunctionality() {
+        Context context = ApplicationProvider.getApplicationContext();
+        String[] statusOptions = context.getResources().getStringArray(R.array.status_filter_options);
+        String ownedStatus = statusOptions[1];
+        String allGamesStatus = statusOptions[0];
+
+        Espresso.onView(ViewMatchers.withId(R.id.actvStatusFilterLibrary))
+                .perform(ViewActions.click());
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {}
+
+        Espresso.onView(ViewMatchers.withText(ownedStatus))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(ViewActions.click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {}
+
+        Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
+                .perform(RecyclerViewActions.scrollToPosition(0))
+                .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("A Way Out"))));
+
+        Espresso.onView(ViewMatchers.withText("Far Cry 3"))
+                .check(ViewAssertions.doesNotExist());
+
+        Espresso.onView(ViewMatchers.withText("It Takes Two"))
+                .check(ViewAssertions.doesNotExist());
+
+        Espresso.onView(ViewMatchers.withId(R.id.actvStatusFilterLibrary))
+                .perform(ViewActions.click());
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {}
+
+        Espresso.onView(ViewMatchers.withText(allGamesStatus))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(ViewActions.click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {}
+    }
+
+    @Test
     public void testItemClickNavigatesToDetail() {
         Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));

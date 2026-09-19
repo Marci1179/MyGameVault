@@ -70,6 +70,31 @@
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilStatusFilterLibrary"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/status_filter"
+        app:boxStrokeColor="@color/til_stroke"
+        app:boxStrokeWidth="2dp"
+        app:hintTextColor="@color/green"
+        app:endIconTint="@color/green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilSortLibrary">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvStatusFilterLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swFavoritesFilterLibrary"
         android:layout_width="wrap_content"
@@ -77,9 +102,8 @@
         android:layout_marginTop="4dp"
         android:text="@string/favorites"
         android:textColor="@color/green"
-
-        app:layout_constraintStart_toStartOf="@+id/tilSortLibrary"
-        app:layout_constraintTop_toBottomOf="@id/tilSortLibrary" />
+        app:layout_constraintStart_toStartOf="@+id/tilStatusFilterLibrary"
+        app:layout_constraintTop_toBottomOf="@id/tilStatusFilterLibrary" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLibrary"

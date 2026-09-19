@@ -8,13 +8,12 @@ import java.util.List;
 
 public class GameListUtils {
 
-    public static List<SavedGameModel> filterGames(List<SavedGameModel> allGames, String searchText, boolean favoritesOnly) {
+    public static List<SavedGameModel> filterGames(List<SavedGameModel> allGames, String searchText, boolean favoritesOnly, int statusPosition) {
         List<SavedGameModel> filteredList = new ArrayList<>();
         String query = searchText != null ? searchText.toLowerCase().trim() : "";
 
         for (SavedGameModel game : allGames) {
             boolean matchesSearch = true;
-
             if (!query.isEmpty()) {
                 if (game.getGameName() == null || !game.getGameName().toLowerCase().contains(query)) {
                     matchesSearch = false;
@@ -26,7 +25,14 @@ public class GameListUtils {
                 matchesFavorite = game.isFavorite();
             }
 
-            if (matchesSearch && matchesFavorite) {
+            boolean matchesStatus = true;
+            if (statusPosition > 0) {
+                if (game.getStatusId() != statusPosition) {
+                    matchesStatus = false;
+                }
+            }
+
+            if (matchesSearch && matchesFavorite && matchesStatus) {
                 filteredList.add(game);
             }
         }

@@ -225,10 +225,11 @@ public class WishlistFragment extends Fragment {
     }
 
     private void applyFilterAndSort() {
-        displayedGames = com.nagy_mark.mygamevault.utils.GameListUtils.filterGames(
+        displayedGames = GameListUtils.filterGames(
                 allGames,
                 currentSearchText,
-                false
+                false,
+                0
         );
 
         GameListUtils.sortGames(displayedGames, currentSortPosition);
