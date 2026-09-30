@@ -11,8 +11,8 @@ public interface WishlistPriceDao {
     void insertOrUpdatePrice(WishlistPriceEntity priceEntity);
 
     @Query("SELECT * FROM wishlist_prices WHERE gameId = :gameId LIMIT 1")
-    WishlistPriceEntity getPriceForGame(int gameId);
+    WishlistPriceEntity getPriceForGame(long gameId);
 
     @Query("DELETE FROM wishlist_prices WHERE gameId = :gameId")
-    void deletePrice(int gameId);
+    void deletePrice(long gameId);
 }

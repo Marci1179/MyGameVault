@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class LibraryFragment extends Fragment {
     private TextInputEditText etSearchLibrary;
     private TextView tvEmptyLibrary;
     private SwitchMaterial swFavoritesFilterLibrary;
+    private ProgressBar pbLibrary;
 
     private SupabaseApi api;
     private SessionManager sessionManager;
@@ -88,14 +90,13 @@ public class LibraryFragment extends Fragment {
         etSearchLibrary = view.findViewById(R.id.etSearchLibrary);
         tvEmptyLibrary = view.findViewById(R.id.tvEmptyLibrary);
         swFavoritesFilterLibrary = view.findViewById(R.id.swFavoritesFilterLibrary);
+        pbLibrary = view.findViewById(R.id.pbLibrary);
 
         setupRecyclerView();
         setupSorting();
         setupStatusFilter();
         setupSearch();
         setupFavoriteFilter();
-
-        loadLibraryGames();
     }
 
     @Override
@@ -117,6 +118,8 @@ public class LibraryFragment extends Fragment {
             String[] statusOptions = getResources().getStringArray(R.array.status_filter_options);
             actvStatusFilterLibrary.setText(statusOptions[currentStatusFilterPosition], false);
         }
+
+        loadLibraryGames();
     }
 
     private void setupFavoriteFilter() {
@@ -251,11 +254,16 @@ public class LibraryFragment extends Fragment {
         String currentUserId = getCurrentUserId();
 
         if (currentUserId == null) return;
+        if (pbLibrary != null) pbLibrary.setVisibility(View.VISIBLE);
+        if (rvLibrary != null) rvLibrary.setVisibility(View.INVISIBLE);
+        if (tvEmptyLibrary != null) tvEmptyLibrary.setVisibility(View.GONE);
 
-        api.getGamesByStatus("eq." + currentUserId, "in.(1,2,3)").enqueue(new Callback<List<SavedGameModel>>() {
+        api.getGamesByStatus("eq." + currentUserId, "in.(1,2,3)", "*,game_data(*)").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
                 if (isAdded()) {
+                    if (pbLibrary != null) pbLibrary.setVisibility(View.GONE);
+
                     if (response.isSuccessful() && response.body() != null) {
                         allGames = response.body();
                         applyFilterAndSort();
@@ -268,6 +276,8 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<List<SavedGameModel>> call, @NonNull Throwable t) {
                 if (isAdded()) {
+                    if (pbLibrary != null) pbLibrary.setVisibility(View.GONE);
+
                     Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
                     Log.e("API_HIBA", "Library load failure: " + t.getMessage());
                 }

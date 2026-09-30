@@ -5,14 +5,15 @@ import com.nagy_mark.mygamevault.models.AuthRequest;
 import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.FeedModel;
 import com.nagy_mark.mygamevault.models.FollowRelationship;
-import com.nagy_mark.mygamevault.models.MyGame;
 import com.nagy_mark.mygamevault.models.ProfileModel;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
-import com.nagy_mark.mygamevault.models.SupabaseUserResponse;
+import com.nagy_mark.mygamevault.models.GameDataModel;
+import com.nagy_mark.mygamevault.models.UserGameModel;
 
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -34,7 +35,7 @@ public interface SupabaseApi {
         Call<AuthResponse> register(@Body AuthRequest request);
 
         @POST("/auth/v1/token?grant_type=refresh_token")
-        Call<AuthResponse> refreshToken(@Body java.util.Map<String, String> body);
+        Call<AuthResponse> refreshToken(@Body Map<String, String> body);
 
         @PUT("auth/v1/user")
         Call<Void> updatePassword(@Header("Authorization") String token, @Body Map<String, String> passwordData);
@@ -45,35 +46,42 @@ public interface SupabaseApi {
         @POST("auth/v1/verify")
         Call<AuthResponse> verifyOtp(@Body Map<String, String> body);
 
-        @POST("rest/v1/games")
-        Call<Void> insertGame(@Body MyGame myGame);
+        @Headers({
+                "Prefer: resolution=merge-duplicates, return=representation"
+        })
+        @POST("rest/v1/game_data?on_conflict=igdb_id")
+        Call<List<GameDataModel>> upsertGameData(@Body GameDataModel gameData);
 
-        @GET("rest/v1/games")
+        @POST("rest/v1/user_games")
+        Call<Void> insertUserGame(@Body UserGameModel userGame);
+
+        @GET("rest/v1/user_games")
         Call<List<SavedGameModel>> getUserSavedGames(
                 @Query("user_id") String userIdFilter,
                 @Query("select") String selectFields
         );
 
-        @GET("rest/v1/games")
+        @GET("rest/v1/user_games")
         Call<List<SavedGameModel>> getGamesByStatus(
                 @Query("user_id") String userIdFilter,
-                @Query("status_id") String statusFilter
+                @Query("status_id") String statusFilter,
+                @Query("select") String selectFields
         );
 
-        @DELETE("rest/v1/games")
+        @DELETE("rest/v1/user_games")
         Call<Void> deleteGame(@Query("id") String idEq);
 
-        @DELETE("rest/v1/games")
-        Call<Void> deleteGameByName(
-                @Query("game_name") String gameName,
-                @Query("user_id") String userId
+        @DELETE("rest/v1/user_games")
+        Call<Void> deleteUserGameByGameId(
+                @Query("game_id") String gameIdEq,
+                @Query("user_id") String userIdEq
         );
 
-        @PATCH("rest/v1/games")
+        @PATCH("rest/v1/user_games")
         Call<Void> updateGameDetails(@Query("id") String idQuery, @Body Map<String, Object> updates);
 
-        @PATCH("rest/v1/games")
-        Call<Void> updateFavoriteStatus(@Query("id") String idQuery, @Body java.util.Map<String, Boolean> body);
+        @PATCH("rest/v1/user_games")
+        Call<Void> updateFavoriteStatus(@Query("id") String idQuery, @Body Map<String, Boolean> body);
 
         @GET("rest/v1/profiles")
         Call<List<ProfileModel>> getProfile(@Query("id") String eqUserId);
@@ -92,10 +100,10 @@ public interface SupabaseApi {
         Call<List<ProfileModel>> getProfilesByIds(@Query("id") String idInQuery);
 
         @POST("storage/v1/object/avatars/{filePath}")
-        Call<Void> uploadAvatar(@Path("filePath") String filePath, @Body okhttp3.RequestBody imageBytes);
+        Call<Void> uploadAvatar(@Path("filePath") String filePath, @Body RequestBody imageBytes);
 
         @HTTP(method = "DELETE", path = "storage/v1/object/avatars", hasBody = true)
-        Call<Void> deleteAvatars(@Body java.util.Map<String, java.util.List<String>> body);
+        Call<Void> deleteAvatars(@Body Map<String, List<String>> body);
 
         @POST("rest/v1/feed_activities")
         Call<Void> logFeedActivity(@Body FeedActivityRequest activityRequest);

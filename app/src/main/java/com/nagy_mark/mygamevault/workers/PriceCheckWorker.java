@@ -1,5 +1,6 @@
 package com.nagy_mark.mygamevault.workers;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +57,7 @@ public class PriceCheckWorker extends Worker {
 
             SupabaseApi supabaseApi = SupabaseApiClient.getClient(context).create(SupabaseApi.class);
 
-            Response<List<SavedGameModel>> supabaseResponse = supabaseApi.getGamesByStatus("eq." + currentUserId, "eq.4").execute();
+            Response<List<SavedGameModel>> supabaseResponse = supabaseApi.getGamesByStatus("eq." + currentUserId, "eq.4", "*,game_data(*)").execute();
 
             if (!supabaseResponse.isSuccessful() || supabaseResponse.body() == null) {
                 return Result.retry();
@@ -94,7 +95,7 @@ public class PriceCheckWorker extends Worker {
                         }
 
                         if (lowestPrice != Double.MAX_VALUE) {
-                            WishlistPriceEntity savedPrice = priceDao.getPriceForGame(game.getId());
+                            WishlistPriceEntity savedPrice = priceDao.getPriceForGame(game.getGameId());
 
                             if (savedPrice != null) {
                                 if (lowestPrice < savedPrice.getLastKnownPrice()) {
@@ -103,7 +104,7 @@ public class PriceCheckWorker extends Worker {
                                 }
                             }
 
-                            priceDao.insertOrUpdatePrice(new WishlistPriceEntity(game.getId(), lowestPrice, bestStoreName));
+                            priceDao.insertOrUpdatePrice(new WishlistPriceEntity(game.getGameId(), lowestPrice, bestStoreName));
                         }
                     }
                 }
@@ -120,7 +121,7 @@ public class PriceCheckWorker extends Worker {
     private void sendNotification(String gameTitle, String priceText) {
         Context context = getApplicationContext();
 
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 

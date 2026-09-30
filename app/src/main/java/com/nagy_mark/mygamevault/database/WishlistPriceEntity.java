@@ -6,23 +6,23 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "wishlist_prices")
 public class WishlistPriceEntity {
     @PrimaryKey
-    private int gameId;
+    private long gameId;
 
     private double lastKnownPrice;
 
     private String storeName;
 
-    public WishlistPriceEntity(int gameId, double lastKnownPrice, String storeName) {
+    public WishlistPriceEntity(long gameId, double lastKnownPrice, String storeName) {
         this.gameId = gameId;
         this.lastKnownPrice = lastKnownPrice;
         this.storeName = storeName;
     }
 
-    public int getGameId() {
+    public long getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(long gameId) {
         this.gameId = gameId;
     }
 

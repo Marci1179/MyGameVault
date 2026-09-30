@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class WishlistFragment extends Fragment {
     private AutoCompleteTextView actvSortWishlist;
     private TextInputEditText etSearchWishlist;
     private TextView tvEmptyWishlist;
+    private ProgressBar pbWishlist;
 
     private SupabaseApi supabaseApi;
     private CheapSharkApi cheapSharkApi;
@@ -91,12 +93,15 @@ public class WishlistFragment extends Fragment {
         actvSortWishlist = view.findViewById(R.id.actvSortWishlist);
         etSearchWishlist = view.findViewById(R.id.etSearchWishlist);
         tvEmptyWishlist = view.findViewById(R.id.tvEmptyWishlist);
+        pbWishlist = view.findViewById(R.id.pbWishlist);
 
         setupRecyclerView();
         setupSorting();
         setupSearch();
 
-        loadWishlistGames();
+        if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.GONE);
+        if (rvWishlist != null) rvWishlist.setVisibility(View.INVISIBLE);
+        if (pbWishlist != null) pbWishlist.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -112,6 +117,8 @@ public class WishlistFragment extends Fragment {
             String[] sortOptions = getResources().getStringArray(R.array.sort_options);
             actvSortWishlist.setText(sortOptions[currentSortPosition], false);
         }
+
+        loadWishlistGames();
     }
 
     private void setupRecyclerView() {
@@ -200,15 +207,21 @@ public class WishlistFragment extends Fragment {
         String currentUserId = sessionManager.getUserId();
 
         if (currentUserId == null) return;
+        if (pbWishlist != null) pbWishlist.setVisibility(View.VISIBLE);
+        if (rvWishlist != null) rvWishlist.setVisibility(View.INVISIBLE);
+        if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.GONE);
 
-        supabaseApi.getGamesByStatus("eq." + currentUserId, "eq.4").enqueue(new Callback<List<SavedGameModel>>() {
+        supabaseApi.getGamesByStatus("eq." + currentUserId, "eq.4", "*,game_data(*)").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
                 if (isAdded()) {
+                    if (pbWishlist != null) pbWishlist.setVisibility(View.GONE);
+
                     if (response.isSuccessful() && response.body() != null) {
                         allGames = response.body();
                         applyFilterAndSort();
                     } else {
+                        if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.VISIBLE);
                         Toast.makeText(requireContext(), getString(R.string.error_data_load), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -217,6 +230,9 @@ public class WishlistFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<List<SavedGameModel>> call, @NonNull Throwable t) {
                 if (isAdded()) {
+                    if (pbWishlist != null) pbWishlist.setVisibility(View.GONE);
+                    if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.VISIBLE);
+
                     Toast.makeText(requireContext(), getString(R.string.error_network_base), Toast.LENGTH_SHORT).show();
                     Log.e("API_HIBA", "Wishlist load failure: " + t.getMessage());
                 }
@@ -235,14 +251,21 @@ public class WishlistFragment extends Fragment {
         GameListUtils.sortGames(displayedGames, currentSortPosition);
 
         adapter.setGames(displayedGames);
-        fetchPricesForWishlist(displayedGames);
+
+        if (pbWishlist != null && pbWishlist.getVisibility() == View.VISIBLE) {
+            if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.GONE);
+            if (rvWishlist != null) rvWishlist.setVisibility(View.INVISIBLE);
+            return;
+        }
 
         if (displayedGames.isEmpty()) {
-            tvEmptyWishlist.setVisibility(View.VISIBLE);
-            rvWishlist.setVisibility(View.INVISIBLE);
+            if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.VISIBLE);
+            if (rvWishlist != null) rvWishlist.setVisibility(View.INVISIBLE);
         } else {
-            tvEmptyWishlist.setVisibility(View.GONE);
-            rvWishlist.setVisibility(View.VISIBLE);
+            if (tvEmptyWishlist != null) tvEmptyWishlist.setVisibility(View.GONE);
+            if (rvWishlist != null) rvWishlist.setVisibility(View.VISIBLE);
+
+            fetchPricesForWishlist(displayedGames);
         }
     }
 
@@ -266,7 +289,7 @@ public class WishlistFragment extends Fragment {
                         Context context = getContext();
                         if (context != null) {
                             Executors.newSingleThreadExecutor().execute(() -> {
-                                AppDatabase.getDatabase(context).wishlistPriceDao().deletePrice(game.getId());
+                                AppDatabase.getDatabase(context).wishlistPriceDao().deletePrice(game.getGameId());
                             });
                         }
                     } else {
@@ -295,7 +318,7 @@ public class WishlistFragment extends Fragment {
             for (SavedGameModel game : gamesToFetch) {
                 if (game.getGameName() == null || game.getGameName().isEmpty()) continue;
 
-                var cachedPrice = db.wishlistPriceDao().getPriceForGame(game.getId());
+                var cachedPrice = db.wishlistPriceDao().getPriceForGame(game.getGameId());
 
                 if (cachedPrice != null && cachedPrice.getLastKnownPrice() > 0) {
                     if (!isAdded()) return;
@@ -360,7 +383,7 @@ public class WishlistFragment extends Fragment {
                                     }
 
                                     Executors.newSingleThreadExecutor().execute(() -> {
-                                        WishlistPriceEntity newEntity = new WishlistPriceEntity(game.getId(), finalPrice, finalStoreName);
+                                        WishlistPriceEntity newEntity = new WishlistPriceEntity(game.getGameId(), finalPrice, finalStoreName);
                                         db.wishlistPriceDao().insertOrUpdatePrice(newEntity);
                                     });
 
@@ -389,11 +412,11 @@ public class WishlistFragment extends Fragment {
         });
     }
 
-    private void setNotFound(int gameId) {
+    private void setNotFound(long gameItemId) {
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
                 if (isAdded()) {
-                    adapter.setGamePrice(gameId, getString(R.string.price_not_found));
+                    adapter.setGamePrice(gameItemId, getString(R.string.price_not_found));
                 }
             });
         }

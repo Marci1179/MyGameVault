@@ -19,6 +19,7 @@ import androidx.test.rule.GrantPermissionRule;
 
 import com.nagy_mark.mygamevault.MainActivity;
 import com.nagy_mark.mygamevault.R;
+import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
 import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.SessionManager;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit2.Response;
 
@@ -104,15 +106,26 @@ public class SearchUITests {
 
         if (userId != null) {
             try {
-                Response<Void> response = api.deleteGameByName("eq.Red Dead Redemption 2", "eq." + userId).execute();
+                Response<List<SavedGameModel>> getResponse = api.getUserSavedGames("eq." + userId, "*,game_data(*)").execute();
 
-                if (!response.isSuccessful()) {
-                    Log.e("TEARDOWN_ERROR", "Nem sikerült törölni a játékot. Kód: " + response.code());
+                if (getResponse.isSuccessful() && getResponse.body() != null) {
+                    for (SavedGameModel game : getResponse.body()) {
+                        if ("Red Dead Redemption 2".equals(game.getGameName())) {
+                            Response<Void> deleteResponse = api.deleteGame("eq." + game.getId()).execute();
+
+                            if (!deleteResponse.isSuccessful()) {
+                                Log.e("TEARDOWN_ERROR", "Nem sikerült törölni a játékot. Kód: " + deleteResponse.code());
+                            } else {
+                                Log.d("TEARDOWN_SUCCESS", "A Red Dead Redemption 2 sikeresen törölve a teszt után!");
+                            }
+                            break;
+                        }
+                    }
                 } else {
-                    Log.d("TEARDOWN_SUCCESS", "A Red Dead Redemption 2 sikeresen törölve a teszt után!");
+                    Log.e("TEARDOWN_ERROR", "Nem sikerült lekérdezni a játékokat a törléshez. Kód: " + getResponse.code());
                 }
             } catch (IOException e) {
-               Log.e("TEARDOWN_EXCEPTION", "Hálózati hiba a törlés során: " + e.getMessage());
+                Log.e("TEARDOWN_EXCEPTION", "Hálózati hiba a törlés során: " + e.getMessage());
             }
         }
 

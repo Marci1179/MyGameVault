@@ -25,8 +25,9 @@ import com.nagy_mark.mygamevault.R;
 import com.nagy_mark.mygamevault.adapters.GameSearchAdapter;
 import com.nagy_mark.mygamevault.models.FeedActivityRequest;
 import com.nagy_mark.mygamevault.models.Game;
-import com.nagy_mark.mygamevault.models.MyGame;
+import com.nagy_mark.mygamevault.models.GameDataModel;
 import com.nagy_mark.mygamevault.models.SavedGameModel;
+import com.nagy_mark.mygamevault.models.UserGameModel;
 import com.nagy_mark.mygamevault.network.IgdbApi;
 import com.nagy_mark.mygamevault.network.IgdbApiClient;
 import com.nagy_mark.mygamevault.network.SupabaseApi;
@@ -34,12 +35,9 @@ import com.nagy_mark.mygamevault.network.SupabaseApiClient;
 import com.nagy_mark.mygamevault.utils.FormatUtils;
 import com.nagy_mark.mygamevault.utils.SessionManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -150,14 +148,16 @@ public class SearchFragment extends Fragment {
         String userId = getCurrentUserId();
         if (userId == null) return;
 
-        supabaseApi.getUserSavedGames("eq." + userId, "game_name,status_id").enqueue(new Callback<List<SavedGameModel>>() {
+        supabaseApi.getUserSavedGames("eq." + userId, "status_id,game_data(game_name)").enqueue(new Callback<List<SavedGameModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<SavedGameModel>> call, @NonNull Response<List<SavedGameModel>> response) {
                 if (isAdded()) {
                     if (response.isSuccessful() && response.body() != null) {
                         savedGamesMap.clear();
                         for (SavedGameModel item : response.body()) {
-                            savedGamesMap.put(item.getGameName(), item.getStatusId());
+                            if (item.getGameName() != null) {
+                                savedGamesMap.put(item.getGameName(), item.getStatusId());
+                            }
                         }
                         if (adapter != null) adapter.notifyDataSetChanged();
                     }
@@ -177,7 +177,7 @@ public class SearchFragment extends Fragment {
         pbSearch.setVisibility(View.VISIBLE);
         rvSearchResults.setVisibility(View.INVISIBLE);
 
-        String query = "fields name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where rating_count > 500 & parent_game = null; sort rating desc; limit 10;";
+        String query = "fields id, name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where rating_count > 500 & parent_game = null; sort rating desc; limit 10;";
         RequestBody body = RequestBody.create(MediaType.parse("text/plain"), query);
 
         igdbApi.getTopGames(body).enqueue(new Callback<List<Game>>() {
@@ -208,7 +208,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void searchGames(String searchQuery) {
-        String query = "search \"" + searchQuery + "\"; fields name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where parent_game = null; limit 20;";
+        String query = "search \"" + searchQuery + "\"; fields id, name, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.publisher; where parent_game = null; limit 20;";
         RequestBody body = RequestBody.create(MediaType.parse("text/plain"), query);
 
         igdbApi.getTopGames(body).enqueue(new Callback<List<Game>>() {
@@ -245,47 +245,65 @@ public class SearchFragment extends Fragment {
         String releaseDateFormatted = FormatUtils.formatIgdbDate(game.getFirstReleaseDate());
         String coverId = (game.getCover() != null) ? game.getCover().getImageId() : null;
         String currentUserId = getCurrentUserId();
+        long igdbId = game.getId();
 
-        MyGame newGame = new MyGame(
+        GameDataModel gameData = new GameDataModel(
+                igdbId,
                 game.getName(),
                 releaseDateFormatted,
                 game.getPublisherName(),
-                coverId,
-                statusId,
-                currentUserId
+                coverId
         );
 
-        supabaseApi.insertGame(newGame).enqueue(new Callback<Void>() {
+        supabaseApi.upsertGameData(gameData).enqueue(new Callback<List<GameDataModel>>() {
             @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            public void onResponse(@NonNull Call<List<GameDataModel>> call, @NonNull Response<List<GameDataModel>> response) {
                 if (isAdded()) {
-                    if (response.isSuccessful()) {
-                        savedGamesMap.put(game.getName(), statusId);
-                        adapter.notifyDataSetChanged();
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                        long internalGameId = response.body().get(0).getId();
 
-                        String actionType = (statusId == 1) ? "ADDED_TO_LIBRARY" : "ADDED_TO_WISHLIST";
-                        if (currentUserId != null) {
-                            logActivityToFeed(currentUserId, actionType, game.getName());
-                        }
+                        UserGameModel userGame = new UserGameModel(internalGameId, statusId, currentUserId);
 
-                        String message = (statusId == 1) ? getString(R.string.game_added_library) : getString(R.string.game_added_wishlist);
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                        supabaseApi.insertUserGame(userGame).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                                if (response.isSuccessful()) {
+                                    savedGamesMap.put(game.getName(), statusId);
+                                    adapter.notifyDataSetChanged();
+
+                                    String actionType = (statusId == 1) ? "ADDED_TO_LIBRARY" : "ADDED_TO_WISHLIST";
+                                    if (currentUserId != null) {
+                                        logActivityToFeed(currentUserId, actionType, game.getName());
+                                    }
+
+                                    String message = (statusId == 1) ? getString(R.string.game_added_library) : getString(R.string.game_added_wishlist);
+                                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    try {
+                                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Ismeretlen hiba";
+                                        Log.e("SUPABASE_ERROR", "UserGame beszúrási hiba: " + response.code() + " | Üzenet: " + errorBody);
+                                        Toast.makeText(requireContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     } else {
-                        try {
-                            String unknownError = getString(R.string.error_unknown_supabase);
-                            String errorBody = response.errorBody() != null ? response.errorBody().string() : unknownError;
-
-                            Log.e("SUPABASE_ERROR", "Mentési hiba kód: " + response.code() + " | Üzenet: " + errorBody);
-                            Toast.makeText(requireContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        Log.e("SUPABASE_ERROR", "GameData Upsert hiba kód: " + response.code());
+                        Toast.makeText(requireContext(), getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<GameDataModel>> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     Toast.makeText(requireContext(), getString(R.string.error_network) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }

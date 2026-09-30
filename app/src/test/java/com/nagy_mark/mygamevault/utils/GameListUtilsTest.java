@@ -20,20 +20,26 @@ public class GameListUtilsTest {
         testGames = new ArrayList<>();
 
         SavedGameModel game1 = new SavedGameModel();
-        game1.setGameName("A Way Out");
-        game1.setReleaseDate("2018-03-23");
+        SavedGameModel.GameDataNested data1 = new SavedGameModel.GameDataNested();
+        data1.gameName = "A Way Out";
+        data1.releaseDate = "2018-03-23";
+        game1.setGameData(data1);
         game1.setFavorite(true);
         game1.setStatusId(1);
 
         SavedGameModel game2 = new SavedGameModel();
-        game2.setGameName("Far Cry 3");
-        game2.setReleaseDate("2012-11-29");
+        SavedGameModel.GameDataNested data2 = new SavedGameModel.GameDataNested();
+        data2.gameName = "Far Cry 3";
+        data2.releaseDate = "2012-11-29";
+        game2.setGameData(data2);
         game2.setFavorite(false);
         game2.setStatusId(2);
 
         SavedGameModel game3 = new SavedGameModel();
-        game3.setGameName("It Takes Two");
-        game3.setReleaseDate("2021-03-26");
+        SavedGameModel.GameDataNested data3 = new SavedGameModel.GameDataNested();
+        data3.gameName = "It Takes Two";
+        data3.releaseDate = "2021-03-26";
+        game3.setGameData(data3);
         game3.setFavorite(true);
         game3.setStatusId(3);
 

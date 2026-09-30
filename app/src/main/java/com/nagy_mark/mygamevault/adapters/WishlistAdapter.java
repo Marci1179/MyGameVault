@@ -17,14 +17,16 @@ import com.nagy_mark.mygamevault.models.SavedGameModel;
 import com.nagy_mark.mygamevault.utils.FormatUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder> {
 
     private List<SavedGameModel> gameList = new ArrayList<>();
     private final Context context;
     private final OnWishlistItemClickListener listener;
-    private java.util.Map<Integer, String> gamePrices = new java.util.HashMap<>();
+    private final Map<Long, String> gamePrices = new HashMap<>();
 
     public interface OnWishlistItemClickListener {
         void onDeleteClick(SavedGameModel game);
@@ -41,7 +43,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         notifyDataSetChanged();
     }
 
-    public void setGamePrice(int gameId, String priceText) {
+    public void setGamePrice(long gameId, String priceText) {
         this.gamePrices.put(gameId, priceText);
         notifyDataSetChanged();
     }

@@ -105,6 +105,16 @@
         app:layout_constraintStart_toStartOf="@+id/tilStatusFilterLibrary"
         app:layout_constraintTop_toBottomOf="@id/tilStatusFilterLibrary" />
 
+    <ProgressBar
+        android:id="@+id/pbLibrary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/green"
+        app:layout_constraintTop_toBottomOf="@+id/swFavoritesFilterLibrary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLibrary"
         android:layout_width="0dp"

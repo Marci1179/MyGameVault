@@ -3,6 +3,7 @@ package com.nagy_mark.mygamevault.models;
 import java.util.List;
 
 public class Game {
+    private long id;
     private String name;
     private Cover cover;
     private Long first_release_date;
@@ -11,6 +12,10 @@ public class Game {
     private List<Platform> platforms;
     private List<Genre> genres;
     private List<GameMode> game_modes;
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

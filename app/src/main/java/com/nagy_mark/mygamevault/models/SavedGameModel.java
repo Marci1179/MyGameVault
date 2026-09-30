@@ -1,42 +1,61 @@
 package com.nagy_mark.mygamevault.models;
 
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class SavedGameModel implements Serializable {
-    private int id;
-    private String game_name;
-    private String release_date;
-    private String publisher;
-    private String cover;
-    private int status_id;
-    private Float rating;
-    private String note;
-    private String user_id;
-    private String created_at;
-    private boolean is_favorite;
 
-    public int getId() {
+    @SerializedName("id")
+    private long id;
+
+    @SerializedName("game_id")
+    private long gameId;
+
+    @SerializedName("status_id")
+    private int statusId;
+
+    @SerializedName("rating")
+    private Float rating;
+
+    @SerializedName("note")
+    private String note;
+
+    @SerializedName("user_id")
+    private String userId;
+
+    @SerializedName("created_at")
+    private String createdAt;
+
+    @SerializedName("is_favorite")
+    private boolean isFavorite;
+
+    @SerializedName("game_data")
+    private GameDataNested gameData;
+
+    public static class GameDataNested implements Serializable {
+        @SerializedName("game_name")
+        public String gameName;
+
+        @SerializedName("release_date")
+        public String releaseDate;
+
+        @SerializedName("publisher")
+        public String publisher;
+
+        @SerializedName("cover")
+        public String cover;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public String getGameName() {
-        return game_name;
-    }
-
-    public String getReleaseDate() {
-        return release_date;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public String getCover() {
-        return cover;
+    public long getGameId() {
+        return gameId;
     }
 
     public int getStatusId() {
-        return status_id;
+        return statusId;
     }
 
     public Float getRating() {
@@ -48,39 +67,47 @@ public class SavedGameModel implements Serializable {
     }
 
     public String getUserId() {
-        return user_id;
+        return userId;
     }
 
     public String getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
     public boolean isFavorite() {
-        return is_favorite;
+        return isFavorite;
     }
 
-    public void setId(int id) {
+    public GameDataNested getGameData() {
+        return gameData;
+    }
+
+    public String getGameName() {
+        return (gameData != null) ? gameData.gameName : null;
+    }
+
+    public String getReleaseDate() {
+        return (gameData != null) ? gameData.releaseDate : null;
+    }
+
+    public String getPublisher() {
+        return (gameData != null) ? gameData.publisher : null;
+    }
+
+    public String getCover() {
+        return (gameData != null) ? gameData.cover : null;
+    }
+
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setGameName(String gameName) {
-        this.game_name = gameName;
-    }
-
-    public void setReleaseDate(String release_date) {
-        this.release_date = release_date;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
+    public void setGameId(long gameId) {
+        this.gameId = gameId;
     }
 
     public void setStatusId(int statusId) {
-        this.status_id = statusId;
+        this.statusId = statusId;
     }
 
     public void setRating(Float rating) {
@@ -92,14 +119,18 @@ public class SavedGameModel implements Serializable {
     }
 
     public void setUserId(String userId) {
-        this.user_id = userId;
+        this.userId = userId;
     }
 
     public void setCreatedAt(String createdAt) {
-        this.created_at = createdAt;
+        this.createdAt = createdAt;
     }
 
     public void setFavorite(boolean favorite) {
-        this.is_favorite = favorite;
+        this.isFavorite = favorite;
+    }
+
+    public void setGameData(GameDataNested gameData) {
+        this.gameData = gameData;
     }
 }

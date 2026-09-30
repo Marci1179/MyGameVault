@@ -145,10 +145,10 @@ public class LibraryUITests {
     @Test
     public void testSearchFunctionality() {
         Espresso.onView(ViewMatchers.withId(R.id.etSearchLibrary))
-                .perform(ViewActions.typeText("Far Cry 3"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.replaceText("Far Cry 3"));
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {}
 
         Espresso.onView(ViewMatchers.withId(R.id.rvLibrary))
