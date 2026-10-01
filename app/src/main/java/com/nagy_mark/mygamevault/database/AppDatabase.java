@@ -15,7 +15,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "gamevault_database")
+                            AppDatabase.class, "mygamevault_database")
                             .fallbackToDestructiveMigration()
                             .build();
                 }
