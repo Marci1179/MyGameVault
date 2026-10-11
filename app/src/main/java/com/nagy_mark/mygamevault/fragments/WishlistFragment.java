@@ -332,82 +332,99 @@ public class WishlistFragment extends Fragment {
                         });
                     }
                 } else {
-                    fetchAndSavePriceFromApi(game, db);
+                    fetchAndSavePriceFromApi(game, db, false);
                 }
             }
         });
     }
 
-    private void fetchAndSavePriceFromApi(SavedGameModel game, AppDatabase db) {
-        cheapSharkApi.searchGame(game.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
+    private void fetchAndSavePriceFromApi(SavedGameModel game, AppDatabase db, boolean isRetry) {
+        String searchTitle = !isRetry ? game.getGameName() : CheapSharkUtils.toggleRomanNumerals(game.getGameName());
+
+        if (searchTitle == null || searchTitle.isEmpty()) {
+            setNotFound(game.getId());
+            return;
+        }
+
+        cheapSharkApi.searchGame(searchTitle, 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override
             public void onResponse(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Response<List<CheapSharkGameSearchResult>> response) {
-                if (!isAdded()) return;
+                if (isAdded()) {
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                        String gameId = response.body().get(0).getGameId();
 
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    String gameId = response.body().get(0).getGameId();
+                        cheapSharkApi.getGameDetails(gameId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
+                            @Override
+                            public void onResponse(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Response<CheapSharkGameDetailResponse> response) {
+                                if (isAdded()) {
+                                    if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
+                                        double lowestPrice = Double.MAX_VALUE;
+                                        String bestStoreName = "";
 
-                    cheapSharkApi.getGameDetails(gameId).enqueue(new Callback<CheapSharkGameDetailResponse>() {
-                        @Override
-                        public void onResponse(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Response<CheapSharkGameDetailResponse> response) {
-                            if (!isAdded()) return;
-
-                            if (response.isSuccessful() && response.body() != null && response.body().getDeals() != null) {
-                                double lowestPrice = Double.MAX_VALUE;
-                                String bestStoreName = "";
-
-                                for (CheapSharkDealInfo deal : response.body().getDeals()) {
-                                    String storeName = CheapSharkUtils.getStoreName(deal.getStoreId());
-                                    if (storeName != null) {
-                                        try {
-                                            double currentPrice = Double.parseDouble(deal.getPrice());
-                                            if (currentPrice < lowestPrice) {
-                                                lowestPrice = currentPrice;
-                                                bestStoreName = storeName;
+                                        for (CheapSharkDealInfo deal : response.body().getDeals()) {
+                                            String storeName = CheapSharkUtils.getStoreName(deal.getStoreId());
+                                            if (storeName != null) {
+                                                try {
+                                                    double currentPrice = Double.parseDouble(deal.getPrice());
+                                                    if (currentPrice < lowestPrice) {
+                                                        lowestPrice = currentPrice;
+                                                        bestStoreName = storeName;
+                                                    }
+                                                } catch (NumberFormatException ignored) {}
                                             }
-                                        } catch (NumberFormatException ignored) {}
+                                        }
+
+                                        if (lowestPrice != Double.MAX_VALUE) {
+                                            final double finalPrice = lowestPrice;
+                                            final String finalStoreName = bestStoreName;
+                                            String priceText = getString(R.string.lowest_price_format, String.valueOf(finalPrice), finalStoreName);
+
+                                            if (getActivity() != null) {
+                                                getActivity().runOnUiThread(() -> {
+                                                    if (isAdded()) {
+                                                        adapter.setGamePrice(game.getId(), priceText);
+                                                    }
+                                                });
+                                            }
+
+                                            Executors.newSingleThreadExecutor().execute(() -> {
+                                                WishlistPriceEntity newEntity = new WishlistPriceEntity(game.getGameId(), finalPrice, finalStoreName);
+                                                db.wishlistPriceDao().insertOrUpdatePrice(newEntity);
+                                            });
+
+                                        } else {
+                                            setNotFound(game.getId());
+                                        }
+                                    } else {
+                                        setNotFound(game.getId());
                                     }
                                 }
-
-                                if (lowestPrice != Double.MAX_VALUE) {
-                                    final double finalPrice = lowestPrice;
-                                    final String finalStoreName = bestStoreName;
-                                    String priceText = getString(R.string.lowest_price_format, String.valueOf(finalPrice), finalStoreName);
-
-                                    if (getActivity() != null) {
-                                        getActivity().runOnUiThread(() -> {
-                                            if (isAdded()) {
-                                                adapter.setGamePrice(game.getId(), priceText);
-                                            }
-                                        });
-                                    }
-
-                                    Executors.newSingleThreadExecutor().execute(() -> {
-                                        WishlistPriceEntity newEntity = new WishlistPriceEntity(game.getGameId(), finalPrice, finalStoreName);
-                                        db.wishlistPriceDao().insertOrUpdatePrice(newEntity);
-                                    });
-
-                                } else {
-                                    setNotFound(game.getId());
-                                }
-                            } else {
-                                setNotFound(game.getId());
                             }
-                        }
 
-                        @Override
-                        public void onFailure(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Throwable t) {
-                            if (isAdded()) setNotFound(game.getId());
+                            @Override
+                            public void onFailure(@NonNull Call<CheapSharkGameDetailResponse> call, @NonNull Throwable t) {
+                                if (isAdded()) setNotFound(game.getId());
+                            }
+                        });
+                    } else {
+                        if (!isRetry) {
+                            fetchAndSavePriceFromApi(game, db, true);
+                            return;
                         }
-                    });
-                } else {
-                    setNotFound(game.getId());
+                        setNotFound(game.getId());
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Throwable t) {
-                if (isAdded()) setNotFound(game.getId());
+                if (isAdded()) {
+                    if (!isRetry) {
+                        fetchAndSavePriceFromApi(game, db, true);
+                        return;
+                    }
+                    setNotFound(game.getId());
+                }
             }
         });
     }

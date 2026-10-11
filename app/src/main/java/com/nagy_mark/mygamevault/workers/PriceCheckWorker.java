@@ -70,6 +70,13 @@ public class PriceCheckWorker extends Worker {
 
                 Response<List<CheapSharkGameSearchResult>> searchResponse = cheapSharkApi.searchGame(game.getGameName(), 1).execute();
 
+                if (!searchResponse.isSuccessful() || searchResponse.body() == null || searchResponse.body().isEmpty()) {
+                    String alternativeTitle = CheapSharkUtils.toggleRomanNumerals(game.getGameName());
+                    if (alternativeTitle != null) {
+                        searchResponse = cheapSharkApi.searchGame(alternativeTitle, 1).execute();
+                    }
+                }
+
                 if (searchResponse.isSuccessful() && searchResponse.body() != null && !searchResponse.body().isEmpty()) {
                     String gameId = searchResponse.body().get(0).getGameId();
 

@@ -76,7 +76,8 @@ public class WishlistDetailViewFragment extends Fragment {
             }
         }
 
-        fetchAllPricesFromApi();
+        String initialTitle = (currentGame != null) ? currentGame.getGameName() : null;
+        fetchAllPricesFromApi(initialTitle, false);
     }
 
     private void populateUI() {
@@ -100,8 +101,8 @@ public class WishlistDetailViewFragment extends Fragment {
         }
     }
 
-    private void fetchAllPricesFromApi() {
-        if (currentGame == null || currentGame.getGameName() == null || currentGame.getGameName().isEmpty()) {
+    private void fetchAllPricesFromApi(String searchTitle, boolean isRetry) {
+        if (currentGame == null || searchTitle == null || searchTitle.isEmpty()) {
             if (isAdded()) {
                 Toast.makeText(requireContext(), getString(R.string.error_loading_prices), Toast.LENGTH_SHORT).show();
                 showPriceMessage(getString(R.string.error_loading_prices));
@@ -112,7 +113,7 @@ public class WishlistDetailViewFragment extends Fragment {
         pbWishlistDetail.setVisibility(View.VISIBLE);
         svWishlistDetail.setVisibility(View.INVISIBLE);
 
-        api.searchGame(currentGame.getGameName(), 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
+        api.searchGame(searchTitle, 1).enqueue(new Callback<List<CheapSharkGameSearchResult>>() {
             @Override
             public void onResponse(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Response<List<CheapSharkGameSearchResult>> response) {
                 if (isAdded()) {
@@ -140,6 +141,13 @@ public class WishlistDetailViewFragment extends Fragment {
                             }
                         });
                     } else {
+                        if (!isRetry && currentGame != null) {
+                            String alternativeTitle = CheapSharkUtils.toggleRomanNumerals(currentGame.getGameName());
+                            if (alternativeTitle != null) {
+                                fetchAllPricesFromApi(alternativeTitle, true);
+                                return;
+                            }
+                        }
                         showPriceMessage(getString(R.string.price_not_found_wdw));
                     }
                 }
@@ -148,6 +156,13 @@ public class WishlistDetailViewFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<List<CheapSharkGameSearchResult>> call, @NonNull Throwable t) {
                 if (isAdded()) {
+                    if (!isRetry && currentGame != null) {
+                        String alternativeTitle = CheapSharkUtils.toggleRomanNumerals(currentGame.getGameName());
+                        if (alternativeTitle != null) {
+                            fetchAllPricesFromApi(alternativeTitle, true);
+                            return;
+                        }
+                    }
                     Toast.makeText(requireContext(), getString(R.string.error_loading_prices), Toast.LENGTH_SHORT).show();
                     showPriceMessage(getString(R.string.error_loading_prices));
                 }

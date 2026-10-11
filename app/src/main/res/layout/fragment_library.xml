@@ -95,22 +95,37 @@
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swFavoritesFilterLibrary"
+    <LinearLayout
+        android:id="@+id/llFavoritesFilterContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/favorites"
-        android:textColor="@color/green"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="@+id/tilStatusFilterLibrary"
-        app:layout_constraintTop_toBottomOf="@id/tilStatusFilterLibrary" />
+        app:layout_constraintTop_toBottomOf="@id/tilStatusFilterLibrary">
+
+        <ImageView
+            android:id="@+id/ivFavoriteFilterIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_heart_filled"
+            app:tint="@color/green"
+            android:contentDescription="@string/favorites" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swFavoritesFilterLibrary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pbLibrary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTint="@color/green"
-        app:layout_constraintTop_toBottomOf="@+id/swFavoritesFilterLibrary"
+        app:layout_constraintTop_toBottomOf="@+id/llFavoritesFilterContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -125,7 +140,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/swFavoritesFilterLibrary"
+        app:layout_constraintTop_toBottomOf="@id/llFavoritesFilterContainer"
         tools:listitem="@layout/item_library" />
 
     <TextView
@@ -136,7 +151,7 @@
         android:textSize="16sp"
         android:textColor="@color/green"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/swFavoritesFilterLibrary"
+        app:layout_constraintTop_toBottomOf="@+id/llFavoritesFilterContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
