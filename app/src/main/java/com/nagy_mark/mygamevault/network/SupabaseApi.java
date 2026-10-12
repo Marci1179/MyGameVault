@@ -115,6 +115,14 @@ public interface SupabaseApi {
                 @Query("order") String orderBy
         );
 
+        @GET("rest/v1/feed_activities")
+        Call<List<FeedModel>> getFeedActivities(
+                @Query("user_id") String userFilter,
+                @Query("select") String selectQuery,
+                @Query("order") String orderBy,
+                @Query("limit") int limit
+        );
+
         @GET("rest/v1/follows")
         Call<List<FollowRelationship>> getMyFollowing(@Query("follower_id") String followerQuery);
 

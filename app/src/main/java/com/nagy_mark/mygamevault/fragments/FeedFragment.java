@@ -146,8 +146,9 @@ public class FeedFragment extends Fragment {
     private void fetchFilteredFeed(String userFilter) {
         String selectQuery = "*,profiles(*)";
         String orderBy = "created_at.desc";
+        int limit = 50;
 
-        api.getFeedActivities(userFilter, selectQuery, orderBy).enqueue(new Callback<List<FeedModel>>() {
+        api.getFeedActivities(userFilter, selectQuery, orderBy, limit).enqueue(new Callback<List<FeedModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<FeedModel>> call, @NonNull Response<List<FeedModel>> response) {
                 if (isAdded()) {
